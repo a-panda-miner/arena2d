@@ -1,0 +1,167 @@
+[package]
+name = "arena2d"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "ar_bin"
+path = "crates/ar_bin/src/main.rs"
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev]
+opt-level = 1
+debug = 0
+
+[profile.release]
+#link time optimization
+lto = true
+# allows for more optimazition in exchange for compile time
+codegen-units = 1
+# no unwinding on panic
+panic = "abort"
+# debug info
+debug = 0 #change to 1 or 2 to get more useful backtraces in debugger
+# strip debug symbols
+strip = "symbols"
+
+[dependencies]
+# Bevy ecosystem's dependencies
+#bevy_xpbd_2d = { version = "0.4", default-features = false, features = ["2d", "f32", "parry-f32", "debug-plugin", "parallel", "simd"]}
+#bevy_eventlistener = "0.7"
+#bevy_asset_loader = { version = "0.20", features = ["2d", "progress_tracking"] }
+#bevy_pixel_camera = "0.13"
+#  AI
+#seldom_state = "0.10"
+#bevior_tree = "0.5"
+#big-brain = "0.19"
+
+# Non-bevy dependencies
+#pathfinding = "4"
+#once_cell = "1"
+#serde = { version = "1", features = ["derive"] }
+#toml = "0.8"
+#toml_edit = "0.22"
+#ron = "0.8"
+#itertools = "0.12"
+#rand_core = "0.6"
+#rand = { version = "0.8", features = ["small_rng"] }
+#anyhow = "1"
+#smart-default = "0.7"
+#rayon = "1"
+#noise = "0.8"
+#directories = "5"
+
+#Navigation System
+#landmass = "0.4"
+#bevy_landmass = "0.5"
+
+#bevy_common_assets = { version = "0.10.0", features = ["ron", "toml"] }
+
+#Dev Tools
+#bevy_mod_debugdump = "0.10"
+#bevy-inspector-egui = "0.23"
+#bevy_editor_pls = "0.8"
+
+#[dependencies.bevy]
+#version = "0.13"
+#default-features = false
+#features = [
+#    "bevy_winit",
+#    "bevy_render",
+#    "x11",
+#    "bevy_gilrs",
+#    "bevy_debug_stepping",
+#    "bevy_core_pipeline",
+#    "bevy_render",
+#    "bevy_scene",
+#    "bevy_sprite",
+#    "bevy_text",
+#    "bevy_ui",
+#    "animation",
+#    "bevy_asset",
+#    "bevy_audio",
+#    "bevy_pbr",
+#    "default_font",
+#    "multi-threaded",
+#    "png",
+#    "jpeg",
+#    "serialize",
+#    "subpixel_glyph_atlas",
+#    "trace",
+#    ]
+
+[workspace]
+members = ["crates/*"]
+default-members = ["crates/*"]
+
+
+[workspace.dependencies]
+pathfinding = "4"
+once_cell = "1"
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+toml_edit = "0.22"
+ron = "0.8"
+itertools = "0.12"
+rand_core = "0.6"
+rand = { version = "0.8", features = ["small_rng"] }
+anyhow = "1"
+smart-default = "0.7"
+rayon = "1"
+noise = "0.8"
+directories = "5"
+bevy_xpbd_2d = { version = "0.4", default-features = false, features = ["2d", "f32", "parry-f32", "debug-plugin", "parallel", "simd"]}
+#bevy_asset_loader = { version = "0.20", features = ["2d", "progress_tracking"] }
+bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader", features = ["2d", "progress_tracking"] }
+iyes_progress = "0.11"
+
+[workspace.dependencies.bevy]
+version = "0.13"
+default-features = false
+features = [
+    "bevy_winit",
+    "bevy_render",
+    "x11",
+    "bevy_gilrs",
+    "bevy_debug_stepping",
+    "bevy_core_pipeline",
+    "bevy_render",
+    "bevy_scene",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "animation",
+    "bevy_asset",
+    "bevy_audio",
+    "bevy_pbr",
+    "default_font",
+    "multi-threaded",
+    "png",
+    "jpeg",
+    "serialize",
+    "subpixel_glyph_atlas",
+    "trace",
+    ]
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+
+[dependencies.ar_core]
+path = "crates/ar_core"
+
+[dependencies.ar_camera]
+path = "crates/camera"
+
+[dependencies.ar_input]
+path = "crates/input"
+
+[dependencies.ar_player]
+path = "crates/player"
+
+[dependencies.ar_battle]
+path = "crates/battle"
