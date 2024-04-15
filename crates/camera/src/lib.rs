@@ -86,7 +86,7 @@ fn change_camera_state(
 
 // Changes the camera when the resource CameraZoomState changes
 fn change_camera_zoom(
-    mut camera_state: ResMut<CameraZoomState>,
+    camera_state: ResMut<CameraZoomState>,
     mut query: Query<&mut OrthographicProjection, With<ArenaCameraMarker>>,
 ) {
     if camera_state.is_changed() {

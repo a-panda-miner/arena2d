@@ -2,8 +2,6 @@
 // to avoid a circular dependency
 
 use bevy::prelude::*;
-use bevy::utils::HashMap;
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {

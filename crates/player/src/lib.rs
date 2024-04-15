@@ -23,9 +23,9 @@ struct PlayerHandler {
 
 #[derive(AssetCollection, Resource)]
 pub struct SheetHandle {
-    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 6, rows = 1))]
+    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 2, rows = 4))]
     pub layout: Handle<TextureAtlasLayout>,
-    #[asset(path = "characters/player.png")]
+    #[asset(path = "characters/character.png")]
     pub sprite: Handle<Image>,
 }
 
@@ -35,7 +35,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert((
             SpriteBundle {
                 texture: sheet_handle.sprite.clone(),
-                transform: Transform::from_xyz(0.0, 0.0, 0.0),
+                transform: Transform::from_xyz(0.0, 0.0, 5.0),
                 ..Default::default()
             },
             TextureAtlas::from(sheet_handle.layout.clone()),

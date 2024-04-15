@@ -62,7 +62,7 @@ fn player_input_manager(
 }
 
 fn animate_player(
-    mut query: Query<(&mut TextureAtlas), With<PlayerMarker>>,
+    mut query: Query<&mut TextureAtlas, With<PlayerMarker>>,
     keys: Res<ButtonInput<KeyCode>>,
 ) {
     let mut texture_atlas = query.single_mut();
@@ -74,19 +74,19 @@ fn animate_player(
         return;
     }
     if w {
-        texture_atlas.index = 0;
+        texture_atlas.index = 7;
         return;
     }
     if a {
-        texture_atlas.index = 3;
+        texture_atlas.index = 5;
         return;
     }
     if s {
-        texture_atlas.index = 2;
+        texture_atlas.index = 0;
         return;
     }
     if d {
-        texture_atlas.index = 1;
+        texture_atlas.index = 3;
         return;
     }
 }

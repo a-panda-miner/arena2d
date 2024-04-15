@@ -8,6 +8,8 @@ bevy = { workspace = true }
 bevy_xpbd_2d = { workspace = true }
 bevy_asset_loader = { workspace = true }
 iyes_progress = { workspace = true }
+bevy-inspector-egui = { workspace = true }
+bevy_fast_tilemap = { workspace = true }
 
 [lints]
 workspace = true

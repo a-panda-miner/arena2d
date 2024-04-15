@@ -1,7 +1,9 @@
 use bevy::prelude::*;
+use bevy::math::{uvec2, vec2};
 use bevy_asset_loader::prelude::*;
-use bevy_ecs_tilemap::prelude::*;
-
+use bevy_fast_tilemap::{Map, MapBundleManaged};
+use ar_core::{AppState, MapSet};
+use rand::prelude::*;
 
 const TILE_SIZE: u32 = 16;
 const CHUNK_SIZE: UVec2 = UVec2 { x: 10, y: 10};
@@ -25,50 +27,28 @@ enum TileType {
     Rock,
 }
 
-struct MapPlugin {}
+pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        }
-}
-
-fn chunk_spawner(commands: &mut Commands, tile_set: Res<TilesetHandle>, chunk_pos: IVec2) {
-    let tilemap_entity = commands.spawn_empty().id();
-    let mut tile_storage = TileStorage::empty(CHUNK_SIZE.into());
-
-    for x in 0..CHUNK_SIZE.x {
-        for y in 0..CHUNK_SIZE.y {
-            let tile_pos = TilePos::new(x, y);
-            let tile_entity = commands
-                .spawn(TileBundle {
-                    position: tile_pos,
-                    tilemap_id: TilemapId(tilemap_entity),
-                    ..Default::default()
-                })
-                .id();
-            commands.entity(tilemap_entity).add_child(tile_entity);
-            tile_storage.set(&tile_pos, tile_entity);
-        }
+        app
+            .add_systems(OnEnter(AppState::InBattle), map_builder.in_set(MapSet));
     }
-
-    let transform = Transform::from_translation(Vec3::new(
-        chunk_pos.x as f32 * CHUNK_SIZE.x as f32 * TILE_SIZE as f32,
-        chunk_pos.y as f32 * CHUNK_SIZE.y as f32 * TILE_SIZE as f32,
-        0.0,
-    ));
-    let texture_handle = tile_set.sprite.clone();
-
-    commands.entity(tilemap_entity).insert(TilemapBundle {
-        grid_size: TilemapGridSize::new(TILE_SIZE as f32, TILE_SIZE as f32),
-        size: CHUNK_SIZE.into(),
-        storage: tile_storage,
-        texture: TilemapTexture::Single(texture_handle),
-        tile_size: TilemapTileSize::new(TILE_SIZE as f32, TILE_SIZE as f32),
-        transform,
-        ..Default::default()
-    });
 }
 
-fn spawn_map(commands: &mut Commands, tileset: Res<TilesetHandle>, asset_server: &AssetServer) {
-    chunk_spawner(commands, tileset, IVec2::ZERO);
+fn map_builder(mut commands: Commands,tile_set: Res<TilesetHandle>, mut materials: ResMut<Assets<Map>>) {
+    let mut rng = rand::thread_rng();
+
+    let map = Map::builder(
+        // The size of the map
+        uvec2(ARENA_WIDTH/8, ARENA_HEIGHT/8),
+        // Tile atlas
+        tile_set.sprite.clone(),
+        // Tile size
+        vec2(16., 16.),
+    )
+    // Set the index of each tile
+    .build_and_set(|_| rng.gen_range(1..4));
+
+    commands.spawn(MapBundleManaged::new(map, materials.as_mut()));
 }

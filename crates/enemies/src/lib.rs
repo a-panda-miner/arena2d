@@ -3,7 +3,6 @@
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use bevy::asset::AssetPath;
 use ar_core::{EnemiesSet, AppState};
 use bevy_xpbd_2d::prelude::*;
 use bevy_asset_loader::prelude::*;
@@ -76,13 +75,13 @@ impl Plugin for EnemiesPlugin {
 
 fn spawn_enemy_dummy(
     mut commands: Commands,
-    mut monster_map: Res<MediumMonsterSprites>,
+    monster_map: Res<MediumMonsterSprites>,
 ) {
     info!("monster map: {:?}", monster_map);
     commands.spawn(
         SpriteBundle {
             texture: monster_map.monster_sheets.get("enemy01").unwrap().clone(),
-            transform: Transform::from_xyz(50.0, 0.0, 0.0),
+            transform: Transform::from_xyz(50.0, 0.0, 4.0),
             ..Default::default()
         }
     )
