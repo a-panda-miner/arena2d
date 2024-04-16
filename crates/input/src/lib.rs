@@ -8,7 +8,7 @@ impl Plugin for InputPlugin {
         app.add_event::<PlayerDirection>()
             .add_event::<BoostUsage>()
             .add_event::<DashUsage>()
-            .add_systems(Update, (player_input_manager.in_set(InputSet), animate_player.in_set(InputSet)).chain());
+            .add_systems(Update, (player_input_manager.in_set(InputSet), animate_player.in_set(InputSet), animate_player_loop.in_set(InputSet)).chain());
     }
 }
 
@@ -88,5 +88,26 @@ fn animate_player(
     if d {
         texture_atlas.index = 3;
         return;
+    }
+}
+
+fn animate_player_loop(
+    mut query: Query<&mut TextureAtlas, With<PlayerMarker>>,
+    mut local: Local<u8>,
+) {
+    *local += 1;
+    if *local < 14 { return; }
+    *local = 0;
+    let mut texture_atlas = query.single_mut();
+    match texture_atlas.index {
+        0 => texture_atlas.index = 1,
+        1 => texture_atlas.index = 0,
+        2 => texture_atlas.index = 3,
+        3 => texture_atlas.index = 2,
+        4 => texture_atlas.index = 5,
+        5 => texture_atlas.index = 4,
+        6 => texture_atlas.index = 7,
+        7 => texture_atlas.index = 6,
+        _ => {}
     }
 }

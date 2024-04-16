@@ -32,11 +32,12 @@ pub struct MapPlugin;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_systems(OnEnter(AppState::InBattle), map_builder.in_set(MapSet));
+            .add_systems(OnEnter(AppState::InBattle), map_builder_tileset.in_set(MapSet));
     }
 }
 
-fn map_builder(mut commands: Commands,tile_set: Res<TilesetHandle>, mut materials: ResMut<Assets<Map>>) {
+/// Builds the visual tileset of the game
+fn map_builder_tileset(mut commands: Commands,tile_set: Res<TilesetHandle>, mut materials: ResMut<Assets<Map>>) {
     let mut rng = rand::thread_rng();
 
     let map = Map::builder(
