@@ -40,3 +40,6 @@ path = "../conf"
 
 [dependencies.ar_enemies]
 path = "../enemies"
+
+[dependencies.ar_audio]
+path = "../ar_audio"

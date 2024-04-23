@@ -7,6 +7,7 @@ edition = "2021"
 bevy = { workspace = true }
 bevy_xpbd_2d = { workspace = true }
 bevy_asset_loader = { workspace = true }
+bevior_tree = { workspace = true }
 
 [dependencies.ar_core]
 path = "../ar_core"

@@ -31,6 +31,10 @@ pub struct EnemiesSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MapSet;
 
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AudioSet;
+
+
 #[derive(Component)]
 pub struct PlayerMarker;
 
@@ -66,3 +70,9 @@ pub struct ZoomIn;
 
 #[derive(Debug, Event)]
 pub struct ZoomOut;
+
+#[derive(Debug, Event)]
+pub struct ChaseDirection(IVec2);
+
+#[derive(Debug, Event)]
+pub struct ChangeBackgroundEvent;

@@ -6,6 +6,7 @@ use ar_input::InputPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_enemies::{EnemiesPlugin, MediumMonsterSprites};
 use ar_map::{MapPlugin, TilesetHandle};
+use ar_audio::{GameAudioPlugin, GameAudioAssets, BackGroundMusic};
 
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
@@ -67,17 +68,20 @@ impl Plugin for GamePlugin {
             .add_plugins(EnemiesPlugin)
             .add_plugins(BattlePlugin)
             .add_plugins(MapPlugin)
+            .add_plugins(GameAudioPlugin)
             .add_plugins(PhysicsPlugins::new(FixedUpdate))
             .add_plugins(FrameTimeDiagnosticsPlugin::default())
             .add_plugins(LogDiagnosticsPlugin::default())
             .add_plugins(WorldInspectorPlugin::new())
             .insert_resource(Time::<Fixed>::from_hz(PFPS))
+            .insert_resource(BackGroundMusic::default())
             .add_loading_state(
                 LoadingState::new(AppState::LoadingAssets)
                     .continue_to_state(AppState::InBattle)
                     .load_collection::<MediumMonsterSprites>()
                     .load_collection::<SheetHandle>()
-                    .load_collection::<TilesetHandle>(),
+                    .load_collection::<TilesetHandle>()
+                    .load_collection::<GameAudioAssets>(),
             )
             .insert_resource(Msaa::Off)
             .insert_resource(ClearColor(Color::rgba_u8(
