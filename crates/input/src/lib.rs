@@ -1,4 +1,4 @@
-use ar_core::{BoostUsage, DashUsage, InputSet, PlayerDirection, ZoomOut, ZoomIn, PlayerMarker};
+use ar_core::{BoostUsage, DashUsage, InputSet, PlayerDirection, ZoomOut, ZoomIn, PlayerMarker, ChangeBackgroundEvent};
 use bevy::prelude::*;
 
 pub struct InputPlugin;
@@ -8,7 +8,13 @@ impl Plugin for InputPlugin {
         app.add_event::<PlayerDirection>()
             .add_event::<BoostUsage>()
             .add_event::<DashUsage>()
-            .add_systems(Update, (player_input_manager.in_set(InputSet), animate_player.in_set(InputSet), animate_player_loop.in_set(InputSet)).chain());
+            .add_event::<ChangeBackgroundEvent>()
+            .add_systems(Update, (
+                player_input_manager.in_set(InputSet), 
+                animate_player.in_set(InputSet), 
+                animate_player_loop.in_set(InputSet),
+                change_background_music.in_set(InputSet),
+            ).chain());
     }
 }
 
@@ -110,4 +116,17 @@ fn animate_player_loop(
         7 => texture_atlas.index = 6,
         _ => {}
     }
+}
+
+fn change_background_music(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut ev: EventWriter<ChangeBackgroundEvent>,
+    mut local: Local<u8>,
+) {
+    *local += 1;
+    if *local < 4 { return; }
+    *local = 0;
+    let b = keys.pressed(KeyCode::KeyB);
+    if !b { return; }
+    ev.send(ChangeBackgroundEvent);
 }

@@ -39,7 +39,11 @@ impl Plugin for GameAudioPlugin {
             .add_systems(
                 OnEnter(AppState::InBattle),
                 setup_bg.in_set(AudioSet),
-            );
+            )
+            .add_systems(Update,(
+                (change_bgm).in_set(AudioSet),
+                (play_music).in_set(AudioSet),
+            ).chain());
     }
 }
 
@@ -70,23 +74,26 @@ fn change_bgm(
     mut commands: Commands,
 ) {
     if !bg_event.is_empty() {
-        commands.entity(current_bg.single().0).despawn();
+        for (entity, sink) in current_bg.iter() {
+            sink.stop();
+            commands.entity(entity).despawn();
+        }
         if bgm.current_bg < bgm.max_bg {
             bgm.current_bg += 1;
-        }
-        else {
+        } else {
             bgm.current_bg = 1;
         }
     }
 }
 
-// System triggers once BackGroundMusic resource is changed, 
-// spawning the new background music
+// System checks if BackGroundMusic resource is changed, 
+// then spawns the new background music
 fn play_music(
     bgm: Res<BackGroundMusic>,
     mut commands: Commands,
     audio_assets: Res<GameAudioAssets>,
 ) {
+    if !bgm.is_changed() { return; }
     let bg = format!("bg{}", bgm.current_bg);
     commands.spawn(AudioBundle {
         source: audio_assets.bg.get(bg.as_str()).unwrap().clone().into(),
@@ -94,5 +101,6 @@ fn play_music(
             mode: PlaybackMode::Loop,
             ..default()
         }
-    });
+    })
+    .insert(BGMusicMarker);
 }

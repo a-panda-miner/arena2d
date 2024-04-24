@@ -1,7 +1,7 @@
 use ar_battle::BattlePlugin;
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
-use ar_core::{AppState, CameraSet, PlayerSet, InputSet, MapSet};
+use ar_core::{AppState, CameraSet, PlayerSet, InputSet, MapSet, AudioSet};
 use ar_input::InputPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_enemies::{EnemiesPlugin, MediumMonsterSprites};
@@ -93,6 +93,7 @@ impl Plugin for GamePlugin {
                 PlayerSet.run_if(in_state(AppState::InBattle)),
                 InputSet.run_if(in_state(AppState::InBattle)),
                 MapSet.run_if(in_state(AppState::InBattle)),
+                AudioSet.run_if(in_state(AppState::InBattle)),
             ));
     }
 }
