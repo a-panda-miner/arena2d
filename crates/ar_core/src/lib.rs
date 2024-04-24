@@ -49,6 +49,11 @@ pub struct InvFrames {
     frames_remaining: u8,
 }
 
+#[derive(Component)]
+pub struct Cooldown(pub Timer);
+
+#[derive(Component)]
+pub struct BGMusicMarker;
 
 #[derive(Component)]
 pub struct Dash {

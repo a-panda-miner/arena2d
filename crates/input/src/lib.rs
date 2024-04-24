@@ -1,7 +1,10 @@
-use ar_core::{BoostUsage, DashUsage, InputSet, PlayerDirection, ZoomOut, ZoomIn, PlayerMarker, ChangeBackgroundEvent};
+use ar_core::{BoostUsage, DashUsage, InputSet, PlayerDirection, ZoomOut, ZoomIn, PlayerMarker, ChangeBackgroundEvent, BGMusicMarker, Cooldown};
 use bevy::prelude::*;
 
 pub struct InputPlugin;
+
+#[derive(Resource)]
+struct BButtonCooldown(Timer);
 
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
@@ -9,6 +12,7 @@ impl Plugin for InputPlugin {
             .add_event::<BoostUsage>()
             .add_event::<DashUsage>()
             .add_event::<ChangeBackgroundEvent>()
+            .insert_resource(BButtonCooldown(Timer::from_seconds(2.0, TimerMode::Once)))
             .add_systems(Update, (
                 player_input_manager.in_set(InputSet), 
                 animate_player.in_set(InputSet), 
@@ -98,35 +102,42 @@ fn animate_player(
 }
 
 fn animate_player_loop(
-    mut query: Query<&mut TextureAtlas, With<PlayerMarker>>,
-    mut local: Local<u8>,
+    time: Res<Time>,
+    mut query: Query<(&mut TextureAtlas, &mut Cooldown), With<PlayerMarker>>,
 ) {
-    *local += 1;
-    if *local < 14 { return; }
-    *local = 0;
-    let mut texture_atlas = query.single_mut();
-    match texture_atlas.index {
-        0 => texture_atlas.index = 1,
-        1 => texture_atlas.index = 0,
-        2 => texture_atlas.index = 3,
-        3 => texture_atlas.index = 2,
-        4 => texture_atlas.index = 5,
-        5 => texture_atlas.index = 4,
-        6 => texture_atlas.index = 7,
-        7 => texture_atlas.index = 6,
-        _ => {}
+    let (mut texture_atlas, mut cooldown) = query.single_mut();
+    if cooldown.0.tick(time.delta()).just_finished() {
+        match texture_atlas.index {
+            0 => texture_atlas.index = 1,
+            1 => texture_atlas.index = 0,
+            2 => texture_atlas.index = 3,
+            3 => texture_atlas.index = 2,
+            4 => texture_atlas.index = 5,
+            5 => texture_atlas.index = 4,
+            6 => texture_atlas.index = 7,
+            7 => texture_atlas.index = 6,
+            _ => {}
+        }
     }
 }
 
 fn change_background_music(
+    time: Res<Time>,
+    mut timer: ResMut<BButtonCooldown>,
     keys: Res<ButtonInput<KeyCode>>,
     mut ev: EventWriter<ChangeBackgroundEvent>,
-    mut local: Local<u8>,
+    mut query: Query<&mut Cooldown, With<BGMusicMarker>>,
 ) {
-    *local += 1;
-    if *local < 4 { return; }
-    *local = 0;
-    let b = keys.pressed(KeyCode::KeyB);
-    if !b { return; }
+    let mut flag = false;
+    for mut cooldown in query.iter_mut() {
+        if cooldown.0.tick(time.delta()).just_finished() {
+            flag = true;
+        }
+    }
+    let a = timer.0.tick(time.delta()).finished();
+    let mut b = keys.pressed(KeyCode::KeyB);
+    if !a { b = false; }
+    if !b && !flag { return; }
     ev.send(ChangeBackgroundEvent);
+    timer.0.reset();
 }

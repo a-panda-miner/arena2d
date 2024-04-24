@@ -2,7 +2,8 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy::audio::PlaybackMode;
 use bevy_asset_loader::prelude::*;
-use ar_core::{AppState, AudioSet, ChangeBackgroundEvent};
+use ar_core::{AppState, AudioSet, ChangeBackgroundEvent, BGMusicMarker, Cooldown};
+
 
 #[derive(Debug, AssetCollection, Resource)]
 pub struct GameAudioAssets {
@@ -18,9 +19,6 @@ pub struct GameAudioAssets {
         "audio/sfx/death.wav",), collection(mapped, typed))]
     pub sfx: HashMap<AssetFileStem, Handle<AudioSource>>,
 }
-
-#[derive(Component)]
-struct BGMusicMarker;
 
 struct GameAudio {
 }
@@ -58,7 +56,8 @@ fn setup_bg(
             ..default()
         }
     })
-    .insert(BGMusicMarker);
+    .insert(BGMusicMarker)
+    .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
     bgm.max_bg = audio_assets.bg.len() as u8;
     bgm.current_bg = 4;
 }
@@ -102,5 +101,6 @@ fn play_music(
             ..default()
         }
     })
-    .insert(BGMusicMarker);
+    .insert(BGMusicMarker)
+    .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
 }

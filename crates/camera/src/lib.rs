@@ -122,10 +122,10 @@ fn follow_player(
     let camera_x = camera.translation.x;
     let camera_y = camera.translation.y;
     let (height, width) = map_zoom_level_to_scale(camera_zoom.0);
-    if (player_transform.translation.x - camera_x).abs() > (height / 2.2) {
+    if (player_transform.translation.x - camera_x).abs() > (height / 3.5) {
         camera.translation.x = player_transform.translation.x;
     }
-    if (player_transform.translation.y - camera_y).abs() > (width / 2.2) {
+    if (player_transform.translation.y - camera_y).abs() > (width / 3.5) {
         camera.translation.y = player_transform.translation.y;
     }
 }

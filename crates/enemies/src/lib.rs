@@ -55,16 +55,23 @@ pub enum QualityMonster {
     Boss,
 }
 
+pub enum MonsterAI {
+    StateMachine,
+    BehaviorTree,
+    BigBrain,
+}
+
 pub struct EnemiesPlugin;
 
 struct MonsterTemplate {
     name: String,
     base_health: u32,
-    base_movespeed: f32,
+    base_movespeed: Option<f32>,
     base_regen: Option<u32>,
-    reward_type: RewardType,
+    reward_type: Option<RewardType>,
     quality: QualityMonster,
     layout_size: MonsterLayoutType,
+    ai: Option<MonsterAI>,
 }
 
 impl Plugin for EnemiesPlugin {
