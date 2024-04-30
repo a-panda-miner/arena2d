@@ -1,12 +1,14 @@
 // Structs and enums that are used by more than one crate
 // to avoid a circular dependency
 
+use serde::Deserialize;
 use bevy::prelude::*;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
     #[default]
     LoadingAssets,
+    LoadingTemplates,
     Menu,
     Pause,
     InBattle,
@@ -34,6 +36,15 @@ pub struct MapSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct AudioSet;
 
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct LoadingTemplatesSet;
+
+
+#[derive(Component)]
+pub struct Stunned;
+
+#[derive(Component)]
+pub struct Silenced;
 
 #[derive(Component)]
 pub struct PlayerMarker;
@@ -81,3 +92,42 @@ pub struct ChaseDirection(IVec2);
 
 #[derive(Debug, Event)]
 pub struct ChangeBackgroundEvent;
+
+#[derive(Clone, Debug, Deserialize)]
+pub enum RewardType {
+    Currency,
+    SpecialCurrency,
+    PetXp
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub enum DropType {
+    Currency,
+    SpecialCurrency,
+    PetXp,
+}
+
+#[derive(Clone, Debug, Component, Deserialize)]
+pub enum WeaponType {
+    Dagger,
+}
+
+#[derive(Debug, Component)]
+pub struct LifeTime {
+    pub timer: Timer,
+}
+
+#[derive(Component)]
+pub struct SummonSpellMarker;
+
+#[derive(Component)]
+pub struct AoESpellMarker;
+
+#[derive(Component)]
+pub struct ProjectileSpellMarker;
+
+#[derive(Component)]
+pub struct SwingSpellMarker;
+
+#[derive(Component)]
+pub struct BuffSpellMarker;

@@ -6,12 +6,7 @@ use bevy::utils::HashMap;
 use ar_core::{EnemiesSet, AppState};
 use bevy_xpbd_2d::prelude::*;
 use bevy_asset_loader::prelude::*;
-
-#[derive(Resource)]
-pub struct MonsterMap {
-    pub monster_templates: HashMap<String, MonsterTemplate>,
-}
-
+use serde::Deserialize;
 
 #[derive(Debug, AssetCollection, Resource)]
 pub struct MediumMonsterSprites {
@@ -33,6 +28,7 @@ pub struct MediumMonsterSprites {
 }
 */
 
+#[derive(Clone, Deserialize, Debug)]
 pub enum MonsterLayoutType {
     Small,
     Medium,
@@ -40,12 +36,7 @@ pub enum MonsterLayoutType {
     Boss,
 }
 
-pub enum RewardType {
-    Currency,
-    SpecialCurrency,
-    PetXp
-}
-
+#[derive(Clone, Deserialize, Debug)]
 pub enum QualityMonster {
     Common,
     Rare,
@@ -55,6 +46,7 @@ pub enum QualityMonster {
     Boss,
 }
 
+#[derive(Clone, Deserialize, Debug)]
 pub enum MonsterAI {
     StateMachine,
     BehaviorTree,
@@ -62,17 +54,6 @@ pub enum MonsterAI {
 }
 
 pub struct EnemiesPlugin;
-
-struct MonsterTemplate {
-    name: String,
-    base_health: u32,
-    base_movespeed: Option<f32>,
-    base_regen: Option<u32>,
-    reward_type: Option<RewardType>,
-    quality: QualityMonster,
-    layout_size: MonsterLayoutType,
-    ai: Option<MonsterAI>,
-}
 
 impl Plugin for EnemiesPlugin {
     fn build(&self, app: &mut App) {

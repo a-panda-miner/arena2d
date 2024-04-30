@@ -43,3 +43,6 @@ path = "../enemies"
 
 [dependencies.ar_audio]
 path = "../ar_audio"
+
+[dependencies.ar_template]
+path = "../ar_template"

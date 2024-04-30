@@ -1,0 +1,23 @@
+[package]
+name = "ar_template"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+serde = { workspace = true }
+bevy = { workspace = true }
+ron = { workspace = true }
+
+[lints]
+workspace = true
+
+
+[dependencies.ar_core]
+path = "../ar_core"
+
+[dependencies.ar_enemies]
+path = "../enemies"
+
+[dependencies.ar_spells]
+path = "../ar_spells"
