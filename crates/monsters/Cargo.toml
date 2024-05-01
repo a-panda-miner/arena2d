@@ -4,3 +4,18 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bevy = { workspace = true }
+rand_core = { workspace = true }
+bevy_rand = { workspace = true }
+
+[dependencies.ar_core]
+path = "../ar_core"
+
+[dependencies.ar_template]
+path = "../ar_template"
+
+[dependencies.ar_enemies]
+path = "../enemies"
+
+[dependencies.ar_camera]
+path = "../camera"

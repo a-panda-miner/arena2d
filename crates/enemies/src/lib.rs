@@ -9,12 +9,16 @@ use bevy_asset_loader::prelude::*;
 use serde::Deserialize;
 
 #[derive(Debug, AssetCollection, Resource)]
-pub struct MediumMonsterSprites {
+pub struct MonsterSprites {
     #[asset(paths(
-        "monsters/medium/enemy01.png"), collection(mapped, typed))]
+        "monsters/large/enemy01.png", "monsters/small/slimesmall.png", "monsters/small/ratsmall.png"), collection(mapped, typed))]
     pub monster_sheets: HashMap<AssetFileStem, Handle<Image>>,
-    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 5, rows = 1))]
-    pub monster_layout: Handle<TextureAtlasLayout>,
+    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 4, rows = 1))]
+    pub monster_layout_large_four: Handle<TextureAtlasLayout>,
+    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 9, rows = 1))]
+    pub monster_layout_large_nine: Handle<TextureAtlasLayout>,
+    #[asset(texture_atlas_layout(tile_size_x = 8., tile_size_y = 8., columns = 2, rows = 4))]
+    pub monster_layout_small: Handle<TextureAtlasLayout>,
 }
 
 /*
@@ -63,21 +67,19 @@ impl Plugin for EnemiesPlugin {
 
 fn spawn_enemy_dummy(
     mut commands: Commands,
-    monster_map: Res<MediumMonsterSprites>,
+    monster_sprites: Res<MonsterSprites>,
 ) {
-    info!("monster map: {:?}", monster_map);
     commands.spawn(
         SpriteBundle {
-            texture: monster_map.monster_sheets.get("enemy01").unwrap().clone(),
+            texture: monster_sprites.monster_sheets.get("enemy01").unwrap().clone(),
             transform: Transform::from_xyz(50.0, 0.0, 4.0),
             ..Default::default()
         }
     )
-    .insert(TextureAtlas::from(monster_map.monster_layout.clone()))
+    .insert(TextureAtlas::from(monster_sprites.monster_layout_large_four.clone()))
     .insert(RigidBody::Dynamic)
     .insert(Mass(50.0))
     .insert(LinearVelocity(Vec2::ZERO))
     .insert(AngularVelocity(0.0))
     .insert(Collider::circle(5.0));
 }
-

@@ -1,16 +1,28 @@
 MonsterTemplates(
     templates: { 
-        "Dummy": MonsterTemplate(
+        "dummy": MonsterTemplate(
             name: "Dummy",
-            sprite_name: "dummy.png",
+            sprite_name: "dummy",
+            layout: Large,
             hp: 8,
             damage: 0,
+            difficulty: 0,
         ),
-        "Dragon": MonsterTemplate(
-            name: "Dragon",
-            sprite_name: "dragon.png",
-            hp: 50,
-            damage: 10,
+        "smallrat": MonsterTemplate(
+            name: "small rat",
+            sprite_name: "ratsmall",
+            layout: Small,
+            hp: 12,
+            damage: 3,
+            difficulty: 0,
         ),
+        "smallsmile": MonsterTemplate(
+            name: "small smile",
+            sprite_name: "smilesmall",
+            layout: Small,
+            hp: 6,
+            damage: 2,
+            difficulty: 0,
+        )
     }
 )

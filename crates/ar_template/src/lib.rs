@@ -31,9 +31,7 @@ pub struct MonsterTemplate {
     pub name: String,
     // The sprite of the monster
     pub sprite_name: String,
-    // How the monster's sprite should be used, if none then
-    // it means the sprite can be used as is
-    pub layout_size: Option<MonsterLayoutType>,
+    pub layout: MonsterLayoutType,
     pub hp: u32,
     pub damage: u32,
     pub movespeed: Option<f32>,
@@ -56,7 +54,7 @@ pub struct MonsterTemplate {
     pub drops_chance: Option<f32>,
     // Determines how much score is needed for the monster to be added
     // to the spawn pool
-    pub difficulty: Option<HashSet<usize>>,
+    pub difficulty: u32,
 }
 
 
@@ -111,4 +109,22 @@ pub fn load_templates(
     commands.insert_resource(spelltemplate);
 
     next_state.set(AppState::InBattle);
+}
+
+#[derive(Debug, Resource)]
+pub struct MonsterFlatList {
+    pub name_difficulty: Vec<(String, u32)>,
+}
+
+pub fn cache_templates_info(
+    mut commands: Commands,
+    monstertemplate: Res<MonsterTemplates>,
+    spelltemplate: Res<SpellTemplates>,
+) {
+    let mut name_difficulty = MonsterFlatList { name_difficulty: Vec::new() };
+    for (key, template) in monstertemplate.templates.iter() {
+        name_difficulty.name_difficulty.push((key.clone(), template.difficulty));
+    }
+    name_difficulty.name_difficulty.sort_by(|a, b| a.1.cmp(&b.1));
+    commands.insert_resource(name_difficulty);
 }

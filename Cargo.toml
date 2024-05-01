@@ -43,9 +43,9 @@ toml_edit = "0.22"
 ron = { git = "https://github.com/ron-rs/ron" }
 
 itertools = "0.12"
-rand_core = "0.6"
-rand = { version = "0.8", features = ["small_rng"] }
-
+rand_core = {version = "0.6", features = ["std"]}
+rand = "0.8"
+bevy_rand = { version = "0.5", features = ["wyrand"]}
 anyhow = "1"
 smart-default = "0.7"
 rayon = "1"

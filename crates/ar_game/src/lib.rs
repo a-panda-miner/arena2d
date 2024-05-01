@@ -4,7 +4,7 @@ use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{AppState, CameraSet, PlayerSet, InputSet, MapSet, AudioSet};
 use ar_input::InputPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
-use ar_enemies::{EnemiesPlugin, MediumMonsterSprites};
+use ar_enemies::{EnemiesPlugin, MonsterSprites};
 use ar_map::{MapPlugin, TilesetHandle};
 use ar_audio::{GameAudioPlugin, GameAudioAssets, BackGroundMusic};
 use ar_template::TemplatePlugin;
@@ -22,6 +22,9 @@ use bevy_fast_tilemap::{FastTileMapPlugin};
 
 use bevy_inspector_egui::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+
+use bevy_rand::prelude::{WyRand, EntropyPlugin};
+use rand_core::RngCore;
 
 pub struct GamePlugin;
 
@@ -62,6 +65,7 @@ impl Plugin for GamePlugin {
             .add_plugins(
                 ProgressPlugin::new(AppState::LoadingAssets).continue_to(AppState::InBattle),
             )
+            .add_plugins(EntropyPlugin::<WyRand>::default())
             .add_plugins(FastTileMapPlugin::default())
             .add_plugins(ArenaCameraPlugin)
             .add_plugins(InputPlugin)
@@ -80,7 +84,7 @@ impl Plugin for GamePlugin {
             .add_loading_state(
                 LoadingState::new(AppState::LoadingAssets)
                     .continue_to_state(AppState::LoadingTemplates)
-                    .load_collection::<MediumMonsterSprites>()
+                    .load_collection::<MonsterSprites>()
                     .load_collection::<SheetHandle>()
                     .load_collection::<TilesetHandle>()
                     .load_collection::<GameAudioAssets>(),
