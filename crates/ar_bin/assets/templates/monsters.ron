@@ -23,6 +23,39 @@ MonsterTemplates(
             hp: 6,
             damage: 2,
             difficulty: 0,
-        )
+        ),
+        "smallzombie": MonsterTemplate(
+            name: "small zombie",
+            sprite_name: "zombiesmall",
+            layout: Small,
+            hp: 10,
+            damage: 2,
+            difficulty: 1,
+        ),
+        "smallrabbit": MonsterTemplate(
+            name: "small rabbit",
+            sprite_name: "rabbitsmall",
+            layout: Small,
+            hp: 5,
+            damage: 1,
+            difficulty: 0,
+        ),
+        "smallbat": MonsterTemplate(
+            name: "small bat",
+            sprite_name: "batsmall",
+            layout: Small,
+            hp: 6,
+            damage: 2,
+            difficulty: 1,
+        ),
+        "smallchicken": MonsterTemplate(
+            name: "small chicken",
+            sprite_name: "chickensmall",
+            layout: Small,
+            hp: 7,
+            damage: 2,
+            difficulty: 1,
+        ),
+        
     }
 )

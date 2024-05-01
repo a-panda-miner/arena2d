@@ -11,7 +11,9 @@ use serde::Deserialize;
 #[derive(Debug, AssetCollection, Resource)]
 pub struct MonsterSprites {
     #[asset(paths(
-        "monsters/large/dummy.png", "monsters/small/slimesmall.png", "monsters/small/ratsmall.png"), collection(mapped, typed))]
+        "monsters/large/dummy.png", "monsters/small/slimesmall.png", "monsters/small/ratsmall.png",
+        "monsters/small/zombiesmall.png", "monsters/small/rabbitsmall.png", "monsters/small/chickensmall.png",
+        "monsters/small/batsmall.png"), collection(mapped, typed))]
     pub monster_sheets: HashMap<AssetFileStem, Handle<Image>>,
     #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 4, rows = 1))]
     pub monster_layout_large_four: Handle<TextureAtlasLayout>,
@@ -61,7 +63,7 @@ pub struct EnemiesPlugin;
 
 impl Plugin for EnemiesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::InBattle), spawn_enemy_dummy.in_set(EnemiesSet));
+        //app.add_systems(OnEnter(AppState::InBattle), spawn_enemy_dummy.in_set(EnemiesSet));
     }
 }
 
