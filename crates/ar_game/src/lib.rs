@@ -1,13 +1,14 @@
 use ar_battle::BattlePlugin;
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
-use ar_core::{AppState, CameraSet, PlayerSet, InputSet, MapSet, AudioSet};
+use ar_core::{AppState, CameraSet, PlayerSet, InputSet, MapSet, AudioSet, MonsterSet};
 use ar_input::InputPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_enemies::{EnemiesPlugin, MonsterSprites};
 use ar_map::{MapPlugin, TilesetHandle};
 use ar_audio::{GameAudioPlugin, GameAudioAssets, BackGroundMusic};
 use ar_template::TemplatePlugin;
+use ar_monsters::MonsterPlugin;
 
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
@@ -72,6 +73,7 @@ impl Plugin for GamePlugin {
             .add_plugins(PlayerPlugin)
             .add_plugins(EnemiesPlugin)
             .add_plugins(BattlePlugin)
+            .add_plugins(MonsterPlugin)
             .add_plugins(MapPlugin)
             .add_plugins(GameAudioPlugin)
             .add_plugins(TemplatePlugin)
@@ -100,6 +102,7 @@ impl Plugin for GamePlugin {
                 InputSet.run_if(in_state(AppState::InBattle)),
                 MapSet.run_if(in_state(AppState::InBattle)),
                 AudioSet.run_if(in_state(AppState::InBattle)),
+                MonsterSet.run_if(in_state(AppState::InBattle)),
             ));
     }
 }

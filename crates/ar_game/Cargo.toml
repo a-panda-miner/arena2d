@@ -48,3 +48,6 @@ path = "../ar_audio"
 
 [dependencies.ar_template]
 path = "../ar_template"
+
+[dependencies.ar_monsters]
+path = "../monsters"

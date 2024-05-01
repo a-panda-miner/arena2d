@@ -16,9 +16,9 @@ MonsterTemplates(
             damage: 3,
             difficulty: 0,
         ),
-        "smallsmile": MonsterTemplate(
-            name: "small smile",
-            sprite_name: "smilesmall",
+        "smallslime": MonsterTemplate(
+            name: "small slime",
+            sprite_name: "slimesmall",
             layout: Small,
             hp: 6,
             damage: 2,

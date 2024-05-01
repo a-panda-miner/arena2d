@@ -274,6 +274,7 @@ dependencies = [
  "ar_enemies",
  "ar_input",
  "ar_map",
+ "ar_monsters",
  "ar_player",
  "ar_shop",
  "ar_template",
@@ -320,6 +321,7 @@ dependencies = [
  "ar_template",
  "bevy",
  "bevy_rand",
+ "bevy_xpbd_2d",
  "rand_core",
 ]
 

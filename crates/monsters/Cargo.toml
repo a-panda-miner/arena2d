@@ -7,6 +7,7 @@ edition = "2021"
 bevy = { workspace = true }
 rand_core = { workspace = true }
 bevy_rand = { workspace = true }
+bevy_xpbd_2d = { workspace = true }
 
 [dependencies.ar_core]
 path = "../ar_core"

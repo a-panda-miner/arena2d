@@ -11,7 +11,7 @@ use serde::Deserialize;
 #[derive(Debug, AssetCollection, Resource)]
 pub struct MonsterSprites {
     #[asset(paths(
-        "monsters/large/enemy01.png", "monsters/small/slimesmall.png", "monsters/small/ratsmall.png"), collection(mapped, typed))]
+        "monsters/large/dummy.png", "monsters/small/slimesmall.png", "monsters/small/ratsmall.png"), collection(mapped, typed))]
     pub monster_sheets: HashMap<AssetFileStem, Handle<Image>>,
     #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 4, rows = 1))]
     pub monster_layout_large_four: Handle<TextureAtlasLayout>,
@@ -71,7 +71,7 @@ fn spawn_enemy_dummy(
 ) {
     commands.spawn(
         SpriteBundle {
-            texture: monster_sprites.monster_sheets.get("enemy01").unwrap().clone(),
+            texture: monster_sprites.monster_sheets.get("dummy").unwrap().clone(),
             transform: Transform::from_xyz(50.0, 0.0, 4.0),
             ..Default::default()
         }

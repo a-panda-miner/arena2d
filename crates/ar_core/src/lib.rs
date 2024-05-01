@@ -3,6 +3,7 @@
 
 use serde::Deserialize;
 use bevy::prelude::*;
+use bevy_xpbd_2d::prelude::*;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
@@ -39,6 +40,8 @@ pub struct AudioSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LoadingTemplatesSet;
 
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MonsterSet;
 
 #[derive(Component)]
 pub struct Stunned;
@@ -48,6 +51,9 @@ pub struct Silenced;
 
 #[derive(Component)]
 pub struct PlayerMarker;
+
+#[derive(Component)]
+pub struct MonsterMarker;
 
 #[derive(Component)]
 pub struct Armor;
@@ -131,3 +137,13 @@ pub struct SwingSpellMarker;
 
 #[derive(Component)]
 pub struct BuffSpellMarker;
+
+#[derive(PhysicsLayer)]
+pub enum Layer {
+    Player,
+    Monster,
+    Neutral,
+    PlayerProjectile,
+    MonsterProjectile,
+    Pet,
+}

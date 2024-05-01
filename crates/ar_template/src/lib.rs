@@ -21,7 +21,7 @@ pub struct TemplatePlugin;
 
 impl Plugin for TemplatePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::LoadingTemplates), load_templates.in_set(LoadingTemplatesSet));
+        app.add_systems(OnEnter(AppState::LoadingTemplates), (load_templates, cache_templates_info).chain().in_set(LoadingTemplatesSet));
     }
 }
 
