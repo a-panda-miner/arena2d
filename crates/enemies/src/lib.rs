@@ -65,6 +65,7 @@ impl Plugin for EnemiesPlugin {
     }
 }
 
+/* 
 fn spawn_enemy_dummy(
     mut commands: Commands,
     monster_sprites: Res<MonsterSprites>,
@@ -83,3 +84,4 @@ fn spawn_enemy_dummy(
     .insert(AngularVelocity(0.0))
     .insert(Collider::circle(5.0));
 }
+*/
