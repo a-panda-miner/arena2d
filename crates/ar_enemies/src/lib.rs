@@ -3,8 +3,6 @@
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use ar_core::{EnemiesSet, AppState};
-use bevy_xpbd_2d::prelude::*;
 use bevy_asset_loader::prelude::*;
 use serde::Deserialize;
 
@@ -57,14 +55,6 @@ pub enum MonsterAI {
     StateMachine,
     BehaviorTree,
     BigBrain,
-}
-
-pub struct EnemiesPlugin;
-
-impl Plugin for EnemiesPlugin {
-    fn build(&self, app: &mut App) {
-        //app.add_systems(OnEnter(AppState::InBattle), spawn_enemy_dummy.in_set(EnemiesSet));
-    }
 }
 
 /* 

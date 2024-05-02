@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy::math::vec2;
-use bevy_rand::prelude::{WyRand, EntropyPlugin};
+use bevy_rand::prelude::WyRand;
 use bevy_rand::resource::GlobalEntropy;
 use rand_core::RngCore;
 use bevy_xpbd_2d::prelude::*;

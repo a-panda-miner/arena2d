@@ -67,21 +67,10 @@ pub struct Armor;
 pub struct Shield;
 
 #[derive(Component)]
-pub struct InvFrames {
-    frames_remaining: u8,
-}
-
-#[derive(Component)]
 pub struct Cooldown(pub Timer);
 
 #[derive(Component)]
 pub struct BGMusicMarker;
-
-#[derive(Component)]
-pub struct Dash {
-    max_dashes: u8,
-    cooldown: u8, // in frames
-}
 
 #[derive(Debug, Event)]
 pub struct PlayerDirection(pub Vec2);
@@ -97,9 +86,6 @@ pub struct ZoomIn;
 
 #[derive(Debug, Event)]
 pub struct ZoomOut;
-
-#[derive(Debug, Event)]
-pub struct ChaseDirection(IVec2);
 
 #[derive(Debug, Event)]
 pub struct ChangeBackgroundEvent;

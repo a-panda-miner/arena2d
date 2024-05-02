@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use serde::Deserialize;
-use ar_core::{WeaponType, Stunned};
+use ar_core::WeaponType;
 use ar_enemies::{MonsterLayoutType};
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;

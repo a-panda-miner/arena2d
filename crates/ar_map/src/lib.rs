@@ -6,7 +6,6 @@ use ar_core::{AppState, MapSet};
 use rand::prelude::*;
 
 const TILE_SIZE: u32 = 16;
-const CHUNK_SIZE: UVec2 = UVec2 { x: 10, y: 10};
 
 // Playable area
 const ARENA_RADIUS: u32 = 1000;
@@ -19,12 +18,6 @@ const ARENA_HEIGHT: u32 = (ARENA_RADIUS * 2) + TILE_SIZE;
 pub struct TilesetHandle {
     #[asset(path = "map/tileset.png")]
     pub sprite: Handle<Image>,
-}
-
-
-enum TileType {
-    Grass,
-    Rock,
 }
 
 pub struct MapPlugin;

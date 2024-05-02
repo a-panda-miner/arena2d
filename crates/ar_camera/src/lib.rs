@@ -14,7 +14,6 @@ impl Default for CameraZoomState {
     }
 }
 
-const ARENA_OFFSET: f32 = 40.0;
 pub const ARENA_HEIGHT_ZOOMOUT: f32 = 960.0;
 const ARENA_HEIGHT_DEFAULT: f32 = 640.0;
 const ARENA_HEIGHT_1_ZOOM: f32 = 480.0;

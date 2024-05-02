@@ -4,9 +4,9 @@ use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{AppState, CameraSet, PlayerSet, InputSet, MapSet, AudioSet, MonsterSet};
 use ar_input::InputPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
-use ar_enemies::{EnemiesPlugin, MonsterSprites};
+use ar_enemies::MonsterSprites;
 use ar_map::{MapPlugin, TilesetHandle};
-use ar_audio::{GameAudioPlugin, GameAudioAssets, BackGroundMusic};
+use ar_audio::{GameAudioPlugin, GameAudioAssets};
 use ar_template::TemplatePlugin;
 use ar_monsters::MonsterPlugin;
 
@@ -21,11 +21,9 @@ use bevy_xpbd_2d::prelude::*;
 use iyes_progress::{ProgressPlugin};
 use bevy_fast_tilemap::{FastTileMapPlugin};
 
-use bevy_inspector_egui::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 use bevy_rand::prelude::{WyRand, EntropyPlugin};
-use rand_core::RngCore;
 
 pub struct GamePlugin;
 
@@ -71,7 +69,6 @@ impl Plugin for GamePlugin {
             .add_plugins(ArenaCameraPlugin)
             .add_plugins(InputPlugin)
             .add_plugins(PlayerPlugin)
-            .add_plugins(EnemiesPlugin)
             .add_plugins(BattlePlugin)
             .add_plugins(MonsterPlugin)
             .add_plugins(MapPlugin)

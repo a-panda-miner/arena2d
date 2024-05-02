@@ -30,7 +30,7 @@ pub struct SheetHandle {
 }
 
 fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
-    commands
+    let player_id = commands
         .spawn(PlayerMarker)
         .insert((
             SpriteBundle {
@@ -47,5 +47,8 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert(Collider::circle(5.0))
         .insert(LockedAxes::ROTATION_LOCKED)
         .insert(Cooldown(Timer::from_seconds(0.24, TimerMode::Repeating))) // Animation cooldown, for attacks it should be a Cooldown in its own child
-        .insert(CollisionLayers::new([Layer::Player], [Layer::Monster, Layer::MonsterProjectile]));
+        .insert(CollisionLayers::new([Layer::Player], [Layer::Monster, Layer::MonsterProjectile]))
+        .id();
+
+        commands.insert_resource(PlayerHandler { player_id });
 }

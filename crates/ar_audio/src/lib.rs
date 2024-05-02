@@ -20,16 +20,13 @@ pub struct GameAudioAssets {
     pub sfx: HashMap<AssetFileStem, Handle<AudioSource>>,
 }
 
-struct GameAudio {
-}
-
-pub struct GameAudioPlugin;
-
 #[derive(Resource)]
 pub struct BackGroundMusic {
     max_bg: usize,
     current_bg: usize,
 }
+
+pub struct GameAudioPlugin;
 
 impl Plugin for GameAudioPlugin {
     fn build(&self, app: &mut App) {
@@ -63,7 +60,7 @@ fn setup_flat_bg(
 
 fn setup_bg(
     mut commands: Commands,
-    mut audio_assets: ResMut<FlatBGList>,
+    audio_assets: Res<FlatBGList>,
 ) {
     let bgm = BackGroundMusic {
         max_bg: audio_assets.list.len(),

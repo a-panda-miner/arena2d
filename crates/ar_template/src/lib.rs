@@ -2,7 +2,6 @@ use serde::Deserialize;
 use ron::de::from_reader;
 use std::fs::File;
 use bevy::utils::HashMap;
-use std::collections::HashSet;
 use ar_enemies::{MonsterLayoutType, MonsterAI, QualityMonster};
 use ar_core::{AppState, RewardType, DropType, LoadingTemplatesSet, WeaponType};
 use ar_spells::{SpellType, SpellAOEType, SpellBuffType, SpellSummonType, SpellProjectileType, SpellSwingType};
@@ -119,7 +118,6 @@ pub struct MonsterFlatList {
 pub fn cache_templates_info(
     mut commands: Commands,
     monstertemplate: Res<MonsterTemplates>,
-    spelltemplate: Res<SpellTemplates>,
 ) {
     let mut name_difficulty = MonsterFlatList { name_difficulty: Vec::new() };
     for (key, template) in monstertemplate.templates.iter() {
