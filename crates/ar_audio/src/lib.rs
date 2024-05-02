@@ -25,10 +25,10 @@ struct GameAudio {
 
 pub struct GameAudioPlugin;
 
-#[derive(Resource, Default)]
+#[derive(Resource)]
 pub struct BackGroundMusic {
-    max_bg: u8,
-    current_bg: u8,
+    max_bg: usize,
+    current_bg: usize,
 }
 
 impl Plugin for GameAudioPlugin {
@@ -36,7 +36,7 @@ impl Plugin for GameAudioPlugin {
         app
             .add_systems(
                 OnEnter(AppState::InBattle),
-                setup_bg.in_set(AudioSet),
+                (setup_flat_bg, setup_bg).chain().in_set(AudioSet),
             )
             .add_systems(Update,(
                 (change_bgm).in_set(AudioSet),
@@ -45,6 +45,43 @@ impl Plugin for GameAudioPlugin {
     }
 }
 
+#[derive(Resource)]
+struct FlatBGList {
+    list: Vec<Handle<AudioSource>>,
+}
+
+fn setup_flat_bg(
+    mut commands: Commands,
+    audio_assets: Res<GameAudioAssets>,
+) {
+    let mut list = Vec::new();
+    for handle in audio_assets.bg.values() {
+        list.push(handle.clone());
+    }
+    commands.insert_resource(FlatBGList { list });
+}
+
+fn setup_bg(
+    mut commands: Commands,
+    mut audio_assets: ResMut<FlatBGList>,
+) {
+    let bgm = BackGroundMusic {
+        max_bg: audio_assets.list.len(),
+        current_bg: 0,
+    };
+    commands.spawn(AudioBundle {
+        source: audio_assets.list[bgm.current_bg].clone().into(),
+        settings: PlaybackSettings {
+            mode: PlaybackMode::Loop,
+            ..default()
+        }
+    })
+    .insert(BGMusicMarker)
+    .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
+    commands.insert_resource(bgm);
+}
+
+/*
 fn setup_bg(
     mut commands: Commands,
     audio_assets: Res<GameAudioAssets>,
@@ -61,7 +98,7 @@ fn setup_bg(
     bgm.max_bg = audio_assets.bg.len() as u8;
     bgm.current_bg = 4;
 }
-
+*/
 // Reads an event to change the background music,
 // triggered either by a button press or by a timer
 // despawning the current background music and changing the
@@ -77,11 +114,7 @@ fn change_bgm(
             sink.stop();
             commands.entity(entity).despawn();
         }
-        if bgm.current_bg < bgm.max_bg {
-            bgm.current_bg += 1;
-        } else {
-            bgm.current_bg = 1;
-        }
+        bgm.current_bg = (bgm.current_bg + 1) % bgm.max_bg;
     }
 }
 
@@ -90,12 +123,12 @@ fn change_bgm(
 fn play_music(
     bgm: Res<BackGroundMusic>,
     mut commands: Commands,
-    audio_assets: Res<GameAudioAssets>,
+    audio_assets: Res<FlatBGList>,
 ) {
     if !bgm.is_changed() { return; }
-    let bg = format!("bg{}", bgm.current_bg);
+    let bg = bgm.current_bg;
     commands.spawn(AudioBundle {
-        source: audio_assets.bg.get(bg.as_str()).unwrap().clone().into(),
+        source: audio_assets.list[bg].clone().into(),
         settings: PlaybackSettings {
             mode: PlaybackMode::Loop,
             ..default()

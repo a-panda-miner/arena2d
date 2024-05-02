@@ -82,7 +82,6 @@ impl Plugin for GamePlugin {
             .add_plugins(LogDiagnosticsPlugin::default())
             .add_plugins(WorldInspectorPlugin::new())
             .insert_resource(Time::<Fixed>::from_hz(PFPS))
-            .insert_resource(BackGroundMusic::default())
             .add_loading_state(
                 LoadingState::new(AppState::LoadingAssets)
                     .continue_to_state(AppState::LoadingTemplates)
