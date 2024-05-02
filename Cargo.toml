@@ -89,19 +89,3 @@ features = [
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
-
-
-[dependencies.ar_core]
-path = "crates/ar_core"
-
-[dependencies.ar_camera]
-path = "crates/camera"
-
-[dependencies.ar_input]
-path = "crates/input"
-
-[dependencies.ar_player]
-path = "crates/player"
-
-[dependencies.ar_battle]
-path = "crates/battle"

@@ -63,7 +63,7 @@ fn spawn_monsters(
         Some(speed) => speed,
         None => 0.0,
     };
-    let speed: Vec2 = vec2(base_speed * direction.x * 10, base_speed * direction.y * 10);
+    let speed: Vec2 = vec2(base_speed * direction.x * 10.0, base_speed * direction.y * 10.0);
 
     let (layout, collider_size, mass) = match monster.layout {
         MonsterLayoutType::Small => (monster_sprites.monster_layout_small.clone(), 8.0, 20.0),

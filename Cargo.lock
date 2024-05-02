@@ -255,7 +255,6 @@ name = "ar_enemies"
 version = "0.1.0"
 dependencies = [
  "ar_core",
- "bevior_tree",
  "bevy",
  "bevy_asset_loader",
  "bevy_xpbd_2d",
@@ -385,13 +384,6 @@ dependencies = [
 [[package]]
 name = "arena2d"
 version = "0.1.0"
-dependencies = [
- "ar_battle",
- "ar_camera",
- "ar_core",
- "ar_input",
- "ar_player",
-]
 
 [[package]]
 name = "arrayref"
@@ -507,20 +499,6 @@ name = "base64"
 version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
-
-[[package]]
-name = "bevior_tree"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d20e5454dde00b110012ab1cb80dfe4c9cee8e831c4f8e635dc261531f707194"
-dependencies = [
- "bevy",
- "derive-nodestate",
- "macro-delegatenode",
- "macro-withstate",
- "ordered-float",
- "rand",
-]
 
 [[package]]
 name = "bevy"
@@ -1964,17 +1942,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8566979429cf69b49a5c740c60791108e86440e8be149bbea4fe54d2c32d6e2"
 
 [[package]]
-name = "derive-nodestate"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08841120bc28f0e9c0bf7971c3c057b323e1d1b9c4b65a34de02994791384f04"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.60",
-]
-
-[[package]]
 name = "derive_more"
 version = "0.99.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2886,28 +2853,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "macro-delegatenode"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "069f1f4205639d35c1986544a3932f5cb993b98b6de5cc38306a3ea14e825566"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.60",
-]
-
-[[package]]
-name = "macro-withstate"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87e9b548ace5ffbb72472e47872e61e0fc2de58507da68ce22598611aff5afc0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.60",
-]
-
-[[package]]
 name = "malloc_buf"
 version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3402,15 +3347,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "52f0d54bde9774d3a51dcf281a5def240c71996bc6ca05d2c847ec8b2b216166"
 dependencies = [
  "libredox",
-]
-
-[[package]]
-name = "ordered-float"
-version = "4.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a76df7075c7d4d01fdcb46c912dd17fba5b60c78ea480b475f2b6ab6f666584e"
-dependencies = [
- "num-traits",
 ]
 
 [[package]]
