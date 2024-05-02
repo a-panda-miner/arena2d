@@ -43,6 +43,11 @@ pub struct LoadingTemplatesSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MonsterSet;
 
+/// The base speed of the entity,
+/// Needed for reference when applying and removing slow/stun effects
+#[derive(Component)]
+pub struct BaseSpeed(pub f32);
+
 #[derive(Component)]
 pub struct Stunned;
 

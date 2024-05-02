@@ -5,7 +5,7 @@ use bevy_rand::resource::GlobalEntropy;
 use rand_core::RngCore;
 use bevy_xpbd_2d::prelude::*;
 
-use ar_core::{PlayerMarker, Layer, Cooldown, MonsterMarker, MonsterSet};
+use ar_core::{PlayerMarker, Layer, Cooldown, MonsterMarker, MonsterSet, BaseSpeed};
 use ar_template::{MonsterTemplates, MonsterFlatList};
 use ar_enemies::{MonsterSprites, MonsterLayoutType};
 use ar_camera::{ARENA_HEIGHT_ZOOMOUT, ARENA_WIDTH_ZOOMOUT};
@@ -19,8 +19,9 @@ impl Plugin for MonsterPlugin {
 }
 
 // TODO! Add a random offset to the spawn point,
-// add a timer 
-// add a battle score system that changes the types of monsters that can be spawned
+// add a timer,
+// add a battle score system that changes the types of monsters that can be spawned and 
+// the frequency of spawning
 fn spawn_monsters(
     mut commands: Commands,
     monster_sprites: Res<MonsterSprites>,
@@ -50,11 +51,19 @@ fn spawn_monsters(
     let player_position = player_position.single();
     let spawn_point = spawn_point + player_position.translation();
 
+    let direction = (player_position.translation() - spawn_point).normalize_or_zero();
+
     let flat_len = monster_flat.name_difficulty.len();
     let random_index = (rng.next_u64() as usize) % flat_len;
 
     let name = monster_flat.name_difficulty[random_index].0.clone();
     let monster = monster_template.templates.get(&name).unwrap();
+
+    let base_speed = match monster.movespeed {
+        Some(speed) => speed,
+        None => 0.0,
+    };
+    let speed: Vec2 = vec2(base_speed * direction.x * 10, base_speed * direction.y * 10);
 
     let (layout, collider_size, mass) = match monster.layout {
         MonsterLayoutType::Small => (monster_sprites.monster_layout_small.clone(), 8.0, 20.0),
@@ -73,9 +82,10 @@ fn spawn_monsters(
             atlas: TextureAtlas::from(layout),
             ..Default::default()
         })
+        .insert(BaseSpeed(base_speed))
         .insert(RigidBody::Dynamic)
         .insert(Mass(mass))
-        .insert(LinearVelocity(Vec2::ZERO))
+        .insert(LinearVelocity(speed))
         .insert(AngularVelocity(0.0))
         .insert(Collider::circle(collider_size))
         .insert(LockedAxes::ROTATION_LOCKED)

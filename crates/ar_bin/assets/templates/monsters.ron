@@ -15,6 +15,7 @@ MonsterTemplates(
             hp: 12,
             damage: 3,
             difficulty: 0,
+            movespeed: Some(2.0),
         ),
         "smallslime": MonsterTemplate(
             name: "small slime",
@@ -23,6 +24,7 @@ MonsterTemplates(
             hp: 6,
             damage: 2,
             difficulty: 0,
+            movespeed: Some(1.5),
         ),
         "smallzombie": MonsterTemplate(
             name: "small zombie",
@@ -31,6 +33,7 @@ MonsterTemplates(
             hp: 10,
             damage: 2,
             difficulty: 1,
+            movespeed: Some(1.2),
         ),
         "smallrabbit": MonsterTemplate(
             name: "small rabbit",
@@ -39,6 +42,7 @@ MonsterTemplates(
             hp: 5,
             damage: 1,
             difficulty: 0,
+            movespeed: Some(2.0),
         ),
         "smallbat": MonsterTemplate(
             name: "small bat",
@@ -47,6 +51,7 @@ MonsterTemplates(
             hp: 6,
             damage: 2,
             difficulty: 1,
+            movespeed: Some(1.7),
         ),
         "smallchicken": MonsterTemplate(
             name: "small chicken",
@@ -55,6 +60,7 @@ MonsterTemplates(
             hp: 7,
             damage: 2,
             difficulty: 1,
+            movespeed: Some(1.3),
         ),
 
     }

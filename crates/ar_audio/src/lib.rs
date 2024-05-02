@@ -106,11 +106,11 @@ fn setup_bg(
 fn change_bgm(
     mut bgm: ResMut<BackGroundMusic>,
     bg_event: EventReader<ChangeBackgroundEvent>,
-    current_bg: Query<(Entity, &AudioSink), With<BGMusicMarker>>,
+    current_bgm: Query<(Entity, &AudioSink), With<BGMusicMarker>>,
     mut commands: Commands,
 ) {
     if !bg_event.is_empty() {
-        for (entity, sink) in current_bg.iter() {
+        for (entity, sink) in current_bgm.iter() {
             sink.stop();
             commands.entity(entity).despawn();
         }
