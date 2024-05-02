@@ -20,28 +20,28 @@ workspace = true
 path = "../ar_core"
 
 [dependencies.ar_battle]
-path = "../battle"
+path = "../ar_battle"
 
 [dependencies.ar_map]
-path = "../map"
+path = "../ar_map"
 
 [dependencies.ar_player]
-path = "../player"
+path = "../ar_player"
 
 [dependencies.ar_input]
-path = "../input"
+path = "../ar_input"
 
 [dependencies.ar_camera]
-path = "../camera"
+path = "../ar_camera"
 
 [dependencies.ar_shop]
-path = "../shop"
+path = "../ar_shop"
 
 [dependencies.ar_conf]
-path = "../conf"
+path = "../ar_conf"
 
 [dependencies.ar_enemies]
-path = "../enemies"
+path = "../ar_enemies"
 
 [dependencies.ar_audio]
 path = "../ar_audio"
@@ -50,4 +50,4 @@ path = "../ar_audio"
 path = "../ar_template"
 
 [dependencies.ar_monsters]
-path = "../monsters"
+path = "../ar_monsters"

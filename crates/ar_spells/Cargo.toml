@@ -16,4 +16,4 @@ workspace = true
 path = "../ar_core"
 
 [dependencies.ar_enemies]
-path = "../enemies"
+path = "../ar_enemies"

@@ -9,6 +9,9 @@ rand_core = { workspace = true }
 bevy_rand = { workspace = true }
 bevy_xpbd_2d = { workspace = true }
 
+[lints]
+workspace = true
+
 [dependencies.ar_core]
 path = "../ar_core"
 
@@ -16,7 +19,7 @@ path = "../ar_core"
 path = "../ar_template"
 
 [dependencies.ar_enemies]
-path = "../enemies"
+path = "../ar_enemies"
 
 [dependencies.ar_camera]
-path = "../camera"
+path = "../ar_camera"

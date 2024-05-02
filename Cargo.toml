@@ -50,16 +50,12 @@ anyhow = "1"
 smart-default = "0.7"
 rayon = "1"
 noise = "0.8"
-directories = "5"
 bevy_xpbd_2d = { version = "0.4", default-features = false, features = ["2d", "f32", "parry-f32", "debug-plugin", "parallel", "simd"]}
 bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader", features = ["2d", "progress_tracking"] }
 iyes_progress = "0.11"
-#bevy_ecs_tilemap = { git = "https://github.com/StarArawn/bevy_ecs_tilemap" }
 bevy_fast_tilemap = { git = "https://github.com/Droggelbecher/bevy-fast-tilemap"}
 bevy-inspector-egui = { git = "https://github.com/jakobhellermann/bevy-inspector-egui"}
 
-bevior_tree = "0.5"
-seldom_state = { git = "https://github.com/a-panda-miner/seldom_state" }
 
 
 [workspace.dependencies.bevy]
