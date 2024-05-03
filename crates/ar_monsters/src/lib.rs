@@ -1,14 +1,14 @@
-use bevy::prelude::*;
 use bevy::math::vec2;
+use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
 use bevy_rand::resource::GlobalEntropy;
-use rand_core::RngCore;
 use bevy_xpbd_2d::prelude::*;
+use rand_core::RngCore;
 
-use ar_core::{PlayerMarker, Layer, Cooldown, MonsterMarker, MonsterSet, BaseSpeed};
-use ar_template::{MonsterTemplates, MonsterFlatList};
-use ar_enemies::{MonsterSprites, MonsterLayoutType};
 use ar_camera::{ARENA_HEIGHT_ZOOMOUT, ARENA_WIDTH_ZOOMOUT};
+use ar_core::{BaseSpeed, Cooldown, Layer, MonsterMarker, MonsterSet, PlayerMarker};
+use ar_enemies::{MonsterLayoutType, MonsterSprites};
+use ar_template::{MonsterFlatList, MonsterTemplates};
 
 pub struct MonsterPlugin;
 
@@ -20,7 +20,7 @@ impl Plugin for MonsterPlugin {
 
 // TODO! Add a random offset to the spawn point,
 // add a timer,
-// add a battle score system that changes the types of monsters that can be spawned and 
+// add a battle score system that changes the types of monsters that can be spawned and
 // the frequency of spawning
 fn spawn_monsters(
     mut commands: Commands,
@@ -43,9 +43,9 @@ fn spawn_monsters(
         }
     } else {
         if up_down {
-            Vec3::new(-ARENA_WIDTH_ZOOMOUT , ARENA_HEIGHT_ZOOMOUT, 0.0)
+            Vec3::new(-ARENA_WIDTH_ZOOMOUT, ARENA_HEIGHT_ZOOMOUT, 0.0)
         } else {
-            Vec3::new(-ARENA_WIDTH_ZOOMOUT , -ARENA_HEIGHT_ZOOMOUT, 0.0)
+            Vec3::new(-ARENA_WIDTH_ZOOMOUT, -ARENA_HEIGHT_ZOOMOUT, 0.0)
         }
     };
     let player_position = player_position.single();
@@ -63,21 +63,41 @@ fn spawn_monsters(
         Some(speed) => speed,
         None => 0.0,
     };
-    let speed: Vec2 = vec2(base_speed * direction.x * 10.0, base_speed * direction.y * 10.0);
+    let speed: Vec2 = vec2(
+        base_speed * direction.x * 10.0,
+        base_speed * direction.y * 10.0,
+    );
 
     let (layout, collider_size, mass) = match monster.layout {
         MonsterLayoutType::Small => (monster_sprites.monster_layout_small.clone(), 8.0, 20.0),
-        MonsterLayoutType::Medium => (monster_sprites.monster_layout_large_four.clone(), 12.0, 35.0),
-        MonsterLayoutType::Large => (monster_sprites.monster_layout_large_nine.clone(), 16.0, 50.0),
-        MonsterLayoutType::Boss => (monster_sprites.monster_layout_large_nine.clone(), 32.0, 100.0),
+        MonsterLayoutType::Medium => (
+            monster_sprites.monster_layout_large_four.clone(),
+            12.0,
+            35.0,
+        ),
+        MonsterLayoutType::Large => (
+            monster_sprites.monster_layout_large_nine.clone(),
+            16.0,
+            50.0,
+        ),
+        MonsterLayoutType::Boss => (
+            monster_sprites.monster_layout_large_nine.clone(),
+            32.0,
+            100.0,
+        ),
     };
 
     let sprite_name = monster.sprite_name.clone();
     info!("Spawning {} @ {:?}", sprite_name, spawn_point);
-    commands.spawn_empty()
+    commands
+        .spawn_empty()
         .insert(MonsterMarker)
         .insert(SpriteSheetBundle {
-            texture: monster_sprites.monster_sheets.get(sprite_name.as_str()).unwrap().clone(),
+            texture: monster_sprites
+                .monster_sheets
+                .get(sprite_name.as_str())
+                .unwrap()
+                .clone(),
             transform: Transform::from_translation(spawn_point),
             atlas: TextureAtlas::from(layout),
             ..Default::default()
@@ -89,6 +109,9 @@ fn spawn_monsters(
         .insert(AngularVelocity(0.0))
         .insert(Collider::circle(collider_size))
         .insert(LockedAxes::ROTATION_LOCKED)
-        .insert(CollisionLayers::new([Layer::Monster], [Layer::Player, Layer::PlayerProjectile]))
-        .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))); // Animation timer 
+        .insert(CollisionLayers::new(
+            [Layer::Monster],
+            [Layer::Player, Layer::PlayerProjectile],
+        ))
+        .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))); // Animation timer
 }

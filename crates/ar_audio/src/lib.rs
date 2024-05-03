@@ -1,22 +1,29 @@
+use ar_core::{AppState, AudioSet, BGMusicMarker, ChangeBackgroundEvent, Cooldown};
+use bevy::audio::PlaybackMode;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use bevy::audio::PlaybackMode;
 use bevy_asset_loader::prelude::*;
-use ar_core::{AppState, AudioSet, ChangeBackgroundEvent, BGMusicMarker, Cooldown};
-
 
 #[derive(Debug, AssetCollection, Resource)]
 pub struct GameAudioAssets {
-    #[asset(paths(
-        "audio/background/bg1.wav",
-        "audio/background/bg2.wav",
-        "audio/background/bg3.wav",
-        "audio/background/bg4.wav"), collection(mapped, typed))]
+    #[asset(
+        paths(
+            "audio/background/bg1.wav",
+            "audio/background/bg2.wav",
+            "audio/background/bg3.wav",
+            "audio/background/bg4.wav"
+        ),
+        collection(mapped, typed)
+    )]
     pub bg: HashMap<AssetFileStem, Handle<AudioSource>>,
-    #[asset(paths(
-        "audio/sfx/retro_lofi.wav",
-        "audio/sfx/hit1.wav",
-        "audio/sfx/death.wav",), collection(mapped, typed))]
+    #[asset(
+        paths(
+            "audio/sfx/retro_lofi.wav",
+            "audio/sfx/hit1.wav",
+            "audio/sfx/death.wav",
+        ),
+        collection(mapped, typed)
+    )]
     pub sfx: HashMap<AssetFileStem, Handle<AudioSource>>,
 }
 
@@ -30,15 +37,14 @@ pub struct GameAudioPlugin;
 
 impl Plugin for GameAudioPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(
-                OnEnter(AppState::InBattle),
-                (setup_flat_bg, setup_bg).chain().in_set(AudioSet),
-            )
-            .add_systems(Update,(
-                (change_bgm).in_set(AudioSet),
-                (play_music).in_set(AudioSet),
-            ).chain());
+        app.add_systems(
+            OnEnter(AppState::InBattle),
+            (setup_flat_bg, setup_bg).chain().in_set(AudioSet),
+        )
+        .add_systems(
+            Update,
+            ((change_bgm).in_set(AudioSet), (play_music).in_set(AudioSet)).chain(),
+        );
     }
 }
 
@@ -47,10 +53,7 @@ struct FlatBGList {
     list: Vec<Handle<AudioSource>>,
 }
 
-fn setup_flat_bg(
-    mut commands: Commands,
-    audio_assets: Res<GameAudioAssets>,
-) {
+fn setup_flat_bg(mut commands: Commands, audio_assets: Res<GameAudioAssets>) {
     let mut list = Vec::new();
     for handle in audio_assets.bg.values() {
         list.push(handle.clone());
@@ -58,23 +61,21 @@ fn setup_flat_bg(
     commands.insert_resource(FlatBGList { list });
 }
 
-fn setup_bg(
-    mut commands: Commands,
-    audio_assets: Res<FlatBGList>,
-) {
+fn setup_bg(mut commands: Commands, audio_assets: Res<FlatBGList>) {
     let bgm = BackGroundMusic {
         max_bg: audio_assets.list.len(),
         current_bg: 0,
     };
-    commands.spawn(AudioBundle {
-        source: audio_assets.list[bgm.current_bg].clone().into(),
-        settings: PlaybackSettings {
-            mode: PlaybackMode::Loop,
-            ..default()
-        }
-    })
-    .insert(BGMusicMarker)
-    .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
+    commands
+        .spawn(AudioBundle {
+            source: audio_assets.list[bgm.current_bg].clone().into(),
+            settings: PlaybackSettings {
+                mode: PlaybackMode::Loop,
+                ..default()
+            },
+        })
+        .insert(BGMusicMarker)
+        .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
     commands.insert_resource(bgm);
 }
 
@@ -115,22 +116,21 @@ fn change_bgm(
     }
 }
 
-// System checks if BackGroundMusic resource is changed, 
+// System checks if BackGroundMusic resource is changed,
 // then spawns the new background music
-fn play_music(
-    bgm: Res<BackGroundMusic>,
-    mut commands: Commands,
-    audio_assets: Res<FlatBGList>,
-) {
-    if !bgm.is_changed() { return; }
+fn play_music(bgm: Res<BackGroundMusic>, mut commands: Commands, audio_assets: Res<FlatBGList>) {
+    if !bgm.is_changed() {
+        return;
+    }
     let bg = bgm.current_bg;
-    commands.spawn(AudioBundle {
-        source: audio_assets.list[bg].clone().into(),
-        settings: PlaybackSettings {
-            mode: PlaybackMode::Loop,
-            ..default()
-        }
-    })
-    .insert(BGMusicMarker)
-    .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
+    commands
+        .spawn(AudioBundle {
+            source: audio_assets.list[bg].clone().into(),
+            settings: PlaybackSettings {
+                mode: PlaybackMode::Loop,
+                ..default()
+            },
+        })
+        .insert(BGMusicMarker)
+        .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
 }

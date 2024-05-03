@@ -1,8 +1,8 @@
-use bevy::prelude::*;
+use ar_core::{AppState, MapSet};
 use bevy::math::{uvec2, vec2};
+use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_fast_tilemap::{Map, MapBundleManaged};
-use ar_core::{AppState, MapSet};
 use rand::prelude::*;
 
 const TILE_SIZE: u32 = 16;
@@ -24,18 +24,24 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(OnEnter(AppState::InBattle), map_builder_tileset.in_set(MapSet));
+        app.add_systems(
+            OnEnter(AppState::InBattle),
+            map_builder_tileset.in_set(MapSet),
+        );
     }
 }
 
 /// Builds the visual tileset of the game
-fn map_builder_tileset(mut commands: Commands,tile_set: Res<TilesetHandle>, mut materials: ResMut<Assets<Map>>) {
+fn map_builder_tileset(
+    mut commands: Commands,
+    tile_set: Res<TilesetHandle>,
+    mut materials: ResMut<Assets<Map>>,
+) {
     let mut rng = rand::thread_rng();
 
     let map = Map::builder(
         // The size of the map
-        uvec2(ARENA_WIDTH/8, ARENA_HEIGHT/8),
+        uvec2(ARENA_WIDTH / 8, ARENA_HEIGHT / 8),
         // Tile atlas
         tile_set.sprite.clone(),
         // Tile size

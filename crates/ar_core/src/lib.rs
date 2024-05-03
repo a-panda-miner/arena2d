@@ -1,9 +1,9 @@
 // Structs and enums that are used by more than one crate
 // to avoid a circular dependency
 
-use serde::Deserialize;
 use bevy::prelude::*;
 use bevy_xpbd_2d::prelude::*;
+use serde::Deserialize;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
@@ -94,7 +94,7 @@ pub struct ChangeBackgroundEvent;
 pub enum RewardType {
     Currency,
     SpecialCurrency,
-    PetXp
+    PetXp,
 }
 
 #[derive(Clone, Debug, Deserialize)]

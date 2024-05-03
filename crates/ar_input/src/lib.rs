@@ -1,4 +1,7 @@
-use ar_core::{BoostUsage, DashUsage, InputSet, PlayerDirection, ZoomOut, ZoomIn, PlayerMarker, ChangeBackgroundEvent, BGMusicMarker, Cooldown};
+use ar_core::{
+    BGMusicMarker, BoostUsage, ChangeBackgroundEvent, Cooldown, DashUsage, InputSet,
+    PlayerDirection, PlayerMarker, ZoomIn, ZoomOut,
+};
 use bevy::prelude::*;
 
 pub struct InputPlugin;
@@ -13,12 +16,16 @@ impl Plugin for InputPlugin {
             .add_event::<DashUsage>()
             .add_event::<ChangeBackgroundEvent>()
             .insert_resource(BButtonCooldown(Timer::from_seconds(2.0, TimerMode::Once)))
-            .add_systems(Update, (
-                player_input_manager.in_set(InputSet), 
-                animate_player.in_set(InputSet), 
-                animate_player_loop.in_set(InputSet),
-                change_background_music.in_set(InputSet),
-            ).chain());
+            .add_systems(
+                Update,
+                (
+                    player_input_manager.in_set(InputSet),
+                    animate_player.in_set(InputSet),
+                    animate_player_loop.in_set(InputSet),
+                    change_background_music.in_set(InputSet),
+                )
+                    .chain(),
+            );
     }
 }
 
@@ -136,8 +143,12 @@ fn change_background_music(
     }
     let a = timer.0.tick(time.delta()).finished();
     let mut b = keys.pressed(KeyCode::KeyB);
-    if !a { b = false; }
-    if !b && !flag { return; }
+    if !a {
+        b = false;
+    }
+    if !b && !flag {
+        return;
+    }
     ev.send(ChangeBackgroundEvent);
     timer.0.reset();
 }

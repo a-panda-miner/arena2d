@@ -1,14 +1,14 @@
+use ar_audio::{GameAudioAssets, GameAudioPlugin};
 use ar_battle::BattlePlugin;
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
-use ar_core::{AppState, CameraSet, PlayerSet, InputSet, MapSet, AudioSet, MonsterSet};
-use ar_input::InputPlugin;
-use ar_player::{PlayerPlugin, SheetHandle};
+use ar_core::{AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet};
 use ar_enemies::MonsterSprites;
+use ar_input::InputPlugin;
 use ar_map::{MapPlugin, TilesetHandle};
-use ar_audio::{GameAudioPlugin, GameAudioAssets};
-use ar_template::TemplatePlugin;
 use ar_monsters::MonsterPlugin;
+use ar_player::{PlayerPlugin, SheetHandle};
+use ar_template::TemplatePlugin;
 
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
@@ -16,14 +16,14 @@ use bevy::{
     log::{Level, LogPlugin},
     prelude::*,
 };
-use bevy_asset_loader::{prelude::*};
+use bevy_asset_loader::prelude::*;
+use bevy_fast_tilemap::FastTileMapPlugin;
 use bevy_xpbd_2d::prelude::*;
-use iyes_progress::{ProgressPlugin};
-use bevy_fast_tilemap::{FastTileMapPlugin};
+use iyes_progress::ProgressPlugin;
 
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-use bevy_rand::prelude::{WyRand, EntropyPlugin};
+use bevy_rand::prelude::{EntropyPlugin, WyRand};
 
 pub struct GamePlugin;
 
@@ -92,13 +92,16 @@ impl Plugin for GamePlugin {
                 BG_COLOR.0, BG_COLOR.1, BG_COLOR.2, 0,
             )))
             .insert_resource(Gravity(Vec2::ZERO))
-            .configure_sets(Update, (
-                CameraSet.run_if(in_state(AppState::InBattle)),
-                PlayerSet.run_if(in_state(AppState::InBattle)),
-                InputSet.run_if(in_state(AppState::InBattle)),
-                MapSet.run_if(in_state(AppState::InBattle)),
-                AudioSet.run_if(in_state(AppState::InBattle)),
-                MonsterSet.run_if(in_state(AppState::InBattle)),
-            ));
+            .configure_sets(
+                Update,
+                (
+                    CameraSet.run_if(in_state(AppState::InBattle)),
+                    PlayerSet.run_if(in_state(AppState::InBattle)),
+                    InputSet.run_if(in_state(AppState::InBattle)),
+                    MapSet.run_if(in_state(AppState::InBattle)),
+                    AudioSet.run_if(in_state(AppState::InBattle)),
+                    MonsterSet.run_if(in_state(AppState::InBattle)),
+                ),
+            );
     }
 }

@@ -1,4 +1,4 @@
-use ar_core::{AppState, PlayerMarker, PlayerSet, Cooldown, Layer};
+use ar_core::{AppState, Cooldown, Layer, PlayerMarker, PlayerSet};
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_xpbd_2d::prelude::*;
@@ -8,7 +8,6 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::InBattle), spawn_player.in_set(PlayerSet));
-        
     }
 }
 
@@ -47,8 +46,11 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert(Collider::circle(5.0))
         .insert(LockedAxes::ROTATION_LOCKED)
         .insert(Cooldown(Timer::from_seconds(0.24, TimerMode::Repeating))) // Animation cooldown, for attacks it should be a Cooldown in its own child
-        .insert(CollisionLayers::new([Layer::Player], [Layer::Monster, Layer::MonsterProjectile]))
+        .insert(CollisionLayers::new(
+            [Layer::Player],
+            [Layer::Monster, Layer::MonsterProjectile],
+        ))
         .id();
 
-        commands.insert_resource(PlayerHandler { player_id });
+    commands.insert_resource(PlayerHandler { player_id });
 }

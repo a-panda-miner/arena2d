@@ -1,15 +1,14 @@
-use bevy::prelude::*;
-use serde::Deserialize;
 use ar_core::WeaponType;
-use ar_enemies::{MonsterLayoutType};
+use ar_enemies::MonsterLayoutType;
+use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
+use serde::Deserialize;
 
 #[derive(Debug, AssetCollection, Resource)]
 pub struct SpellSprites {
-    #[asset(paths(
-        "spells/dagger.png"), collection(mapped, typed))]
-    pub spells_sheet: HashMap<AssetFileStem, Handle<Image>>
+    #[asset(paths("spells/dagger.png"), collection(mapped, typed))]
+    pub spells_sheet: HashMap<AssetFileStem, Handle<Image>>,
 }
 
 #[derive(Clone, Deserialize, Debug)]
@@ -61,7 +60,7 @@ pub struct SpellProjectileType {
 pub struct SpellSwingType {
     pub swing_sprite: String,
     pub swing_damage: u32,
-    pub swing_arc: f32, 
+    pub swing_arc: f32,
     pub swing_length: f32,
 }
 
@@ -72,7 +71,6 @@ pub struct SpellBuffType {
 
 #[derive(Clone, Deserialize, Debug)]
 pub enum ProjectilePattern {
-    Circle, // Shoots projectiles in a circle pattern, starting at 360° and reducing by 360°/n for each projectile, where n is projectile_count 
-    Line, // Shoots projectiles one after the other in quick succession
+    Circle, // Shoots projectiles in a circle pattern, starting at 360° and reducing by 360°/n for each projectile, where n is projectile_count
+    Line,   // Shoots projectiles one after the other in quick succession
 }
-

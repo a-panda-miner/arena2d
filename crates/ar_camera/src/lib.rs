@@ -35,8 +35,10 @@ impl Plugin for ArenaCameraPlugin {
                 OnEnter(AppState::InBattle),
                 setup_arena_camera.in_set(CameraSet),
             )
-            .add_systems(Update, 
-                (change_camera_zoom, change_camera_state ,follow_player).in_set(CameraSet));
+            .add_systems(
+                Update,
+                (change_camera_zoom, change_camera_state, follow_player).in_set(CameraSet),
+            );
     }
 }
 
@@ -58,7 +60,7 @@ fn change_camera_state(
 ) {
     *last_change += 1;
     if *last_change < 5 || (zoom_in_event.is_empty() && zoom_out_event.is_empty()) {
-        return ()
+        return ();
     }
     if !zoom_in_event.is_empty() {
         match camera_state.0 {
@@ -81,7 +83,6 @@ fn change_camera_state(
     //info!("Current zoom level: {}", camera_state.0);
     *last_change = 0;
 }
-
 
 // Changes the camera when the resource CameraZoomState changes
 fn change_camera_zoom(
@@ -110,7 +111,7 @@ fn map_zoom_level_to_scale(zoom_level: u8) -> (f32, f32) {
     }
 }
 
-// TODO! Make the camera a physical object and follow the player with Bevy XPBD Interp 
+// TODO! Make the camera a physical object and follow the player with Bevy XPBD Interp
 fn follow_player(
     player_query: Query<&Transform, (With<PlayerMarker>, Without<ArenaCameraMarker>)>,
     mut camera_query: Query<&mut Transform, (With<ArenaCameraMarker>, Without<PlayerMarker>)>,
