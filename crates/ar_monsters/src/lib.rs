@@ -11,8 +11,8 @@ use rand_core::RngCore;
 use ar_camera::{ARENA_HEIGHT_ZOOMOUT, ARENA_WIDTH_ZOOMOUT};
 use ar_core::{BaseSpeed, Cooldown, Layer, MonsterMarker, MonsterSet, PlayerMarker};
 use ar_enemies::{MonsterLayoutType, MonsterSprites};
-use ar_template::{MonsterFlatList, MonsterTemplates};
 use ar_player::PlayerHandler;
+use ar_template::{MonsterFlatList, MonsterTemplates};
 
 pub struct MonsterPlugin;
 
@@ -116,5 +116,7 @@ fn spawn_monsters(
             [Layer::Player, Layer::PlayerProjectile],
         ))
         .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))) // Animation timer
-        .insert(Chase { target: target.player_id });
+        .insert(Chase {
+            target: target.player_id,
+        });
 }

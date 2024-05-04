@@ -115,8 +115,12 @@ impl Plugin for GamePlugin {
                     MonsterSet.run_if(in_state(AppState::InBattle)),
                 ),
             )
-            .configure_sets(FixedUpdate, (
-                (AISet.run_if(in_state(AppState::InBattle))),
-                (MonsterSet.run_if(in_state(AppState::InBattle))),));
+            .configure_sets(
+                FixedUpdate,
+                (
+                    (AISet.run_if(in_state(AppState::InBattle))),
+                    (MonsterSet.run_if(in_state(AppState::InBattle))),
+                ),
+            );
     }
 }

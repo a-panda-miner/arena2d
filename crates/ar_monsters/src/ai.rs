@@ -1,6 +1,6 @@
-use crate::{PlayerMarker, LinearVelocity, BaseSpeed};
+use crate::{BaseSpeed, LinearVelocity, PlayerMarker};
+use ar_core::AISet;
 use bevy::prelude::*;
-use ar_core::{AISet};
 
 pub struct AIPlugin;
 
@@ -46,7 +46,8 @@ fn chase(
 ) {
     let player_position = player.single();
     for (transform, base_speed, mut velocity) in query.iter_mut() {
-        let speed = (player_position.translation() - transform.translation()).normalize_or_zero() * base_speed.0;
+        let speed = (player_position.translation() - transform.translation()).normalize_or_zero()
+            * base_speed.0;
         velocity.x = speed.x;
         velocity.y = speed.y;
     }
