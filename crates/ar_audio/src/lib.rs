@@ -79,24 +79,6 @@ fn setup_bg(mut commands: Commands, audio_assets: Res<FlatBGList>) {
     commands.insert_resource(bgm);
 }
 
-/*
-fn setup_bg(
-    mut commands: Commands,
-    audio_assets: Res<GameAudioAssets>,
-    mut bgm: ResMut<BackGroundMusic>,) {
-    commands.spawn(AudioBundle {
-        source: audio_assets.bg.get("bg4").unwrap().clone().into(),
-        settings: PlaybackSettings {
-            mode: PlaybackMode::Loop,
-            ..default()
-        }
-    })
-    .insert(BGMusicMarker)
-    .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
-    bgm.max_bg = audio_assets.bg.len() as u8;
-    bgm.current_bg = 4;
-}
-*/
 // Reads an event to change the background music,
 // triggered either by a button press or by a timer
 // despawning the current background music and changing the

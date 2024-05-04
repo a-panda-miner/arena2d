@@ -16,8 +16,8 @@ impl Plugin for PlayerPlugin {
 // TODO! Either initialize with a default and change it during the spawn_player() system,
 // or make a exclusive &World system that handles initialization
 #[derive(Resource)]
-struct PlayerHandler {
-    player_id: Entity,
+pub struct PlayerHandler {
+    pub player_id: Entity,
 }
 
 #[derive(AssetCollection, Resource)]

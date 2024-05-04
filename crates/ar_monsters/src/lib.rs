@@ -1,3 +1,6 @@
+pub mod ai;
+
+use ai::Chase;
 use bevy::math::vec2;
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
@@ -9,12 +12,13 @@ use ar_camera::{ARENA_HEIGHT_ZOOMOUT, ARENA_WIDTH_ZOOMOUT};
 use ar_core::{BaseSpeed, Cooldown, Layer, MonsterMarker, MonsterSet, PlayerMarker};
 use ar_enemies::{MonsterLayoutType, MonsterSprites};
 use ar_template::{MonsterFlatList, MonsterTemplates};
+use ar_player::PlayerHandler;
 
 pub struct MonsterPlugin;
 
 impl Plugin for MonsterPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, spawn_monsters.in_set(MonsterSet));
+        app.add_systems(FixedUpdate, spawn_monsters.in_set(MonsterSet));
     }
 }
 
@@ -29,6 +33,7 @@ fn spawn_monsters(
     monster_flat: Res<MonsterFlatList>,
     player_position: Query<&GlobalTransform, With<PlayerMarker>>,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
+    target: Res<PlayerHandler>,
 ) {
     let mut random = [0u8; 4];
     rng.fill_bytes(&mut random);
@@ -60,13 +65,10 @@ fn spawn_monsters(
     let monster = monster_template.templates.get(&name).unwrap();
 
     let base_speed = match monster.movespeed {
-        Some(speed) => speed,
+        Some(speed) => speed * 10.0,
         None => 0.0,
     };
-    let speed: Vec2 = vec2(
-        base_speed * direction.x * 10.0,
-        base_speed * direction.y * 10.0,
-    );
+    let speed: Vec2 = vec2(base_speed * direction.x, base_speed * direction.y);
 
     let (layout, collider_size, mass) = match monster.layout {
         MonsterLayoutType::Small => (monster_sprites.monster_layout_small.clone(), 8.0, 20.0),
@@ -113,5 +115,6 @@ fn spawn_monsters(
             [Layer::Monster],
             [Layer::Player, Layer::PlayerProjectile],
         ))
-        .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))); // Animation timer
+        .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))) // Animation timer
+        .insert(Chase { target: target.player_id });
 }

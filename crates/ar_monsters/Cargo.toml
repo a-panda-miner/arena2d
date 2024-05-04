@@ -23,3 +23,6 @@ path = "../ar_enemies"
 
 [dependencies.ar_camera]
 path = "../ar_camera"
+
+[dependencies.ar_player]
+path = "../ar_player"

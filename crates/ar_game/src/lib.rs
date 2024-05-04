@@ -2,11 +2,11 @@ use ar_audio::{GameAudioAssets, GameAudioPlugin};
 use ar_battle::BattlePlugin;
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
-use ar_core::{AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet};
+use ar_core::{AISet, AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet};
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
 use ar_map::{MapPlugin, TilesetHandle};
-use ar_monsters::MonsterPlugin;
+use ar_monsters::{ai::AIPlugin, MonsterPlugin};
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_template::TemplatePlugin;
 
@@ -15,6 +15,7 @@ use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     log::{Level, LogPlugin},
     prelude::*,
+    window::{PresentMode, WindowTheme},
 };
 use bevy_asset_loader::prelude::*;
 use bevy_fast_tilemap::FastTileMapPlugin;
@@ -36,6 +37,16 @@ impl Plugin for GamePlugin {
                         level: Level::INFO,
                         filter: "wpgu=error,bevy_render=info,bevy_ecs=trace".to_string(),
                         update_subscriber: None,
+                    })
+                    .set(WindowPlugin {
+                        primary_window: Some(Window {
+                            title: "arena2d".to_string(),
+                            name: Some("arena2d".to_string()),
+                            present_mode: PresentMode::AutoVsync,
+                            window_theme: Some(WindowTheme::Dark),
+                            ..default()
+                        }),
+                        ..default()
                     })
                     .set(TaskPoolPlugin {
                         task_pool_options: TaskPoolOptions {
@@ -74,6 +85,7 @@ impl Plugin for GamePlugin {
             .add_plugins(MapPlugin)
             .add_plugins(GameAudioPlugin)
             .add_plugins(TemplatePlugin)
+            .add_plugins(AIPlugin)
             .add_plugins(PhysicsPlugins::new(FixedUpdate))
             .add_plugins(FrameTimeDiagnosticsPlugin::default())
             .add_plugins(LogDiagnosticsPlugin::default())
@@ -102,6 +114,9 @@ impl Plugin for GamePlugin {
                     AudioSet.run_if(in_state(AppState::InBattle)),
                     MonsterSet.run_if(in_state(AppState::InBattle)),
                 ),
-            );
+            )
+            .configure_sets(FixedUpdate, (
+                (AISet.run_if(in_state(AppState::InBattle))),
+                (MonsterSet.run_if(in_state(AppState::InBattle))),));
     }
 }

@@ -29,17 +29,6 @@ pub struct MonsterSprites {
     pub monster_layout_small: Handle<TextureAtlasLayout>,
 }
 
-/*
-// Bugged, but uses the folder instead of full paths for sprites
-#[derive(Debug, AssetCollection, Resource)]
-pub struct MediumMonsterSprites {
-    #[asset(path = "monsters/medium", collection(typed, mapped))]
-    pub monster_sheets: HashMap<AssetFileStem, Handle<Image>>,
-    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 5, rows = 1))]
-    pub monster_layout: Handle<TextureAtlasLayout>,
-}
-*/
-
 #[derive(Clone, Deserialize, Debug)]
 pub enum MonsterLayoutType {
     Small,
@@ -64,24 +53,3 @@ pub enum MonsterAI {
     BehaviorTree,
     BigBrain,
 }
-
-/*
-fn spawn_enemy_dummy(
-    mut commands: Commands,
-    monster_sprites: Res<MonsterSprites>,
-) {
-    commands.spawn(
-        SpriteBundle {
-            texture: monster_sprites.monster_sheets.get("dummy").unwrap().clone(),
-            transform: Transform::from_xyz(50.0, 0.0, 4.0),
-            ..Default::default()
-        }
-    )
-    .insert(TextureAtlas::from(monster_sprites.monster_layout_large_four.clone()))
-    .insert(RigidBody::Dynamic)
-    .insert(Mass(50.0))
-    .insert(LinearVelocity(Vec2::ZERO))
-    .insert(AngularVelocity(0.0))
-    .insert(Collider::circle(5.0));
-}
-*/

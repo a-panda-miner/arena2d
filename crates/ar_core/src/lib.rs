@@ -32,6 +32,9 @@ pub struct PlayerSet;
 pub struct EnemiesSet;
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct AISet;
+
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MapSet;
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]

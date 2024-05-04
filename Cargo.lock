@@ -317,6 +317,7 @@ dependencies = [
  "ar_camera",
  "ar_core",
  "ar_enemies",
+ "ar_player",
  "ar_template",
  "bevy",
  "bevy_rand",

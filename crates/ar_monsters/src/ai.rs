@@ -1,10 +1,12 @@
+use crate::{PlayerMarker, LinearVelocity, BaseSpeed};
 use bevy::prelude::*;
+use ar_core::{AISet};
 
 pub struct AIPlugin;
 
 impl Plugin for AIPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, chase);
+        app.add_systems(FixedUpdate, chase.in_set(AISet));
     }
 }
 
@@ -25,7 +27,7 @@ pub enum Action {
 #[derive(Clone, Component, Reflect)]
 #[component(storage = "SparseSet")]
 pub struct Chase {
-    target: Entity,
+    pub target: Entity,
 }
 
 /// Representation of the possible states a monster with only
@@ -38,4 +40,14 @@ pub enum ChasingBehavior {
 }
 
 /// Adjusts the speed and direction the monster should be moving towards its target
-fn chase() {}
+fn chase(
+    mut query: Query<(&GlobalTransform, &BaseSpeed, &mut LinearVelocity), With<Chase>>,
+    player: Query<&GlobalTransform, With<PlayerMarker>>,
+) {
+    let player_position = player.single();
+    for (transform, base_speed, mut velocity) in query.iter_mut() {
+        let speed = (player_position.translation() - transform.translation()).normalize_or_zero() * base_speed.0;
+        velocity.x = speed.x;
+        velocity.y = speed.y;
+    }
+}
