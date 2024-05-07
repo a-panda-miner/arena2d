@@ -141,3 +141,18 @@ pub enum Layer {
     MonsterProjectile,
     Pet,
 }
+
+/// Keeps the internal score of the game,
+/// used for spawning rules
+#[derive(Resource)]
+pub struct GameScore(pub usize);
+
+/// Used for calculating GameScore
+/// and spawning monsters
+#[derive(Resource)]
+pub struct MonstersAlive(pub usize);
+
+/// Used for calculating GameScore
+/// and spawning bosses
+#[derive(Resource)]
+pub struct MinutesSurvived(pub usize);

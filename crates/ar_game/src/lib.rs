@@ -6,7 +6,7 @@ use ar_core::{AISet, AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
 use ar_map::{MapPlugin, TilesetHandle};
-use ar_monsters::{ai::AIPlugin, MonsterPlugin};
+use ar_monsters::MonsterPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_template::TemplatePlugin;
 
@@ -85,7 +85,6 @@ impl Plugin for GamePlugin {
             .add_plugins(MapPlugin)
             .add_plugins(GameAudioPlugin)
             .add_plugins(TemplatePlugin)
-            .add_plugins(AIPlugin)
             .add_plugins(PhysicsPlugins::new(FixedUpdate))
             .add_plugins(FrameTimeDiagnosticsPlugin::default())
             .add_plugins(LogDiagnosticsPlugin::default())
