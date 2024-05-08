@@ -6,7 +6,7 @@ MonsterTemplates(
             layout: Large,
             hp: 80,
             damage: 10,
-            difficulty: 50,
+            difficulty: 4,
         ),
         "smallrat": MonsterTemplate(
             name: "small rat",
@@ -23,7 +23,7 @@ MonsterTemplates(
             layout: Small,
             hp: 6,
             damage: 2,
-            difficulty: 0,
+            difficulty: 3,
             movespeed: Some(1.5),
         ),
         "smallzombie": MonsterTemplate(
@@ -41,7 +41,7 @@ MonsterTemplates(
             layout: Small,
             hp: 5,
             damage: 1,
-            difficulty: 0,
+            difficulty: 2,
             movespeed: Some(2.0),
         ),
         "smallbat": MonsterTemplate(
@@ -59,7 +59,7 @@ MonsterTemplates(
             layout: Small,
             hp: 7,
             damage: 2,
-            difficulty: 1,
+            difficulty: 4,
             movespeed: Some(1.3),
         ),
 

@@ -10,13 +10,14 @@ impl Plugin for SpawnPlugin {
 }
 
 /// Handles the logic of monster spawning
+//TODO! Separate into multiple systems instead of a big one
 fn spawn_monsters(
     time: Res<Time>,
     mut timer: ResMut<SpawnerTimer>,
     mut commands: Commands,
     monster_sprites: Res<MonsterSprites>,
     monster_template: Res<MonsterTemplates>,
-    monster_flat: Res<MonsterFlatList>,
+    monster_difficulty_lists: Res<MonsterDifficultyLists>,
     player_position: Query<&GlobalTransform, With<PlayerMarker>>,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
     target: Res<PlayerHandler>,
@@ -40,6 +41,7 @@ fn spawn_monsters(
         let random = random;
         let left_right: bool = random[0] % 2 == 0;
         let up_down: bool = random[1] % 2 == 0;
+        let difficulty = random[2] % 4;
         let spawn_point: Vec3 = if left_right {
             if up_down {
                 Vec3::new(ARENA_WIDTH_ZOOMOUT, ARENA_HEIGHT_ZOOMOUT, 0.0)
@@ -58,10 +60,16 @@ fn spawn_monsters(
 
         let direction = (player_position.translation() - spawn_point).normalize_or_zero();
 
-        let flat_len = monster_flat.name_difficulty.len();
-        let random_index = (rng.next_u64() as usize) % flat_len;
+        let list = match difficulty {
+            0 => &monster_difficulty_lists.difficulty_1,
+            1 => &monster_difficulty_lists.difficulty_2,
+            2 => &monster_difficulty_lists.difficulty_3,
+            3 => &monster_difficulty_lists.difficulty_4,
+            _ => panic!("Invalid difficulty"),
+        };
+        let random_index = (rng.next_u64() as usize) % list.len();
 
-        let name = monster_flat.name_difficulty[random_index].0.clone();
+        let name = list[random_index].clone();
         let monster = monster_template.templates.get(&name).unwrap();
 
         let base_speed = match monster.movespeed {

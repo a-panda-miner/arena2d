@@ -19,7 +19,7 @@ use ar_core::{
 };
 use ar_enemies::{MonsterLayoutType, MonsterSprites};
 use ar_player::PlayerHandler;
-use ar_template::{MonsterFlatList, MonsterTemplates};
+use ar_template::{MonsterDifficultyLists, MonsterTemplates};
 
 pub struct MonsterPlugin;
 

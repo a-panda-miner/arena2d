@@ -117,11 +117,24 @@ pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<A
     next_state.set(AppState::InBattle);
 }
 
-#[derive(Debug, Resource)]
+/// Flat list of all monsters in the game, sorted by difficulty
+#[derive(Debug, Resource, Clone)]
 pub struct MonsterFlatList {
     pub name_difficulty: Vec<(String, u32)>,
 }
 
+/// Flat lists of all monsters in the game,
+/// excpet for bosses, each list
+/// represents a different difficulty
+#[derive(Debug, Resource)]
+pub struct MonsterDifficultyLists {
+    pub difficulty_1: Vec<String>,
+    pub difficulty_2: Vec<String>,
+    pub difficulty_3: Vec<String>,
+    pub difficulty_4: Vec<String>,
+}
+
+/// Builds and inserts MonsterFlatList and MonsterDifficultyLists
 pub fn cache_templates_info(mut commands: Commands, monstertemplate: Res<MonsterTemplates>) {
     let mut name_difficulty = MonsterFlatList {
         name_difficulty: Vec::new(),
@@ -134,5 +147,41 @@ pub fn cache_templates_info(mut commands: Commands, monstertemplate: Res<Monster
     name_difficulty
         .name_difficulty
         .sort_by(|a, b| a.1.cmp(&b.1));
-    commands.insert_resource(name_difficulty);
+    commands.insert_resource(name_difficulty.clone());
+
+    let difficulty_1: Vec<String> = name_difficulty
+        .name_difficulty
+        .clone()
+        .into_iter()
+        .filter(|x| x.1 == 1)
+        .map(|x| x.0)
+        .collect();
+    let difficulty_2: Vec<String> = name_difficulty
+        .name_difficulty
+        .clone()
+        .into_iter()
+        .filter(|x| x.1 == 2)
+        .map(|x| x.0)
+        .collect();
+    let difficulty_3: Vec<String> = name_difficulty
+        .name_difficulty
+        .clone()
+        .into_iter()
+        .filter(|x| x.1 == 3)
+        .map(|x| x.0)
+        .collect();
+    let difficulty_4: Vec<String> = name_difficulty
+        .name_difficulty
+        .clone()
+        .into_iter()
+        .filter(|x| x.1 == 4)
+        .map(|x| x.0)
+        .collect();
+
+    commands.insert_resource(MonsterDifficultyLists {
+        difficulty_1,
+        difficulty_2,
+        difficulty_3,
+        difficulty_4,
+    });
 }

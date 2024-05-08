@@ -1,5 +1,5 @@
 use ar_core::{AppState, AudioSet, BGMusicMarker, ChangeBackgroundEvent, Cooldown};
-use bevy::audio::PlaybackMode;
+use bevy::audio::{PlaybackMode, Volume};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -71,6 +71,7 @@ fn setup_bg(mut commands: Commands, audio_assets: Res<FlatBGList>) {
             source: audio_assets.list[bgm.current_bg].clone().into(),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Loop,
+                volume: Volume::new(0.1),
                 ..default()
             },
         })
@@ -110,6 +111,7 @@ fn play_music(bgm: Res<BackGroundMusic>, mut commands: Commands, audio_assets: R
             source: audio_assets.list[bg].clone().into(),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Loop,
+                volume: Volume::new(0.01),
                 ..default()
             },
         })
