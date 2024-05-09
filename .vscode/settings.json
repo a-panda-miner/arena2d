@@ -1,9 +1,0 @@
-{
-    "rust-analyzer.showUnlinkedFileNotification": false,
-    "rust-analyzer.cargo.extraEnv": {
-        "RUSTFLAGS": "-Clinker=clang -Clink-arg=-fuse-ld=mold -Zthreads=8",
-        "RUSTC_WRAPPER": "/home/fabio/.cargo/bin/sccache",
-        "CARGO_INCREMENTAL": 0,
-    },
-    "rust-analyzer.server.extraEnv": { "RUSTUP_TOOLCHAIN": "nightly" }
-}
