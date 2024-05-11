@@ -73,6 +73,17 @@ pub struct Shield;
 pub struct Cooldown(pub Timer);
 
 #[derive(Component)]
+pub struct PlayerInvulnerableFrames {
+    pub timer: Timer,
+}
+
+#[derive(Component)]
+pub struct Health(pub usize);
+
+#[derive(Component)]
+pub struct Damage(pub usize);
+
+#[derive(Component)]
 pub struct BGMusicMarker;
 
 #[derive(Debug, Event)]
@@ -131,6 +142,12 @@ pub struct SwingSpellMarker;
 
 #[derive(Component)]
 pub struct BuffSpellMarker;
+
+#[derive(Component)]
+pub struct PlayerProjectileMarker;
+
+#[derive(Component)]
+pub struct MonsterProjectileMarker;
 
 #[derive(PhysicsLayer)]
 pub enum Layer {
