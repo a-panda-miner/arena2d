@@ -38,12 +38,12 @@ pub struct MonsterTemplate {
     // The sprite of the monster
     pub sprite_name: String,
     pub layout: MonsterLayoutType,
-    pub hp: u32,
-    pub damage: u32,
+    pub hp: usize,
+    pub damage: usize,
     pub movespeed: Option<f32>,
     pub attackspeed: Option<f32>,
-    pub regen: Option<u32>,
-    pub attack_range: Option<u32>,
+    pub regen: Option<usize>,
+    pub attack_range: Option<f32>,
     pub rewards: Option<Vec<RewardType>>,
     // The AI of the monster, if none then it just stays still
     pub ai: Option<MonsterAI>,
@@ -60,7 +60,7 @@ pub struct MonsterTemplate {
     pub drops_chance: Option<f32>,
     // Determines how much score is needed for the monster to be added
     // to the spawn pool
-    pub difficulty: u32,
+    pub difficulty: usize,
 }
 
 #[derive(Clone, Deserialize, Debug, Resource)]
@@ -120,7 +120,7 @@ pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<A
 /// Flat list of all monsters in the game, sorted by difficulty
 #[derive(Debug, Resource, Clone)]
 pub struct MonsterFlatList {
-    pub name_difficulty: Vec<(String, u32)>,
+    pub name_difficulty: Vec<(String, usize)>,
 }
 
 /// Flat lists of all monsters in the game,

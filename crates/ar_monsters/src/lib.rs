@@ -14,8 +14,8 @@ use spawn::SpawnPlugin;
 
 use ar_camera::{ARENA_HEIGHT_ZOOMOUT, ARENA_WIDTH_ZOOMOUT};
 use ar_core::{
-    AppState, BaseSpeed, Cooldown, GameScore, Layer, MinutesSurvived, MonsterMarker, MonsterSet,
-    MonstersAlive, PlayerMarker,
+    AppState, BaseSpeed, Cooldown, Damage, GameScore, Health, Layer, MinutesSurvived,
+    MonsterMarker, MonsterSet, MonstersAlive, PlayerMarker,
 };
 use ar_enemies::{MonsterLayoutType, MonsterSprites};
 use ar_player::PlayerHandler;

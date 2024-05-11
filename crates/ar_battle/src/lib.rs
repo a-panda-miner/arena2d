@@ -184,7 +184,11 @@ fn player_damaged_handler(
     }
     let mut player_health = player_health.single_mut();
     for ev in ev_damage.read() {
-        player_health.0 -= ev.damage;
+        if player_health.0 <= ev.damage {
+            player_health.0 = 0;
+        } else {
+            player_health.0 -= ev.damage;
+        }
     }
     ev_damage.clear();
     inv.timer.reset();

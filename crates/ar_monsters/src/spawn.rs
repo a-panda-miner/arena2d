@@ -123,6 +123,8 @@ fn spawn_monsters(
                 [Layer::Monster],
                 [Layer::Player, Layer::PlayerProjectile],
             ))
+            .insert(Health(monster.hp))
+            .insert(Damage(monster.damage))
             .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))) // Animation timer
             .insert(Chase {
                 target: target.player_id,

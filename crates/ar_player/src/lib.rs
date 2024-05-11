@@ -1,4 +1,6 @@
-use ar_core::{AppState, Cooldown, Layer, PlayerInvulnerableFrames, PlayerMarker, PlayerSet};
+use ar_core::{
+    AppState, Cooldown, Damage, Health, Layer, PlayerInvulnerableFrames, PlayerMarker, PlayerSet,
+};
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_xpbd_2d::prelude::*;
@@ -51,8 +53,11 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
             [Layer::Monster, Layer::MonsterProjectile],
         ))
         .insert(PlayerInvulnerableFrames {
+            // Player invulnerability after getting hit
             timer: Timer::from_seconds(0.5, TimerMode::Once),
-        }) // Player invulnerability after getting hit
+        })
+        .insert(Health(100))
+        .insert(Damage(1))
         .id();
 
     commands.insert_resource(PlayerHandler { player_id });
