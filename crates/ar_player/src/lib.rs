@@ -1,5 +1,6 @@
 use ar_core::{
-    AppState, Cooldown, Damage, Health, Layer, PlayerInvulnerableFrames, PlayerMarker, PlayerSet,
+    AppState, Cooldown, Damage, Health, Layer, MaxHealth, PlayerInvulnerableFrames, PlayerMarker,
+    PlayerSet,
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
@@ -57,6 +58,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
             timer: Timer::from_seconds(0.5, TimerMode::Once),
         })
         .insert(Health(100))
+        .insert(MaxHealth(100))
         .insert(Damage(1))
         .id();
 

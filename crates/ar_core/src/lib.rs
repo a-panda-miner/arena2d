@@ -49,6 +49,9 @@ pub struct MonsterSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct UiSet;
 
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct UtilSet;
+
 /// The base speed of the entity,
 /// Needed for reference when applying and removing slow/stun effects
 #[derive(Component)]
@@ -85,6 +88,9 @@ pub struct PlayerInvulnerableFrames {
 
 #[derive(Component)]
 pub struct Health(pub usize);
+
+#[derive(Component)]
+pub struct MaxHealth(pub usize);
 
 #[derive(Component)]
 pub struct Damage(pub usize);

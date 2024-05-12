@@ -278,6 +278,7 @@ dependencies = [
  "ar_shop",
  "ar_template",
  "ar_ui",
+ "ar_utils",
  "bevy",
  "bevy-inspector-egui",
  "bevy_asset_loader",
@@ -373,6 +374,14 @@ dependencies = [
  "ar_core",
  "bevy",
  "bevy_asset_loader",
+]
+
+[[package]]
+name = "ar_utils"
+version = "0.1.0"
+dependencies = [
+ "ar_core",
+ "bevy",
 ]
 
 [[package]]

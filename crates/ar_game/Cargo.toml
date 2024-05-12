@@ -54,3 +54,6 @@ path = "../ar_monsters"
 
 [dependencies.ar_ui]
 path = "../ar_ui"
+
+[dependencies.ar_utils]
+path = "../ar_utils"
