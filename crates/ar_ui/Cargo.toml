@@ -1,0 +1,18 @@
+[package]
+name = "ar_ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+bevy = { workspace = true }
+bevy_asset_loader = { workspace = true }
+
+[lints]
+workspace = true
+
+[dependencies.ar_core]
+path = "../ar_core"
+
+[dependencies.ar_battle]
+path = "../ar_battle"

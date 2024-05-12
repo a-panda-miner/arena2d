@@ -46,6 +46,9 @@ pub struct LoadingTemplatesSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MonsterSet;
 
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct UiSet;
+
 /// The base speed of the entity,
 /// Needed for reference when applying and removing slow/stun effects
 #[derive(Component)]
@@ -62,6 +65,9 @@ pub struct PlayerMarker;
 
 #[derive(Component)]
 pub struct MonsterMarker;
+
+#[derive(Component)]
+pub struct UiMarker;
 
 #[derive(Component)]
 pub struct Armor;
@@ -85,6 +91,11 @@ pub struct Damage(pub usize);
 
 #[derive(Component)]
 pub struct BGMusicMarker;
+
+#[derive(Event)]
+pub struct PlayerMinusHpEvent {
+    pub damage: usize,
+}
 
 #[derive(Debug, Event)]
 pub struct PlayerDirection(pub Vec2);

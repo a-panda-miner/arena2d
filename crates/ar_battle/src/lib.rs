@@ -1,6 +1,7 @@
 use ar_core::{
     AppState, BoostUsage, Damage, DashUsage, Health, MonsterMarker, MonsterProjectileMarker,
-    PlayerDirection, PlayerInvulnerableFrames, PlayerMarker, PlayerProjectileMarker,
+    PlayerDirection, PlayerInvulnerableFrames, PlayerMarker, PlayerMinusHpEvent,
+    PlayerProjectileMarker,
 };
 use bevy::prelude::*;
 use bevy::utils::HashMap;
@@ -28,6 +29,7 @@ pub struct SpellsSheetSmall {
 impl Plugin for BattlePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlayerDamageEvent>()
+            .add_event::<PlayerMinusHpEvent>()
             .add_event::<DamageEvent>()
             .add_systems(
                 PhysicsSchedule,
@@ -172,6 +174,7 @@ fn player_damaged_handler(
     mut ev_damage: EventReader<PlayerDamageEvent>,
     mut player_inv: Query<&mut PlayerInvulnerableFrames, With<PlayerMarker>>,
     mut player_health: Query<&mut Health, With<PlayerMarker>>,
+    mut ev_player_damaged: EventWriter<PlayerMinusHpEvent>,
 ) {
     let mut inv = player_inv.single_mut();
     inv.timer.tick(time.delta());
@@ -188,6 +191,7 @@ fn player_damaged_handler(
             player_health.0 = 0;
         } else {
             player_health.0 -= ev.damage;
+            ev_player_damaged.send(PlayerMinusHpEvent { damage: ev.damage });
         }
     }
     ev_damage.clear();

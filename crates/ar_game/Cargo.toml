@@ -51,3 +51,6 @@ path = "../ar_template"
 
 [dependencies.ar_monsters]
 path = "../ar_monsters"
+
+[dependencies.ar_ui]
+path = "../ar_ui"

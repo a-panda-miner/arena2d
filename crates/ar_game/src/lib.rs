@@ -2,13 +2,16 @@ use ar_audio::{GameAudioAssets, GameAudioPlugin};
 use ar_battle::BattlePlugin;
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
-use ar_core::{AISet, AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet};
+use ar_core::{
+    AISet, AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet, UiSet,
+};
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
 use ar_map::{MapPlugin, TilesetHandle};
 use ar_monsters::MonsterPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_template::TemplatePlugin;
+use ar_ui::{FontAssets, UiPlugin};
 
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
@@ -85,6 +88,7 @@ impl Plugin for GamePlugin {
             .add_plugins(MapPlugin)
             .add_plugins(GameAudioPlugin)
             .add_plugins(TemplatePlugin)
+            .add_plugins(UiPlugin)
             .add_plugins(PhysicsPlugins::new(FixedUpdate))
             .add_plugins(FrameTimeDiagnosticsPlugin::default())
             .add_plugins(LogDiagnosticsPlugin::default())
@@ -96,7 +100,8 @@ impl Plugin for GamePlugin {
                     .load_collection::<MonsterSprites>()
                     .load_collection::<SheetHandle>()
                     .load_collection::<TilesetHandle>()
-                    .load_collection::<GameAudioAssets>(),
+                    .load_collection::<GameAudioAssets>()
+                    .load_collection::<FontAssets>(),
             )
             .insert_resource(Msaa::Off)
             .insert_resource(ClearColor(Color::rgba_u8(
@@ -119,7 +124,9 @@ impl Plugin for GamePlugin {
                 (
                     (AISet.run_if(in_state(AppState::InBattle))),
                     (MonsterSet.run_if(in_state(AppState::InBattle))),
+                    (UiSet.run_if(in_state(AppState::InBattle))),
                 ),
-            );
+            )
+            .configure_sets(OnEnter(AppState::InBattle), (UiSet).after(PlayerSet));
     }
 }
