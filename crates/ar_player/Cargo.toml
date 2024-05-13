@@ -14,3 +14,6 @@ workspace = true
 
 [dependencies.ar_core]
 path = "../ar_core"
+
+[dependencies.ar_spells]
+path = "../ar_spells"

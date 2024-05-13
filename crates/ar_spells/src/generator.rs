@@ -18,9 +18,9 @@ pub struct SwingSpells {
 }
 
 /// A hashmap of projectilespells that exist
-#[derive(Resource)]
+#[derive(Resource, Debug)]
 pub struct ProjectileSpells {
-    projectile_spells: HashMap<String, SpellProjectile>,
+    pub projectile_spells: HashMap<String, SpellProjectile>,
 }
 
 /// The spells of the type Projectile that the Entity has
@@ -35,10 +35,11 @@ pub struct OwnedSwingSpells {
     pub spells: Vec<SpellSwing>,
 }
 
+#[derive(Clone, Debug)]
 pub struct SpellProjectile {
     name: String,
     sprite: String,
-    cooldown: f32,
+    cooldown: Timer,
     count: u8,
     pattern: ProjectilePattern,
     damage: u32,
@@ -46,6 +47,7 @@ pub struct SpellProjectile {
     radius: f32,
 }
 
+#[derive(Clone, Debug)]
 pub struct SpellSwing {
     name: String,
     sprite: String,
@@ -60,7 +62,7 @@ pub struct SpellSwing {
 /// Must be run before setup_player as the player is spawned with a spell
 pub fn setup_generate_spells(loaded_spells: Res<SpellTemplates>, mut commands: Commands) {
     let mut projectile_spells = HashMap::new();
-    for (_, &ref spell) in &loaded_spells.spells {
+    for (&ref name, &ref spell) in &loaded_spells.spells {
         match spell.spell_main_type {
             SpellType::Projectile => {
                 let projectile = spell
@@ -70,14 +72,14 @@ pub fn setup_generate_spells(loaded_spells: Res<SpellTemplates>, mut commands: C
                 let proj = SpellProjectile {
                     name: spell.name.clone(),
                     sprite: projectile.projectile_sprite,
-                    cooldown: spell.cooldown,
+                    cooldown: Timer::from_seconds(spell.cooldown, TimerMode::Repeating),
                     count: projectile.projectile_count,
                     pattern: projectile.projectile_pattern,
                     damage: projectile.projectile_damage,
                     movespeed: projectile.projectile_movespeed,
                     radius: projectile.projectile_radius,
                 };
-                projectile_spells.insert(proj.name.clone(), proj);
+                projectile_spells.insert(name.clone(), proj);
             }
             _ => (),
         }

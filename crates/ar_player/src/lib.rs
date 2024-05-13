@@ -2,6 +2,7 @@ use ar_core::{
     AppState, Cooldown, Damage, Health, Layer, MaxHealth, PlayerInvulnerableFrames, PlayerMarker,
     PlayerSet,
 };
+use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_xpbd_2d::prelude::*;
@@ -10,7 +11,10 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::InBattle), spawn_player.in_set(PlayerSet));
+        app.add_systems(
+            OnEnter(AppState::InBattle),
+            (spawn_player, setup_basic_spell).chain().in_set(PlayerSet),
+        );
     }
 }
 
@@ -60,7 +64,22 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert(Health(100))
         .insert(MaxHealth(100))
         .insert(Damage(1))
+        .insert(OwnedProjectileSpells { spells: vec![] })
         .id();
 
     commands.insert_resource(PlayerHandler { player_id });
+}
+
+// TODO! This should be chosen by the player at the menu before the game starts
+// This function should be ran after the player is spawned and after the spells are set up
+fn setup_basic_spell(
+    mut player_spells: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
+    loaded_projectile_spells: Res<ProjectileSpells>,
+) {
+    let mut player_spells = player_spells.single_mut();
+    let spell = loaded_projectile_spells
+        .projectile_spells
+        .get("throwdagger")
+        .expect("no throwdagger in loaded spells");
+    player_spells.spells.push(spell.clone());
 }

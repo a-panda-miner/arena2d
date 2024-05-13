@@ -333,6 +333,7 @@ name = "ar_player"
 version = "0.1.0"
 dependencies = [
  "ar_core",
+ "ar_spells",
  "bevy",
  "bevy_asset_loader",
  "bevy_xpbd_2d",
