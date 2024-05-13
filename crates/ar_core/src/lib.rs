@@ -243,9 +243,13 @@ pub struct SpellProjectileType {
     pub projectile_hp: Option<u32>,
     pub projectile_count: u8,
     pub projectile_pattern: ProjectilePattern,
-    pub projectile_damage: u32,
-    pub projectile_movespeed: Option<f32>,
+    pub projectile_damage: usize,
+    pub projectile_movespeed: f32,
     pub projectile_radius: f32, // The size of the collider
+    pub projectile_mass: f32,   // The mass of the collider
+    pub projectile_lifetime: f32,
+    pub projectile_bounce: Option<bool>,
+    pub projectile_penetration: Option<u8>,
 }
 
 #[derive(Clone, Deserialize, Debug)]

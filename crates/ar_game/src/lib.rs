@@ -1,12 +1,12 @@
 // This crate creates the GamePlugin, which is the only Plugin ran in the app
 
 use ar_audio::{GameAudioAssets, GameAudioPlugin};
-use ar_battle::BattlePlugin;
+use ar_battle::{BattlePlugin, SpellsSheetSmall};
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{
     AISet, AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet, SpellSet, UiSet,
-    UtilSet,
+    UtilSet, BattleSet
 };
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
@@ -108,7 +108,8 @@ impl Plugin for GamePlugin {
                     .load_collection::<SheetHandle>()
                     .load_collection::<TilesetHandle>()
                     .load_collection::<GameAudioAssets>()
-                    .load_collection::<FontAssets>(),
+                    .load_collection::<FontAssets>()
+                    .load_collection::<SpellsSheetSmall>(),
             )
             .insert_resource(Msaa::Off)
             .insert_resource(ClearColor(Color::rgba_u8(
@@ -133,6 +134,7 @@ impl Plugin for GamePlugin {
                     (MonsterSet.run_if(in_state(AppState::InBattle))),
                     (UiSet.run_if(in_state(AppState::InBattle))),
                     (UtilSet.run_if(in_state(AppState::InBattle))),
+                    (BattleSet.run_if(in_state(AppState::InBattle))),
                 ),
             )
             .configure_sets(OnEnter(AppState::InBattle), (UiSet).after(PlayerSet))

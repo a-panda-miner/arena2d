@@ -5,12 +5,14 @@ SpellTemplates(
             cooldown: 1.5,
             spell_main_type: Projectile,
             projectile_type_struct: Some(SpellProjectileType(
-                projectile_sprite: "dagger.png",
+                projectile_sprite: "dagger8x8",
                 projectile_count: 1,
                 projectile_pattern: Line,
                 projectile_damage: 1,
-                projectile_movespeed: Some(20.0),
+                projectile_movespeed: 200.0,
                 projectile_radius: 8.0,
+                projectile_mass: 0.5,
+                projectile_lifetime: 0.8,
             ))
         ),
         "swordswing": SpellTemplate(

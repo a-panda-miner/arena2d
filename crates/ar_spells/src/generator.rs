@@ -37,25 +37,27 @@ pub struct OwnedSwingSpells {
 
 #[derive(Clone, Debug)]
 pub struct SpellProjectile {
-    name: String,
-    sprite: String,
-    cooldown: Timer,
-    count: u8,
-    pattern: ProjectilePattern,
-    damage: u32,
-    movespeed: Option<f32>,
-    radius: f32,
+    pub name: String,
+    pub sprite: String,
+    pub cooldown: Timer,
+    pub count: u8,
+    pub pattern: ProjectilePattern,
+    pub damage: usize,
+    pub projectile_movespeed: f32,
+    pub radius: f32,
+    pub mass: f32,
+    pub lifetime: f32,
 }
 
 #[derive(Clone, Debug)]
 pub struct SpellSwing {
-    name: String,
-    sprite: String,
-    cooldown: f32,
-    damage: u32,
-    arc: f32,
-    length: f32,
-    aoe: SpellAOEType,
+    pub name: String,
+    pub sprite: String,
+    pub cooldown: f32,
+    pub damage: u32,
+    pub arc: f32,
+    pub length: f32,
+    pub aoe: SpellAOEType,
 }
 
 /// Creates the SpellSwing, SpellProjectile structs from the SpellTemplates
@@ -76,8 +78,10 @@ pub fn setup_generate_spells(loaded_spells: Res<SpellTemplates>, mut commands: C
                     count: projectile.projectile_count,
                     pattern: projectile.projectile_pattern,
                     damage: projectile.projectile_damage,
-                    movespeed: projectile.projectile_movespeed,
+                    projectile_movespeed: projectile.projectile_movespeed,
                     radius: projectile.projectile_radius,
+                    mass: projectile.projectile_mass,
+                    lifetime: projectile.projectile_lifetime,
                 };
                 projectile_spells.insert(name.clone(), proj);
             }

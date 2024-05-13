@@ -1,8 +1,9 @@
 use ar_core::{
     AppState, BoostUsage, Damage, DashUsage, Health, MonsterMarker, MonsterProjectileMarker,
     PlayerDirection, PlayerInvulnerableFrames, PlayerMarker, PlayerMinusHpEvent,
-    PlayerProjectileMarker,
+    PlayerProjectileMarker, LifeTime, ProjectilePattern, BattleSet, Layer
 };
+use ar_spells::generator::OwnedProjectileSpells;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -37,7 +38,8 @@ impl Plugin for BattlePlugin {
                     .chain()
                     .before(PhysicsStepSet::BroadPhase)
                     .run_if(in_state(AppState::InBattle)),
-            );
+            )
+            .add_systems(FixedUpdate, spawn_player_projectiles.in_set(BattleSet));
     }
 }
 
@@ -196,4 +198,58 @@ fn player_damaged_handler(
     }
     ev_damage.clear();
     inv.timer.reset();
+}
+
+// TODO! This implementation makes all projectiles to spawn at the same time, there should be a delay between them
+fn spawn_player_projectiles(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut projs: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
+    spawn_point: Query<(&GlobalTransform, &Transform), With<PlayerMarker>>,
+    sprite_sheet: Res<SpellsSheetSmall>,
+) {
+    if projs.is_empty() {
+        return;
+    }
+    
+    let (global_transform, local_transform) = spawn_point.single();
+
+    let mut projs = projs.single_mut();
+    for proj in projs.spells.iter_mut() {
+        if !proj.cooldown.tick(time.delta()).finished() {
+            break;
+        }
+        for i in 0..proj.count {
+            let angle = match proj.pattern {
+                ProjectilePattern::Circle => (360.0 / proj.count as f32) * i as f32,
+                ProjectilePattern::Line => 0.0,
+            };
+            let dir = Vec2::from_angle(angle.to_radians());
+            let speed = proj.projectile_movespeed;
+            let linear_vel = dir * speed;
+            let sprite = proj.sprite.clone();
+            let damage = proj.damage;
+            commands.spawn(
+                SpriteSheetBundle {
+                    texture: sprite_sheet.sprite.get(sprite.as_str()).expect(format!("{} not found", sprite).as_str()).clone().into(),
+                    atlas: sprite_sheet.layout.clone().into(),
+                    global_transform: *global_transform,
+                    transform: *local_transform, 
+                    ..Default::default()
+                }
+            )
+            .insert(PlayerProjectileMarker)
+            .insert(RigidBody::Dynamic)
+            .insert(Mass(proj.mass))
+            .insert(LinearVelocity(linear_vel))
+            .insert(AngularVelocity(0.0))
+            .insert(Collider::circle(proj.radius))
+            .insert(CollisionLayers::new(
+                [Layer::PlayerProjectile],
+                [Layer::Monster, Layer::MonsterProjectile]
+            ))
+            .insert(Damage(damage))
+            .insert(LifeTime{ timer: Timer::from_seconds(proj.lifetime, TimerMode::Once) } );
+        }
+    }
 }
