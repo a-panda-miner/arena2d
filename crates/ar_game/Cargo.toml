@@ -57,3 +57,6 @@ path = "../ar_ui"
 
 [dependencies.ar_utils]
 path = "../ar_utils"
+
+[dependencies.ar_spells]
+path = "../ar_spells"

@@ -30,14 +30,6 @@ pub struct MonsterSprites {
 }
 
 #[derive(Clone, Deserialize, Debug)]
-pub enum MonsterLayoutType {
-    Small,
-    Medium,
-    Large,
-    Boss,
-}
-
-#[derive(Clone, Deserialize, Debug)]
 pub enum QualityMonster {
     Common,
     Rare,

@@ -19,10 +19,10 @@ fn display_player_damaged_numbers(
         return;
     }
     let font = fonts.damage_font.clone();
-    let color = Color::rgb(1.0, 0.0, 0.0);
+    let color = Color::rgb(0.8, 0.1, 0.1);
     let textstyle: TextStyle = TextStyle {
         font,
-        font_size: 8.0,
+        font_size: 14.0,
         color,
     };
     let (transform, global_transform) = spatial_query.single();

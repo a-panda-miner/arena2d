@@ -1,10 +1,5 @@
 SpellTemplates(
     spells: {
-        "fireball": SpellTemplate (
-            name: "Fireball",
-            cooldown: 2.0,
-            spell_main_type: Projectile,
-        ),
         "throwdagger": SpellTemplate(
             name: "Throw Dagger",
             cooldown: 1.5,

@@ -17,6 +17,3 @@ path = "../ar_core"
 
 [dependencies.ar_enemies]
 path = "../ar_enemies"
-
-[dependencies.ar_spells]
-path = "../ar_spells"

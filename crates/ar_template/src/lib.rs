@@ -1,8 +1,8 @@
-use ar_core::{AppState, DropType, LoadingTemplatesSet, RewardType, WeaponType};
-use ar_enemies::{MonsterAI, MonsterLayoutType, QualityMonster};
-use ar_spells::{
-    SpellAOEType, SpellBuffType, SpellProjectileType, SpellSummonType, SpellSwingType, SpellType,
+use ar_core::{
+    AppState, DropType, LoadingTemplatesSet, MonsterLayoutType, RewardType, SpellAOEType,
+    SpellBuffType, SpellProjectileType, SpellSummonType, SpellSwingType, SpellType, WeaponType,
 };
+use ar_enemies::{MonsterAI, QualityMonster};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use ron::de::from_reader;
