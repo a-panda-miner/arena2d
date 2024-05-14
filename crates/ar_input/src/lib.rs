@@ -1,6 +1,6 @@
 use ar_core::{
     BGMusicMarker, BoostUsage, ChangeBackgroundEvent, Cooldown, DashUsage, InputSet,
-    PlayerDirection, PlayerMarker, ZoomIn, ZoomOut, PlayerLastDirection
+    PlayerDirection, PlayerLastDirection, PlayerMarker, ZoomIn, ZoomOut,
 };
 use bevy::prelude::*;
 

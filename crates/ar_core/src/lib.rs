@@ -73,6 +73,11 @@ pub struct PlayerMarker;
 #[derive(Component)]
 pub struct MonsterMarker;
 
+/// The marker for monsters with small layout,
+/// used for animation purposes
+#[derive(Component)]
+pub struct MonsterMarkerSmall;
+
 #[derive(Component)]
 pub struct UiMarker;
 
@@ -85,7 +90,7 @@ pub struct Shield;
 #[derive(Component)]
 pub struct Cooldown(pub Timer);
 
-/// The timer must be set on Once, and then reset when the player takes damage or 
+/// The timer must be set on Once, and then reset when the player takes damage or
 /// is in an invulnerable state, when the timer finishes the player can take damage
 #[derive(Component)]
 pub struct PlayerInvulnerableFrames {

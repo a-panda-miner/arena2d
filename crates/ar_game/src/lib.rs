@@ -5,8 +5,8 @@ use ar_battle::{BattlePlugin, SpellsSheetSmall};
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{
-    AISet, AppState, AudioSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet, SpellSet, UiSet,
-    UtilSet, BattleSet
+    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet,
+    SpellSet, UiSet, UtilSet,
 };
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;

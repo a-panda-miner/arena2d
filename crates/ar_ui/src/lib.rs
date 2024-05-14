@@ -4,8 +4,8 @@ pub mod damagenumbers;
 
 use crate::damagenumbers::DamageNumbersPlugin;
 use ar_core::{
-    AppState, Health, LifeTime, MaxHealth, PlayerMarker, PlayerMinusHpEvent, UiMarker, UiSet,
-    DisplayDamageEvent,
+    AppState, DisplayDamageEvent, Health, LifeTime, MaxHealth, PlayerMarker, PlayerMinusHpEvent,
+    UiMarker, UiSet,
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
@@ -47,7 +47,7 @@ fn set_display_player_health(
     let textstyle: TextStyle = TextStyle {
         font,
         font_size: 16.0,
-        color: Color::rgb(0.8, 0.0, 0.8),
+        color: Color::SILVER,
     };
 
     commands

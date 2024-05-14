@@ -99,7 +99,7 @@ fn spawn_monsters(
 
         let sprite_name = monster.sprite_name.clone();
         info!("Spawning {} @ {:?}", sprite_name, spawn_point);
-        commands
+        let monster_id = commands
             .spawn_empty()
             .insert(MonsterMarker)
             .insert(SpriteSheetBundle {
@@ -128,7 +128,14 @@ fn spawn_monsters(
             .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))) // Animation timer
             .insert(Chase {
                 target: target.player_id,
-            });
+            })
+            .id();
+        match monster.layout {
+            MonsterLayoutType::Small => {
+                commands.entity(monster_id).insert(MonsterMarkerSmall);
+            }
+            _ => {}
+        }
         spawn_count -= 1;
     }
 }

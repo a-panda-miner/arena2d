@@ -1,11 +1,15 @@
-// This crate defines the monsters, their AI and their spawn logic
+// This crate defines the monsters, their AI, spawn logic, and animation
 
 pub mod ai;
+pub mod animation;
 pub mod spawn;
 
-use ai::{AIPlugin, Chase};
+use crate::ai::{AIPlugin, Chase};
+use crate::animation::MonsterAnimationPlugin;
 use bevy::math::vec2;
 use bevy::prelude::*;
+use bevy::time::common_conditions::on_timer;
+use bevy::utils::Duration;
 use bevy_rand::prelude::WyRand;
 use bevy_rand::resource::GlobalEntropy;
 use bevy_xpbd_2d::prelude::*;
@@ -15,7 +19,7 @@ use spawn::SpawnPlugin;
 use ar_camera::{ARENA_HEIGHT_ZOOMOUT, ARENA_WIDTH_ZOOMOUT};
 use ar_core::{
     AppState, BaseSpeed, Cooldown, Damage, GameScore, Health, Layer, MinutesSurvived,
-    MonsterLayoutType, MonsterMarker, MonsterSet, MonstersAlive, PlayerMarker,
+    MonsterLayoutType, MonsterMarker, MonsterMarkerSmall, MonsterSet, MonstersAlive, PlayerMarker,
 };
 use ar_enemies::MonsterSprites;
 use ar_player::PlayerHandler;
@@ -30,7 +34,8 @@ impl Plugin for MonsterPlugin {
             monster_setup.in_set(MonsterSet),
         )
         .add_plugins(SpawnPlugin)
-        .add_plugins(AIPlugin);
+        .add_plugins(AIPlugin)
+        .add_plugins(MonsterAnimationPlugin);
     }
 }
 

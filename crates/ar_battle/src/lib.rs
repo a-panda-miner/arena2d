@@ -1,8 +1,8 @@
 use ar_core::{
-    AppState, BoostUsage, Damage, DashUsage, Health, MonsterMarker, MonsterProjectileMarker,
-    PlayerDirection, PlayerInvulnerableFrames, PlayerMarker, PlayerMinusHpEvent,
-    PlayerProjectileMarker, LifeTime, ProjectilePattern, BattleSet, Layer, PlayerLastDirection,
-    DeathEvent, DisplayDamageEvent,
+    AppState, BattleSet, BoostUsage, Damage, DashUsage, DeathEvent, DisplayDamageEvent, Health,
+    Layer, LifeTime, MonsterMarker, MonsterProjectileMarker, PlayerDirection,
+    PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent,
+    PlayerProjectileMarker, ProjectilePattern,
 };
 use ar_spells::generator::OwnedProjectileSpells;
 use bevy::prelude::*;
@@ -37,7 +37,13 @@ impl Plugin for BattlePlugin {
             .add_event::<DeathEvent>()
             .add_systems(
                 PhysicsSchedule,
-                (move_player, handle_collision, player_damaged_handler, damage_applier, death_applier)
+                (
+                    move_player,
+                    handle_collision,
+                    player_damaged_handler,
+                    damage_applier,
+                    death_applier,
+                )
                     .chain()
                     .before(PhysicsStepSet::BroadPhase)
                     .run_if(in_state(AppState::InBattle)),
@@ -237,27 +243,33 @@ fn spawn_player_projectiles(
             let linear_vel = dir * speed;
             let sprite = proj.sprite.clone();
             let damage = proj.damage;
-            commands.spawn(
-                SpriteSheetBundle {
-                    texture: sprite_sheet.sprite.get(sprite.as_str()).expect(format!("{} not found", sprite).as_str()).clone().into(),
+            commands
+                .spawn(SpriteSheetBundle {
+                    texture: sprite_sheet
+                        .sprite
+                        .get(sprite.as_str())
+                        .expect(format!("{} not found", sprite).as_str())
+                        .clone()
+                        .into(),
                     atlas: sprite_sheet.layout.clone().into(),
                     global_transform: *global_transform,
-                    transform: *local_transform, 
+                    transform: *local_transform,
                     ..Default::default()
-                }
-            )
-            .insert(PlayerProjectileMarker)
-            .insert(RigidBody::Dynamic)
-            .insert(Mass(proj.mass))
-            .insert(LinearVelocity(linear_vel))
-            .insert(AngularVelocity(0.0))
-            .insert(Collider::circle(proj.radius))
-            .insert(CollisionLayers::new(
-                [Layer::PlayerProjectile],
-                [Layer::Monster, Layer::MonsterProjectile]
-            ))
-            .insert(Damage(damage))
-            .insert(LifeTime{ timer: Timer::from_seconds(proj.lifetime, TimerMode::Once) } );
+                })
+                .insert(PlayerProjectileMarker)
+                .insert(RigidBody::Dynamic)
+                .insert(Mass(proj.mass))
+                .insert(LinearVelocity(linear_vel))
+                .insert(AngularVelocity(0.0))
+                .insert(Collider::circle(proj.radius))
+                .insert(CollisionLayers::new(
+                    [Layer::PlayerProjectile],
+                    [Layer::Monster, Layer::MonsterProjectile],
+                ))
+                .insert(Damage(damage))
+                .insert(LifeTime {
+                    timer: Timer::from_seconds(proj.lifetime, TimerMode::Once),
+                });
         }
     }
 }
@@ -281,15 +293,15 @@ fn damage_applier(
                 health.0 -= ev.damage;
             }
         }
-        display_damage.send(DisplayDamageEvent { damage: ev.damage, target: ev.target });
+        display_damage.send(DisplayDamageEvent {
+            damage: ev.damage,
+            target: ev.target,
+        });
     }
     ev_damage.clear();
 }
 
-fn death_applier(
-    mut commands: Commands,
-    mut ev_death: EventReader<DeathEvent>,
-) {
+fn death_applier(mut commands: Commands, mut ev_death: EventReader<DeathEvent>) {
     if ev_death.is_empty() {
         return;
     }
