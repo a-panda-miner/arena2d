@@ -106,7 +106,7 @@ pub struct PlayerDamageEvent {
 /// Handles the possible collisions accordinly to Layers' rules,
 /// Player only gets damaged by the largest damage source possible
 fn handle_collision(
-    mut ev_collision_reader: EventReader<Collision>,
+    mut ev_collision_reader: EventReader<CollisionStarted>,
     mut ev_damage: EventWriter<DamageEvent>,
     mut ev_player_damage: EventWriter<PlayerDamageEvent>,
     damage: Query<&Damage>,
@@ -120,9 +120,9 @@ fn handle_collision(
     }
     let mut player_damage = 0;
     let mut source: Entity = Entity::from_raw(0);
-    for Collision(collision) in ev_collision_reader.read() {
-        let entity1 = collision.entity1;
-        let entity2 = collision.entity2;
+    for CollisionStarted(entity1, entity2) in ev_collision_reader.read() {
+        let entity1 = entity1.clone();
+        let entity2 = entity2.clone();
 
         if player_query.contains(entity1) {
             if let Ok(damage) = damage.get(entity2) {
@@ -257,7 +257,7 @@ fn spawn_player_projectiles(
                     ..Default::default()
                 })
                 .insert(PlayerProjectileMarker)
-                .insert(RigidBody::Dynamic)
+                .insert(RigidBody::Kinematic)
                 .insert(Mass(proj.mass))
                 .insert(LinearVelocity(linear_vel))
                 .insert(AngularVelocity(0.0))
