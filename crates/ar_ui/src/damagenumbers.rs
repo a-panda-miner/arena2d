@@ -1,11 +1,11 @@
-use crate::{FontAssets, LifeTime, PlayerMarker, PlayerMinusHpEvent, UiSet};
+use crate::{FontAssets, LifeTime, PlayerMarker, PlayerMinusHpEvent, UiSet, DisplayDamageEvent};
 use bevy::prelude::*;
 
 pub struct DamageNumbersPlugin;
 
 impl Plugin for DamageNumbersPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(FixedUpdate, display_player_damaged_numbers.in_set(UiSet));
+        app.add_systems(FixedUpdate, (display_player_damaged_numbers, display_damage_numbers).in_set(UiSet));
     }
 }
 
@@ -19,7 +19,7 @@ fn display_player_damaged_numbers(
         return;
     }
     let font = fonts.damage_font.clone();
-    let color = Color::rgb(0.8, 0.1, 0.1);
+    let color = Color::TOMATO;
     let textstyle: TextStyle = TextStyle {
         font,
         font_size: 14.0,
@@ -40,4 +40,34 @@ fn display_player_damaged_numbers(
             });
     }
     damage.clear();
+}
+
+fn display_damage_numbers(
+    mut commands: Commands,
+    fonts: Res<FontAssets>,
+    mut damage: EventReader<DisplayDamageEvent>,
+    spatial_query: Query<(&Transform, &GlobalTransform), Without<PlayerMarker>>,
+) {
+    if damage.is_empty() {
+        return;
+    }
+    let font = fonts.damage_font.clone();
+    let color = Color::YELLOW;
+    let textstyle: TextStyle = TextStyle {
+        font,
+        font_size: 18.0,
+        color,
+    };
+    for ev in damage.read() {
+        if let Ok((transform, global_transform)) = spatial_query.get(ev.target) {
+            let displayed_number = ev.damage.to_string();
+            commands.spawn(Text2dBundle {
+                text: Text::from_section(displayed_number, textstyle.clone()),
+                transform: *transform,
+                global_transform: *global_transform,
+                ..default()
+            })
+            .insert(LifeTime { timer: Timer::from_seconds(0.8, TimerMode::Once) });
+        }
+    }
 }

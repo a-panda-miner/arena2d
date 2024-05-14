@@ -5,6 +5,7 @@ pub mod damagenumbers;
 use crate::damagenumbers::DamageNumbersPlugin;
 use ar_core::{
     AppState, Health, LifeTime, MaxHealth, PlayerMarker, PlayerMinusHpEvent, UiMarker, UiSet,
+    DisplayDamageEvent,
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;

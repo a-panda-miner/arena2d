@@ -1,7 +1,8 @@
 use ar_core::{
     AppState, BoostUsage, Damage, DashUsage, Health, MonsterMarker, MonsterProjectileMarker,
     PlayerDirection, PlayerInvulnerableFrames, PlayerMarker, PlayerMinusHpEvent,
-    PlayerProjectileMarker, LifeTime, ProjectilePattern, BattleSet, Layer
+    PlayerProjectileMarker, LifeTime, ProjectilePattern, BattleSet, Layer, PlayerLastDirection,
+    DeathEvent, DisplayDamageEvent,
 };
 use ar_spells::generator::OwnedProjectileSpells;
 use bevy::prelude::*;
@@ -32,9 +33,11 @@ impl Plugin for BattlePlugin {
         app.add_event::<PlayerDamageEvent>()
             .add_event::<PlayerMinusHpEvent>()
             .add_event::<DamageEvent>()
+            .add_event::<DisplayDamageEvent>()
+            .add_event::<DeathEvent>()
             .add_systems(
                 PhysicsSchedule,
-                (move_player, handle_collision, player_damaged_handler)
+                (move_player, handle_collision, player_damaged_handler, damage_applier, death_applier)
                     .chain()
                     .before(PhysicsStepSet::BroadPhase)
                     .run_if(in_state(AppState::InBattle)),
@@ -43,7 +46,7 @@ impl Plugin for BattlePlugin {
     }
 }
 
-// Changes the player's LinearVelocity based on input
+/// Changes the player's LinearVelocity based on input.
 fn move_player(
     mut q: Query<&mut LinearVelocity, With<PlayerMarker>>,
     mut ev_direction: EventReader<PlayerDirection>,
@@ -201,19 +204,21 @@ fn player_damaged_handler(
 }
 
 // TODO! This implementation makes all projectiles to spawn at the same time, there should be a delay between them
+// TODO! Write the Circle logic
 fn spawn_player_projectiles(
     mut commands: Commands,
     time: Res<Time>,
     mut projs: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
     spawn_point: Query<(&GlobalTransform, &Transform), With<PlayerMarker>>,
     sprite_sheet: Res<SpellsSheetSmall>,
+    player_direction: Res<PlayerLastDirection>,
 ) {
     if projs.is_empty() {
         return;
     }
-    
     let (global_transform, local_transform) = spawn_point.single();
 
+    let player_direction = player_direction.direction;
     let mut projs = projs.single_mut();
     for proj in projs.spells.iter_mut() {
         if !proj.cooldown.tick(time.delta()).finished() {
@@ -221,10 +226,13 @@ fn spawn_player_projectiles(
         }
         for i in 0..proj.count {
             let angle = match proj.pattern {
-                ProjectilePattern::Circle => (360.0 / proj.count as f32) * i as f32,
-                ProjectilePattern::Line => 0.0,
+                ProjectilePattern::Circle => Vec2::ZERO,
+                ProjectilePattern::Line => player_direction,
             };
-            let dir = Vec2::from_angle(angle.to_radians());
+            let mut dir = angle.normalize_or_zero();
+            if dir == Vec2::ZERO {
+                dir = Vec2::X;
+            }
             let speed = proj.projectile_movespeed;
             let linear_vel = dir * speed;
             let sprite = proj.sprite.clone();
@@ -252,4 +260,41 @@ fn spawn_player_projectiles(
             .insert(LifeTime{ timer: Timer::from_seconds(proj.lifetime, TimerMode::Once) } );
         }
     }
+}
+
+/// Applies damage to the target,
+/// except for the player
+fn damage_applier(
+    mut ev_damage: EventReader<DamageEvent>,
+    mut health: Query<&mut Health, Without<PlayerMarker>>,
+    mut death_event: EventWriter<DeathEvent>,
+    mut display_damage: EventWriter<DisplayDamageEvent>,
+) {
+    if ev_damage.is_empty() {
+        return;
+    }
+    for ev in ev_damage.read() {
+        if let Ok(mut health) = health.get_mut(ev.target) {
+            if health.0 <= ev.damage {
+                death_event.send(DeathEvent { target: ev.target });
+            } else {
+                health.0 -= ev.damage;
+            }
+        }
+        display_damage.send(DisplayDamageEvent { damage: ev.damage, target: ev.target });
+    }
+    ev_damage.clear();
+}
+
+fn death_applier(
+    mut commands: Commands,
+    mut ev_death: EventReader<DeathEvent>,
+) {
+    if ev_death.is_empty() {
+        return;
+    }
+    for ev in ev_death.read() {
+        commands.entity(ev.target).despawn_recursive();
+    }
+    ev_death.clear();
 }

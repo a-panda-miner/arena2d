@@ -85,6 +85,8 @@ pub struct Shield;
 #[derive(Component)]
 pub struct Cooldown(pub Timer);
 
+/// The timer must be set on Once, and then reset when the player takes damage or 
+/// is in an invulnerable state, when the timer finishes the player can take damage
 #[derive(Component)]
 pub struct PlayerInvulnerableFrames {
     pub timer: Timer,
@@ -99,31 +101,60 @@ pub struct MaxHealth(pub usize);
 #[derive(Component)]
 pub struct Damage(pub usize);
 
+/// The marker for the background music
 #[derive(Component)]
 pub struct BGMusicMarker;
 
+/// An event that is triggered when the player is hit,
+/// not used yet for player's death
 #[derive(Event)]
 pub struct PlayerMinusHpEvent {
     pub damage: usize,
 }
 
+/// The direction in which the player will move
 #[derive(Debug, Event)]
 pub struct PlayerDirection(pub Vec2);
 
+/// Boosts the movespeed of the player
 #[derive(Debug, Event)]
 pub struct BoostUsage(pub bool);
 
+/// Used for moving the player in an dash event,
+/// not implemented
 #[derive(Debug, Event)]
 pub struct DashUsage(pub bool);
 
+/// Zooms in the camera,
+/// the camera zoom levels is predetermined in the camera plugin
 #[derive(Debug, Event)]
 pub struct ZoomIn;
 
+/// Zooms out the camera,
+/// the camera zoom levels is predetermined in the camera plugin
 #[derive(Debug, Event)]
 pub struct ZoomOut;
 
+/// Changes the background music of the game
 #[derive(Debug, Event)]
 pub struct ChangeBackgroundEvent;
+
+/// An event that is triggered when the target reaches 0 HP,
+/// despawning it and applying the death animation and rewards to
+/// the player.
+/// The player's death is not handled by this event
+#[derive(Debug, Event)]
+pub struct DeathEvent {
+    pub target: Entity,
+}
+
+/// Displays the damage that happened on the ground,
+/// damage done to the player is not handled by this event
+#[derive(Debug, Event)]
+pub struct DisplayDamageEvent {
+    pub damage: usize,
+    pub target: Entity,
+}
 
 #[derive(Clone, Deserialize, Debug)]
 pub enum MonsterLayoutType {
@@ -211,6 +242,12 @@ pub struct MonstersAlive(pub usize);
 /// and spawning bosses
 #[derive(Resource)]
 pub struct MinutesSurvived(pub usize);
+
+/// Used for spawning projectiles from where the player was last facing
+#[derive(Resource)]
+pub struct PlayerLastDirection {
+    pub direction: Vec2,
+}
 
 #[derive(Clone, Deserialize, Debug)]
 pub enum SpellAOEType {

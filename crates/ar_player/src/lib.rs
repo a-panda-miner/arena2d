@@ -1,6 +1,6 @@
 use ar_core::{
     AppState, Cooldown, Damage, Health, Layer, MaxHealth, PlayerInvulnerableFrames, PlayerMarker,
-    PlayerSet,
+    PlayerSet, PlayerLastDirection,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use bevy::prelude::*;
@@ -68,6 +68,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .id();
 
     commands.insert_resource(PlayerHandler { player_id });
+    commands.insert_resource(PlayerLastDirection { direction: Vec2::ZERO });
 }
 
 // TODO! This should be chosen by the player at the menu before the game starts

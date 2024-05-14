@@ -1,6 +1,6 @@
 use ar_core::{
     BGMusicMarker, BoostUsage, ChangeBackgroundEvent, Cooldown, DashUsage, InputSet,
-    PlayerDirection, PlayerMarker, ZoomIn, ZoomOut,
+    PlayerDirection, PlayerMarker, ZoomIn, ZoomOut, PlayerLastDirection
 };
 use bevy::prelude::*;
 
@@ -36,6 +36,7 @@ fn player_input_manager(
     mut ev_dash: EventWriter<DashUsage>,
     mut ev_zoom_out: EventWriter<ZoomOut>,
     mut ev_zoom_in: EventWriter<ZoomIn>,
+    mut last_direction: ResMut<PlayerLastDirection>,
 ) {
     let w = keys.pressed(KeyCode::KeyW);
     let a = keys.pressed(KeyCode::KeyA);
@@ -47,6 +48,9 @@ fn player_input_manager(
     let boost = keys.pressed(KeyCode::ShiftLeft);
     let dash = keys.pressed(KeyCode::Space);
 
+    if !w && !a && !s && !d && !q && !e && !boost && !dash {
+        return;
+    }
     let mut direction = Vec2::ZERO;
 
     if d {
@@ -63,6 +67,7 @@ fn player_input_manager(
     }
     // A normalized direction vector
     let direction = direction.normalize_or_zero();
+    last_direction.direction = direction;
     ev_direction.send(PlayerDirection(direction));
     if boost {
         ev_boost.send(BoostUsage(boost));
