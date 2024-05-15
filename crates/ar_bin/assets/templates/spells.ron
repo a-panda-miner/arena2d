@@ -1,7 +1,7 @@
 SpellTemplates(
     spells: {
         "throwdagger": SpellTemplate(
-            name: "Throw Dagger",
+            name: "throwdagger",
             cooldown: 1.5,
             spell_main_type: Projectile,
             projectile_type_struct: Some(SpellProjectileType(
@@ -16,7 +16,7 @@ SpellTemplates(
             ))
         ),
         "swordswing": SpellTemplate(
-            name: "Sword Swing",
+            name: "swordswing",
             cooldown: 2.4,
             spell_main_type: Swing,
             swing_type_struct: Some(SpellSwingType(

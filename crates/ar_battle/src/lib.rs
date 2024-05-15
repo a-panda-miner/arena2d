@@ -4,7 +4,7 @@ use ar_core::{
     PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent,
     PlayerProjectileMarker, ProjectilePattern,
 };
-use ar_spells::generator::OwnedProjectileSpells;
+use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -48,7 +48,12 @@ impl Plugin for BattlePlugin {
                     .before(PhysicsStepSet::BroadPhase)
                     .run_if(in_state(AppState::InBattle)),
             )
-            .add_systems(FixedUpdate, spawn_player_projectiles.in_set(BattleSet));
+            .add_systems(
+                FixedUpdate,
+                (queue_spawn_player_projectiles, spawn_player_projectiles)
+                    .chain()
+                    .in_set(BattleSet),
+            );
     }
 }
 
@@ -211,71 +216,41 @@ fn player_damaged_handler(
 
 // TODO! This implementation makes all projectiles to spawn at the same time, there should be a delay between them
 // TODO! Write the Circle logic
-fn spawn_player_projectiles(
+fn queue_spawn_player_projectiles(
     mut commands: Commands,
     time: Res<Time>,
     mut projs: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
-    spawn_point: Query<(&GlobalTransform, &Transform), With<PlayerMarker>>,
     sprite_sheet: Res<SpellsSheetSmall>,
-    player_direction: Res<PlayerLastDirection>,
 ) {
     if projs.is_empty() {
         return;
     }
-    let (global_transform, local_transform) = spawn_point.single();
 
-    let player_direction = player_direction.direction;
     let mut projs = projs.single_mut();
     for proj in projs.spells.iter_mut() {
         if !proj.cooldown.tick(time.delta()).finished() {
             break;
         }
         for i in 0..proj.count {
+            let time_to_spawn: f32 = (i as f32 + 1.0) * 2.0 / 3.0
+                * (proj.cooldown.duration().as_secs_f32() / proj.count as f32);
             let angle = match proj.pattern {
                 ProjectilePattern::Circle => Vec2::ZERO,
-                ProjectilePattern::Line => player_direction,
+                ProjectilePattern::Line => Vec2::ZERO,
             };
-            let mut dir = angle.normalize_or_zero();
-            if dir == Vec2::ZERO {
-                dir = Vec2::X;
-            }
-            let speed = proj.projectile_movespeed;
-            let linear_vel = dir * speed;
-            let sprite = proj.sprite.clone();
-            let damage = proj.damage;
-            commands
-                .spawn(SpriteSheetBundle {
-                    texture: sprite_sheet
-                        .sprite
-                        .get(sprite.as_str())
-                        .expect(format!("{} not found", sprite).as_str())
-                        .clone()
-                        .into(),
-                    atlas: sprite_sheet.layout.clone().into(),
-                    global_transform: *global_transform,
-                    transform: *local_transform,
-                    ..Default::default()
-                })
-                .insert(PlayerProjectileMarker)
-                .insert(RigidBody::Kinematic)
-                .insert(Mass(proj.mass))
-                .insert(LinearVelocity(linear_vel))
-                .insert(AngularVelocity(0.0))
-                .insert(Collider::circle(proj.radius))
-                .insert(CollisionLayers::new(
-                    [Layer::PlayerProjectile],
-                    [Layer::Monster, Layer::MonsterProjectile],
-                ))
-                .insert(Damage(damage))
-                .insert(LifeTime {
-                    timer: Timer::from_seconds(proj.lifetime, TimerMode::Once),
-                });
+            commands.spawn(PlayerProjectileSpawner {
+                timer: Timer::from_seconds(time_to_spawn, TimerMode::Once),
+                angle: angle,
+                spell_name: proj.name.clone(),
+            });
         }
     }
 }
 
 /// Applies damage to the target,
 /// except for the player
+// TODO! Check for bounce/penetration count and
+// handle it correctly, despawing the projectile when the count is 0
 fn damage_applier(
     mut ev_damage: EventReader<DamageEvent>,
     mut health: Query<&mut Health, Without<PlayerMarker>>,
@@ -309,4 +284,74 @@ fn death_applier(mut commands: Commands, mut ev_death: EventReader<DeathEvent>) 
         commands.entity(ev.target).despawn_recursive();
     }
     ev_death.clear();
+}
+
+#[derive(Component, Debug)]
+struct PlayerProjectileSpawner {
+    timer: Timer,
+    angle: Vec2,
+    spell_name: String,
+}
+
+fn spawn_player_projectiles(
+    mut commands: Commands,
+    time: Res<Time>,
+    player_position: Query<(&GlobalTransform, &Transform), With<PlayerMarker>>,
+    mut spawner: Query<(Entity, &mut PlayerProjectileSpawner)>,
+    sprite_sheet: Res<SpellsSheetSmall>,
+    spell: Res<ProjectileSpells>,
+    player_last_direction: Res<PlayerLastDirection>,
+) {
+    if spawner.is_empty() {
+        return;
+    }
+    let player_last_direction = player_last_direction.direction;
+    let (player_position, player_transform) = player_position.single();
+    for (entity, mut spa) in spawner.iter_mut() {
+        if !spa.timer.tick(time.delta()).just_finished() {
+            break;
+        }
+        let global_transform = player_position;
+        let local_transform = player_transform;
+        let angle = spa.angle + player_last_direction;
+        let mut dir = angle.normalize_or_zero();
+        if dir == Vec2::ZERO {
+            dir = Vec2::X;
+        }
+        let proj = spell
+            .projectile_spells
+            .get(&spa.spell_name)
+            .expect(format!("{} not found", spa.spell_name).as_str());
+        let linear_vel = dir * proj.projectile_movespeed;
+        let sprite = proj.sprite.clone();
+        commands
+            .entity(entity)
+            .insert(SpriteSheetBundle {
+                texture: sprite_sheet
+                    .sprite
+                    .get(sprite.as_str())
+                    .expect(format!("{} not found", sprite).as_str())
+                    .clone()
+                    .into(),
+                atlas: sprite_sheet.layout.clone().into(),
+                global_transform: *global_transform,
+                transform: *local_transform,
+                ..Default::default()
+            })
+            .insert(PlayerProjectileMarker)
+            .insert(RigidBody::Kinematic)
+            .insert(Mass(proj.mass))
+            .insert(LinearVelocity(linear_vel))
+            .insert(AngularVelocity(0.0))
+            .insert(Collider::circle(proj.radius))
+            .insert(CollisionLayers::new(
+                [Layer::PlayerProjectile],
+                [Layer::Monster, Layer::MonsterProjectile],
+            ))
+            .insert(Damage(proj.damage))
+            .insert(LifeTime {
+                timer: Timer::from_seconds(proj.lifetime, TimerMode::Once),
+            })
+            .remove::<PlayerProjectileSpawner>();
+    }
 }
