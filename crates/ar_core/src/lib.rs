@@ -6,15 +6,35 @@ use bevy::utils::HashMap;
 use bevy_xpbd_2d::prelude::*;
 use serde::Deserialize;
 
+/// Defines tha main states of the app
+/// LoadingAssets loads the assets during the App startup,
+/// LoadingTemplates initiates some of those assets into resources,
+/// InitialScreen is the main menu before starting the game (not implemented)
+/// InBattle is the main game state
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
     #[default]
     LoadingAssets,
     LoadingTemplates,
-    Menu,
-    Pause,
+    InitialScreen,
     InBattle,
+}
+
+/// Different states of pause,
+/// Paused is a manual pause of the game, (not implemented)
+/// Menu is in the pause menu (not implemented)
+/// Shop is triggered by a shop NPC (not implemented)
+/// PowerUp is the selection of a power up after reaching a new level (not implemented)
+/// MetaUpgrades is the buying of meta upgrades after dying (not implemented)
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+pub enum PauseState {
+    #[default]
+    NotPaused,
+    Paused,
+    Menu,
     Shop,
+    PowerUp,
+    MetaUpgrades,
 }
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
