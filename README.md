@@ -10,3 +10,7 @@
 - [ ] Complex enemies
 - [ ] Bosses
 - [ ] Android build
+
+
+### LICENSE 
+All assets and written code are CC0 
