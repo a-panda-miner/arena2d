@@ -1,27 +1,46 @@
-// Physical FPS
-pub const PFPS: f64 = 60.0;
+// Game's configuration
+// Changes the behavior of the systems
 
-// Sprites
-pub const TILE_W: usize = 6;
-pub const TILE_H: usize = 8;
-pub const SPRITE_SHEET_W: usize = 242;
-pub const SPRITE_SHEET_H: usize = 12;
-pub const SPRITE_SCALE_FACTOR: usize = 5;
-pub const PLAYER_SPRITE_INDEX: usize = 1;
-pub const SPRITESHEET_PATH: &str = "spritesheet.png";
-pub const SPRITE_PADDING: f32 = 2.0;
-pub const SPRITE_SHEET_OFFSET: f32 = 2.0;
+use bevy::prelude::*;
 
-// Window
-pub const GRID_COLS: usize = 800;
-pub const GRID_ROWS: usize = 300;
-pub const GRID_W: usize = GRID_COLS * TILE_W;
-pub const GRID_H: usize = GRID_ROWS * TILE_H;
-pub const BG_COLOR: (u8, u8, u8) = (181, 212, 220);
-pub const VIRTUAL_W: i32 = 640;
-pub const VIRTUAL_H: i32 = 360;
-// Terrain
-pub const NOISE_SCALE: f64 = 13.5;
+pub const BG_COLOR: (u8, u8, u8) = (0, 0, 0); 
 
-// Player
-pub const PLAYER_BASE_SPEED: f32 = 0.5;
+pub const PFPS: f64 = 64.0;
+
+/// Only used to insert the default resources in the game,
+/// The resources themselves should be updated through the loading process,
+/// through the menu or input
+pub struct ConfPlugin;
+
+impl Plugin for ConfPlugin {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(CameraConf::default());
+    }
+}
+
+#[derive(Resource, Debug, Default)]
+pub struct CameraConf {
+    pub camera_mode: CameraMode,
+}
+
+#[derive(Debug, Default)]
+pub enum CameraMode {
+    Square,
+    #[default]
+    Follow,
+}
+
+
+#[derive(Debug, Default, Resource)]
+pub struct NumbersDisplayConf {
+    pub show_player_damaged_numbers: bool,
+    pub show_player_dealt_damage_numbers: bool,
+    pub show_player_healed_numbers: bool,
+}
+
+#[derive(Debug, Default, Resource)]
+pub struct UiConf {
+    pub show_ui: bool,
+    pub show_fps: bool,
+    pub ui_scale: f32,
+}

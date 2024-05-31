@@ -41,7 +41,7 @@ fn map_builder_tileset(
 
     let map = Map::builder(
         // The size of the map
-        uvec2(ARENA_WIDTH / 8, ARENA_HEIGHT / 8),
+        uvec2(ARENA_WIDTH * 4, ARENA_HEIGHT * 4),
         // Tile atlas
         tile_set.sprite.clone(),
         // Tile size

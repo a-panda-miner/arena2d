@@ -11,7 +11,7 @@ SpellTemplates(
                 projectile_damage: 1,
                 projectile_movespeed: 200.0,
                 projectile_radius: 8.0,
-                projectile_mass: 0.5,
+                projectile_mass: 0.1,
                 projectile_lifetime: 0.8,
             ))
         ),

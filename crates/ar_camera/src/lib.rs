@@ -37,8 +37,9 @@ impl Plugin for ArenaCameraPlugin {
             )
             .add_systems(
                 Update,
-                (change_camera_zoom, change_camera_state, follow_player).in_set(CameraSet),
-            );
+                (change_camera_zoom, change_camera_state).in_set(CameraSet),
+            )
+            .add_systems(Update, follow_player_fixed_rec.in_set(CameraSet));
     }
 }
 
@@ -111,8 +112,7 @@ fn map_zoom_level_to_scale(zoom_level: u8) -> (f32, f32) {
     }
 }
 
-// TODO! Make the camera a physical object and follow the player with Bevy XPBD Interp
-fn follow_player(
+fn follow_player_fixed_rec(
     player_query: Query<&Transform, (With<PlayerMarker>, Without<ArenaCameraMarker>)>,
     mut camera_query: Query<&mut Transform, (With<ArenaCameraMarker>, Without<PlayerMarker>)>,
     camera_zoom: Res<CameraZoomState>,
@@ -128,4 +128,13 @@ fn follow_player(
     if (player_transform.translation.y - camera_y).abs() > (width / 3.5) {
         camera.translation.y = player_transform.translation.y;
     }
+}
+
+fn follow_player(
+    player_query: Query<&Transform, (With<PlayerMarker>, Without<ArenaCameraMarker>)>,
+    mut camera_query: Query<&mut Transform, (With<ArenaCameraMarker>, Without<PlayerMarker>)>,
+) {
+    let player_transform = player_query.single();
+    let mut camera = camera_query.single_mut();
+    camera.translation = player_transform.translation;
 }
