@@ -25,6 +25,7 @@ use bevy::{
     prelude::*,
     window::{PresentMode, WindowTheme},
 };
+
 use bevy_asset_loader::prelude::*;
 use bevy_fast_tilemap::plugin::FastTileMapPlugin;
 use avian2d::prelude::*;
@@ -113,7 +114,7 @@ impl Plugin for GamePlugin {
                     .load_collection::<SpellsSheetSmall>(),
             )
             .insert_resource(Msaa::Off)
-            .insert_resource(ClearColor(Color::rgba_u8(
+            .insert_resource(ClearColor(Color::srgba_u8(
                 BG_COLOR.0, BG_COLOR.1, BG_COLOR.2, 0,
             )))
             .insert_resource(Gravity(Vec2::ZERO))
