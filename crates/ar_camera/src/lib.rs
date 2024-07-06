@@ -1,4 +1,4 @@
-use ar_core::{AppState, CameraSet, PlayerMarker, ZoomIn, ZoomOut};
+use ar_core::{AppState, CameraSet, PlayerMarker, ZoomIn, ZoomOut, CameraFollowState};
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
 
@@ -28,7 +28,9 @@ pub struct ArenaCameraPlugin;
 
 impl Plugin for ArenaCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<CameraZoomState>()
+        app
+            .init_resource::<CameraZoomState>()
+            .init_resource::<CameraFollowState>()
             .add_event::<ZoomIn>()
             .add_event::<ZoomOut>()
             .add_systems(
@@ -39,7 +41,8 @@ impl Plugin for ArenaCameraPlugin {
                 Update,
                 (change_camera_zoom, change_camera_state).in_set(CameraSet),
             )
-            .add_systems(Update, follow_player_fixed_rec.in_set(CameraSet));
+            .add_systems(Update, follow_player_fixed_rec.run_if(resource_equals(CameraFollowState::Rect)).in_set(CameraSet))
+            .add_systems(Update, follow_player_fixed_player.run_if(resource_equals(CameraFollowState::Player)).in_set(CameraSet));
     }
 }
 
@@ -130,7 +133,7 @@ fn follow_player_fixed_rec(
     }
 }
 
-fn follow_player(
+fn follow_player_fixed_player(
     player_query: Query<&Transform, (With<PlayerMarker>, Without<ArenaCameraMarker>)>,
     mut camera_query: Query<&mut Transform, (With<ArenaCameraMarker>, Without<PlayerMarker>)>,
 ) {

@@ -3,6 +3,7 @@
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use bevy::ecs::system::SystemId;
 use avian2d::prelude::*;
 use serde::Deserialize;
 
@@ -37,6 +38,10 @@ pub enum PauseState {
     PowerUp,
     MetaUpgrades,
 }
+
+/// These systems are One-Shot systems, they are ran by calling commands.run_system(id)
+#[derive(Resource, Debug)]
+pub struct OneShotSystems(pub HashMap<String, SystemId>);
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CameraSet;
@@ -160,6 +165,17 @@ pub struct ZoomIn;
 /// the camera zoom levels is predetermined in the camera plugin
 #[derive(Debug, Event)]
 pub struct ZoomOut;
+
+
+/// Changes the camera following strategy of the game
+/// Rect is the default, adjusts itself only when the player moves out of the current 'rect'
+/// Player moves the camera to follow the player each frame
+#[derive(Resource, Default, Debug, PartialEq)]
+pub enum CameraFollowState {
+    #[default]
+    Rect,
+    Player,
+}
 
 /// Changes the background music of the game
 #[derive(Debug, Event)]

@@ -1,6 +1,7 @@
 use ar_core::{
     BGMusicMarker, BoostUsage, ChangeBackgroundEvent, Cooldown, DashUsage, InputSet,
-    PlayerDirection, PlayerLastDirection, PlayerMarker, ZoomIn, ZoomOut,
+    PlayerDirection, PlayerLastDirection, PlayerMarker, ZoomIn, ZoomOut, CameraFollowState,
+    OneShotSystems
 };
 use bevy::prelude::*;
 
@@ -9,6 +10,10 @@ pub struct InputPlugin;
 #[derive(Resource)]
 struct BButtonCooldown(Timer);
 
+#[derive(Resource)]
+struct RButtonCooldown(Timer);
+
+
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlayerDirection>()
@@ -16,6 +21,7 @@ impl Plugin for InputPlugin {
             .add_event::<DashUsage>()
             .add_event::<ChangeBackgroundEvent>()
             .insert_resource(BButtonCooldown(Timer::from_seconds(2.0, TimerMode::Once)))
+            .insert_resource(RButtonCooldown(Timer::from_seconds(2.0, TimerMode::Once)))
             .add_systems(
                 Update,
                 (
@@ -30,13 +36,17 @@ impl Plugin for InputPlugin {
 }
 
 fn player_input_manager(
-    keys: Res<ButtonInput<KeyCode>>,
+    mut commands: Commands,
     mut ev_direction: EventWriter<PlayerDirection>,
     mut ev_boost: EventWriter<BoostUsage>,
     mut ev_dash: EventWriter<DashUsage>,
     mut ev_zoom_out: EventWriter<ZoomOut>,
     mut ev_zoom_in: EventWriter<ZoomIn>,
     mut last_direction: ResMut<PlayerLastDirection>,
+    keys: Res<ButtonInput<KeyCode>>,
+    oneshot: Res<OneShotSystems>,
+    time: Res<Time>,
+    mut timer: ResMut<RButtonCooldown>,
 ) {
     let w = keys.pressed(KeyCode::KeyW);
     let a = keys.pressed(KeyCode::KeyA);
@@ -44,11 +54,12 @@ fn player_input_manager(
     let d = keys.pressed(KeyCode::KeyD);
     let q = keys.pressed(KeyCode::KeyQ);
     let e = keys.pressed(KeyCode::KeyE);
+    let r = keys.pressed(KeyCode::KeyR);
 
     let boost = keys.pressed(KeyCode::ShiftLeft);
     let dash = keys.pressed(KeyCode::Space);
 
-    if !w && !a && !s && !d && !q && !e && !boost && !dash {
+    if !w && !a && !s && !d && !q && !e && !boost && !dash && !r{
         return;
     }
     let mut direction = Vec2::ZERO;
@@ -65,6 +76,7 @@ fn player_input_manager(
     if s {
         direction.y += -1.;
     }
+
     // A normalized direction vector
     let direction = direction.normalize_or_zero();
     last_direction.direction = direction;
@@ -72,14 +84,24 @@ fn player_input_manager(
     if boost {
         ev_boost.send(BoostUsage(boost));
     }
+
     if dash {
         ev_dash.send(DashUsage(dash));
     }
+
     if q {
         ev_zoom_out.send(ZoomOut);
     }
+
     if e {
         ev_zoom_in.send(ZoomIn);
+    }
+
+    let r_timer = timer.0.tick(time.delta()).finished();
+
+    if r && r_timer {
+        commands.run_system(*oneshot.0.get("change_camera_follow_state").expect("Missing change_camera_follow_state system"));
+        timer.0.reset();
     }
 }
 
@@ -156,4 +178,16 @@ fn change_background_music(
     }
     ev.send(ChangeBackgroundEvent);
     timer.0.reset();
+}
+
+pub fn change_camera_follow_state(
+    mut camera_state: ResMut<CameraFollowState>,
+) {
+
+    let state;
+    match *camera_state {
+        CameraFollowState::Player => { state = CameraFollowState::Rect },
+        CameraFollowState::Rect => { state = CameraFollowState::Player },
+    }
+    *camera_state = state;
 }

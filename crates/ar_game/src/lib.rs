@@ -17,6 +17,7 @@ use ar_spells::SpellsPlugin;
 use ar_template::TemplatePlugin;
 use ar_ui::{FontAssets, UiPlugin};
 use ar_utils::UtilPlugin;
+use ar_oneshot::OneShotPlugin;
 
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
@@ -88,6 +89,7 @@ impl Plugin for GamePlugin {
             )
             .add_plugins(EntropyPlugin::<WyRand>::default())
             .add_plugins(FastTileMapPlugin::default())
+            .add_plugins(OneShotPlugin)
             .add_plugins(ArenaCameraPlugin)
             .add_plugins(InputPlugin)
             .add_plugins(PlayerPlugin)

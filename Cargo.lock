@@ -277,6 +277,7 @@ dependencies = [
  "ar_input",
  "ar_map",
  "ar_monsters",
+ "ar_oneshot",
  "ar_player",
  "ar_shop",
  "ar_spells",
@@ -328,6 +329,15 @@ dependencies = [
  "bevy",
  "bevy_rand",
  "rand_core",
+]
+
+[[package]]
+name = "ar_oneshot"
+version = "0.1.0"
+dependencies = [
+ "ar_core",
+ "ar_input",
+ "bevy",
 ]
 
 [[package]]
@@ -399,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "arena2d"
-version = "0.1.0"
+version = "0.2.0"
 
 [[package]]
 name = "arrayref"
