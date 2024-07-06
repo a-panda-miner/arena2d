@@ -5,7 +5,7 @@ use ar_core::{
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
-use bevy_xpbd_2d::prelude::*;
+use avian2d::prelude::*;
 
 pub struct PlayerPlugin;
 
@@ -29,7 +29,7 @@ pub struct PlayerHandler {
 
 #[derive(AssetCollection, Resource)]
 pub struct SheetHandle {
-    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 2, rows = 4))]
+    #[asset(texture_atlas_layout(tile_size_x = 16, tile_size_y = 16, columns = 2, rows = 4))]
     pub layout: Handle<TextureAtlasLayout>,
     #[asset(path = "characters/character.png")]
     pub sprite: Handle<Image>,

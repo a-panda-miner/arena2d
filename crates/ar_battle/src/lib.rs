@@ -8,13 +8,13 @@ use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
-use bevy_xpbd_2d::{prelude::*, PhysicsSchedule, PhysicsStepSet};
+use avian2d::{prelude::*, schedule::PhysicsSchedule, schedule::PhysicsStepSet};
 
 pub struct BattlePlugin;
 
 #[derive(AssetCollection, Resource)]
 pub struct SpellsSheetBig {
-    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 2, rows = 1))]
+    #[asset(texture_atlas_layout(tile_size_x = 16, tile_size_y = 16, columns = 2, rows = 1))]
     pub layout: Handle<TextureAtlasLayout>,
     #[asset(paths("spells/dagger32x16.png"), collection(mapped, typed))]
     pub sprite: HashMap<AssetFileStem, Handle<Image>>,
@@ -22,7 +22,7 @@ pub struct SpellsSheetBig {
 
 #[derive(AssetCollection, Resource)]
 pub struct SpellsSheetSmall {
-    #[asset(texture_atlas_layout(tile_size_x = 8., tile_size_y = 8., columns = 1, rows = 1))]
+    #[asset(texture_atlas_layout(tile_size_x = 8, tile_size_y = 8, columns = 1, rows = 1))]
     pub layout: Handle<TextureAtlasLayout>,
     #[asset(paths("spells/dagger8x8.png"), collection(mapped, typed))]
     pub sprite: HashMap<AssetFileStem, Handle<Image>>,
@@ -210,7 +210,6 @@ fn player_damaged_handler(
             ev_player_damaged.send(PlayerMinusHpEvent { damage: ev.damage });
         }
     }
-    ev_damage.clear();
     inv.timer.reset();
 }
 

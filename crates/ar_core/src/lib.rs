@@ -3,7 +3,7 @@
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use bevy_xpbd_2d::prelude::*;
+use avian2d::prelude::*;
 use serde::Deserialize;
 
 /// Defines tha main states of the app

@@ -21,11 +21,11 @@ pub struct MonsterSprites {
         collection(mapped, typed)
     )]
     pub monster_sheets: HashMap<AssetFileStem, Handle<Image>>,
-    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 4, rows = 1))]
+    #[asset(texture_atlas_layout(tile_size_x = 16, tile_size_y = 16, columns = 4, rows = 1))]
     pub monster_layout_large_four: Handle<TextureAtlasLayout>,
-    #[asset(texture_atlas_layout(tile_size_x = 16., tile_size_y = 16., columns = 9, rows = 1))]
+    #[asset(texture_atlas_layout(tile_size_x = 16, tile_size_y = 16, columns = 9, rows = 1))]
     pub monster_layout_large_nine: Handle<TextureAtlasLayout>,
-    #[asset(texture_atlas_layout(tile_size_x = 8., tile_size_y = 8., columns = 2, rows = 4))]
+    #[asset(texture_atlas_layout(tile_size_x = 8, tile_size_y = 8, columns = 2, rows = 4))]
     pub monster_layout_small: Handle<TextureAtlasLayout>,
 }
 

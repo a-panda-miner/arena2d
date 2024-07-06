@@ -9,6 +9,7 @@ use ar_core::{
 };
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
+use bevy::color::palettes::css::SILVER;
 
 #[derive(AssetCollection, Resource)]
 pub struct FontAssets {
@@ -44,10 +45,11 @@ fn set_display_player_health(
     let (health, max_health) = health.single();
     let text = format!("HP: {} / {}", health.0, max_health.0);
     let font = fonts.ui_font.clone();
+    let color: Color = SILVER.into();
     let textstyle: TextStyle = TextStyle {
         font,
         font_size: 16.0,
-        color: Color::SILVER,
+        color,
     };
 
     commands
