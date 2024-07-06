@@ -45,7 +45,7 @@ impl Plugin for BattlePlugin {
                     death_applier,
                 )
                     .chain()
-                    .before(PhysicsStepSet::BroadPhase)
+                    .before(PhysicsStepSet::First)
                     .run_if(in_state(AppState::InBattle)),
             )
             .add_systems(

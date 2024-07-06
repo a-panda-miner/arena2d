@@ -40,7 +40,7 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.init_state::<AppState>()
+        app
             .add_plugins(
                 DefaultPlugins
                     .set(LogPlugin {
@@ -82,6 +82,7 @@ impl Plugin for GamePlugin {
                     .set(ImagePlugin::default_nearest())
                     .build(),
             )
+            .init_state::<AppState>()
             .add_plugins(
                 ProgressPlugin::new(AppState::LoadingAssets).continue_to(AppState::InBattle),
             )
