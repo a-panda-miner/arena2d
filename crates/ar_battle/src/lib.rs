@@ -219,7 +219,6 @@ fn queue_spawn_player_projectiles(
     mut commands: Commands,
     time: Res<Time>,
     mut projs: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
-    sprite_sheet: Res<SpellsSheetSmall>,
 ) {
     if projs.is_empty() {
         return;
@@ -325,16 +324,19 @@ fn spawn_player_projectiles(
         let sprite = proj.sprite.clone();
         commands
             .entity(entity)
-            .insert(SpriteSheetBundle {
+            .insert(SpriteBundle {
                 texture: sprite_sheet
                     .sprite
                     .get(sprite.as_str())
                     .expect(format!("{} not found", sprite).as_str())
                     .clone()
                     .into(),
-                atlas: sprite_sheet.layout.clone().into(),
                 global_transform: *global_transform,
                 transform: *local_transform,
+                ..Default::default()
+            })
+            .insert(TextureAtlas {
+                layout: sprite_sheet.layout.clone(),
                 ..Default::default()
             })
             .insert(PlayerProjectileMarker)

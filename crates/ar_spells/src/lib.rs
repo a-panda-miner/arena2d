@@ -2,14 +2,13 @@ pub mod generator;
 
 use crate::generator::GenerateSpellsPlugin;
 use ar_core::{
-    AppState, MonsterLayoutType, ProjectilePattern, SpellAOEType, SpellProjectileType, SpellSet,
-    SpellSwingType, SpellType, WeaponType,
+    AppState, ProjectilePattern, SpellAOEType, SpellSet,
+    SpellType,
 };
 use ar_template::SpellTemplates;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
-use serde::Deserialize;
 
 #[derive(Debug, AssetCollection, Resource)]
 pub struct SpellSprites {

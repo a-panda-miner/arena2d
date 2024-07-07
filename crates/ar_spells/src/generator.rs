@@ -10,13 +10,13 @@ impl Plugin for GenerateSpellsPlugin {
         );
     }
 }
-
+/*
 /// A hashmap of swingspells that exist
 #[derive(Resource)]
 pub struct SwingSpells {
     swing_spells: HashMap<String, SpellSwing>,
 }
-
+*/
 /// A hashmap of projectilespells that exist
 #[derive(Resource, Debug)]
 pub struct ProjectileSpells {

@@ -28,9 +28,10 @@ fn spawn_monsters(
     if !timer.0.tick(time.delta()).just_finished() {
         return;
     }
+    // How many monsters should be on the map
     let mut spawn_count = 1 + (minutes_survived.0 / 4) + (game_score.0 / 50);
     if monsters_alive.0 >= spawn_count {
-        spawn_count = 1;
+        spawn_count = 1; // It spawns beyond the limit
     } else {
         spawn_count -= monsters_alive.0;
     }
@@ -41,6 +42,7 @@ fn spawn_monsters(
         let random = random;
         let left_right: bool = random[0] % 2 == 0;
         let up_down: bool = random[1] % 2 == 0;
+        // TODO! Base it on game_score and minutes_survived instead of purely RNG
         let difficulty = random[2] % 4;
         let spawn_point: Vec3 = if left_right {
             if up_down {
@@ -102,14 +104,17 @@ fn spawn_monsters(
         let monster_id = commands
             .spawn_empty()
             .insert(MonsterMarker)
-            .insert(SpriteSheetBundle {
+            .insert(SpriteBundle {
                 texture: monster_sprites
                     .monster_sheets
                     .get(sprite_name.as_str())
                     .unwrap()
                     .clone(),
                 transform: Transform::from_translation(spawn_point),
-                atlas: TextureAtlas::from(layout),
+                ..Default::default()
+            })
+            .insert(TextureAtlas {
+                layout: layout.clone(),
                 ..Default::default()
             })
             .insert(BaseSpeed(base_speed))

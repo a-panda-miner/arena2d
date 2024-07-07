@@ -32,8 +32,7 @@ use bevy_fast_tilemap::plugin::FastTileMapPlugin;
 use avian2d::prelude::*;
 use iyes_progress::ProgressPlugin;
 
-// Remove the comment once inspector_egui is available for bevy 0.14
-// use bevy_inspector_egui::quick::WorldInspectorPlugin;
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 use bevy_rand::prelude::{EntropyPlugin, WyRand};
 
@@ -104,7 +103,7 @@ impl Plugin for GamePlugin {
             .add_plugins(PhysicsPlugins::new(FixedUpdate))
             .add_plugins(FrameTimeDiagnosticsPlugin::default())
             .add_plugins(LogDiagnosticsPlugin::default())
-            //.add_plugins(WorldInspectorPlugin::new())
+            .add_plugins(WorldInspectorPlugin::new())
             .insert_resource(Time::<Fixed>::from_hz(PFPS))
             .add_loading_state(
                 LoadingState::new(AppState::LoadingAssets)

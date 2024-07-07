@@ -67,8 +67,7 @@ bevy_fast_tilemap = { git = "https://github.com/droggelbecher/bevy-fast-tilemap"
 #bevy_fast_tilemap = "0.8" # not released on crates.io yet
 
 # GUI Inspector
-#not updated to bevy 0.14 yet
-#bevy-inspector-egui = "0.25"
+bevy-inspector-egui = "0.25"
 
 # Particles
 # not updated to bevy 0.14 yet
