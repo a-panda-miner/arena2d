@@ -47,6 +47,7 @@ pub struct SpellProjectile {
     pub radius: f32,
     pub mass: f32,
     pub lifetime: f32,
+    pub penetration: u8,
 }
 
 #[derive(Clone, Debug)]
@@ -82,6 +83,7 @@ pub fn setup_generate_spells(loaded_spells: Res<SpellTemplates>, mut commands: C
                     radius: projectile.projectile_radius,
                     mass: projectile.projectile_mass,
                     lifetime: projectile.projectile_lifetime,
+                    penetration: projectile.projectile_penetration.unwrap_or(0),
                 };
                 projectile_spells.insert(name.clone(), proj);
             }

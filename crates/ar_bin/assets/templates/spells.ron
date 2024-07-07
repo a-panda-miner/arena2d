@@ -13,6 +13,7 @@ SpellTemplates(
                 projectile_radius: 8.0,
                 projectile_mass: 0.1,
                 projectile_lifetime: 0.8,
+                projectile_penetration: Some(0),
             ))
         ),
         "swordswing": SpellTemplate(

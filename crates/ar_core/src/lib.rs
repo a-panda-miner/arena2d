@@ -107,9 +107,11 @@ pub struct MonsterMarkerSmall;
 #[derive(Component)]
 pub struct UiMarker;
 
+/// Armor reduces damage taken
 #[derive(Component)]
 pub struct Armor;
 
+/// Shield prevents damage
 #[derive(Component)]
 pub struct Shield;
 
@@ -215,6 +217,7 @@ pub enum SpellType {
     AoE,
 }
 
+/// Reward is automatically given when a condition is met
 #[derive(Clone, Debug, Deserialize)]
 pub enum RewardType {
     Currency,
@@ -222,6 +225,7 @@ pub enum RewardType {
     PetXp,
 }
 
+/// Drop is dropped on the ground and the player must pick it up
 #[derive(Clone, Debug, Deserialize)]
 pub enum DropType {
     Currency,
@@ -285,10 +289,27 @@ pub struct MonstersAlive(pub usize);
 #[derive(Resource)]
 pub struct MinutesSurvived(pub usize);
 
-/// Used for spawning projectiles from where the player was last facing
+/// Used for spawning projectiles and dashing from where the player was last facing
 #[derive(Resource)]
 pub struct PlayerLastDirection {
     pub direction: Vec2,
+}
+
+/// Defines the cooldown of the dash and if the player is dashing
+#[derive(Resource)]
+pub struct PlayerDash {
+    pub timer: Timer,
+    pub cooldown_reduction: f32, // 0.0 - 1.0
+    pub dashing: bool,
+}
+
+/// Handles the player's stamina, used for boosting movespeed 
+/// and special attacks
+#[derive(Resource)]
+pub struct Stamina {
+    pub current_stamina: u32,
+    pub max_stamina: u32,
+    pub stamina_regen: u32,
 }
 
 #[derive(Clone, Deserialize, Debug)]

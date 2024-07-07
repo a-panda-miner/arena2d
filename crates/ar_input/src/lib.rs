@@ -52,9 +52,9 @@ fn player_input_manager(
     let a = keys.pressed(KeyCode::KeyA);
     let s = keys.pressed(KeyCode::KeyS);
     let d = keys.pressed(KeyCode::KeyD);
-    let q = keys.pressed(KeyCode::KeyQ);
-    let e = keys.pressed(KeyCode::KeyE);
-    let r = keys.pressed(KeyCode::KeyR);
+    let q = keys.just_pressed(KeyCode::KeyQ);
+    let e = keys.just_pressed(KeyCode::KeyE);
+    let r = keys.just_pressed(KeyCode::KeyR);
 
     let boost = keys.pressed(KeyCode::ShiftLeft);
     let dash = keys.pressed(KeyCode::Space);

@@ -69,7 +69,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
 
     commands.insert_resource(PlayerHandler { player_id });
     commands.insert_resource(PlayerLastDirection {
-        direction: Vec2::ZERO,
+        direction: Vec2::Y,
     });
 }
 
