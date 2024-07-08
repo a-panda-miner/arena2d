@@ -119,12 +119,13 @@ fn handle_collision(
     damage: Query<&Damage>,
     monster_query: Query<Entity, With<MonsterMarker>>,
     monster_projectile_query: Query<Entity, With<MonsterProjectileMarker>>,
-    player_projectile_query: Query<Entity, With<PlayerProjectileMarker>>,
+    mut player_projectile_query: Query<(Entity, &mut CollidedHash), With<PlayerProjectileMarker>>,
     player_query: Query<Entity, With<PlayerMarker>>,
 ) {
     if ev_collision_reader.is_empty() {
         return;
     }
+    // The largest damage given to the player this frame
     let mut player_damage = 0;
     let mut source: Entity = Entity::from_raw(0);
     for CollisionStarted(entity1, entity2) in ev_collision_reader.read() {
@@ -147,6 +148,13 @@ fn handle_collision(
             }
         } else if monster_query.contains(entity1) {
             if player_projectile_query.contains(entity2) {
+                // Unwrap safety: It is guaranteed to have the entity as we just checked in the 'if'
+                let (_, mut collided) = player_projectile_query.get_mut(entity2).unwrap();
+                if collided.0.contains(&entity1) {
+                    continue;
+                } else {
+                    collided.0.insert(entity1);
+                }
                 ev_damage.send(DamageEvent {
                     damage: damage.get(entity2).unwrap().0,
                     target: entity1,
@@ -155,6 +163,13 @@ fn handle_collision(
             }
         } else if monster_query.contains(entity2) {
             if player_projectile_query.contains(entity1) {
+                // Unwrap safety: It is guaranteed to have the entity as we just checked in the 'if'
+                let (_, mut collided) = player_projectile_query.get_mut(entity1).unwrap();
+                if collided.0.contains(&entity2) {
+                    continue;
+                } else {
+                    collided.0.insert(entity2);
+                }
                 ev_damage.send(DamageEvent {
                     damage: damage.get(entity1).unwrap().0,
                     target: entity2,
@@ -260,17 +275,11 @@ fn damage_applier(
     if ev_damage.is_empty() {
         return;
     }
+    let mut despawned_projectiles = HashSet::new();
     for ev in ev_damage.read() {
-        if let Ok((_, mut pen)) = player_projectile.get_mut(ev.source) {
-            if pen.0 == 0 {
-                // as the command isn't applied until at least after the end of the function,
-                // it is safe to do so
-                commands.entity(ev.source).despawn_recursive();
-            } else {
-                pen.0 -= 1;
-            }
+        if despawned_projectiles.contains(&ev.source) {
+            continue;
         }
-
         if let Ok(mut health) = health.get_mut(ev.target) {
             if health.0 <= ev.damage {
                 death_event.send(DeathEvent { target: ev.target });
@@ -282,6 +291,18 @@ fn damage_applier(
             damage: ev.damage,
             target: ev.target,
         });
+        if let Ok((projectile_id, mut pen)) = player_projectile.get_mut(ev.source) {
+            if pen.0 == 0 {
+                // as the command isn't applied until at least after the end of the function,
+                // it is safe to do so
+                commands.entity(ev.source).despawn_recursive();
+
+                // flags the entity so it can't do any more damage this frame
+                despawned_projectiles.insert(projectile_id);
+            } else {
+                pen.0 -= 1;
+            }
+        }
     }
     ev_damage.clear();
 }
