@@ -14,3 +14,7 @@
 
 ### LICENSE 
 All assets and written code are CC0 
+
+
+### Version 0.1
+This version was made with Bevy 0.13 and bevy_xpbd2d
