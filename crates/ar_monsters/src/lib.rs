@@ -6,13 +6,13 @@ pub mod spawn;
 
 use crate::ai::{AIPlugin, Chase};
 use crate::animation::MonsterAnimationPlugin;
+use avian2d::prelude::*;
 use bevy::math::vec2;
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
 use bevy::utils::Duration;
 use bevy_rand::prelude::WyRand;
 use bevy_rand::resource::GlobalEntropy;
-use avian2d::prelude::*;
 use rand_core::RngCore;
 use spawn::SpawnPlugin;
 

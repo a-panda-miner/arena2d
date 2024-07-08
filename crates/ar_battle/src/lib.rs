@@ -1,14 +1,14 @@
 use ar_core::{
-    AppState, BattleSet, BoostUsage, Damage, DashUsage, DeathEvent, DisplayDamageEvent, Health,
-    Layer, LifeTime, MonsterMarker, MonsterProjectileMarker, PlayerDirection,
-    PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent,
-    PlayerProjectileMarker, ProjectilePattern,
+    AppState, BattleSet, BoostUsage, CollidedHash, Damage, DashUsage, DeathEvent,
+    DisplayDamageEvent, Health, Layer, LifeTime, MonsterMarker, MonsterProjectileMarker,
+    Penetration, PlayerDirection, PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker,
+    PlayerMinusHpEvent, PlayerProjectileMarker, ProjectilePattern,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
-use bevy::prelude::*;
-use bevy::utils::HashMap;
-use bevy_asset_loader::prelude::*;
 use avian2d::{prelude::*, schedule::PhysicsSchedule, schedule::PhysicsStepSet};
+use bevy::prelude::*;
+use bevy::utils::{HashMap, HashSet};
+use bevy_asset_loader::prelude::*;
 
 pub struct BattlePlugin;
 
@@ -110,6 +110,8 @@ pub struct PlayerDamageEvent {
 
 /// Handles the possible collisions accordinly to Layers' rules,
 /// Player only gets damaged by the largest damage source possible
+// TODO! Check for collided entities with projectiles,
+// ignore collisions with entities already collided with the same projectile
 fn handle_collision(
     mut ev_collision_reader: EventReader<CollisionStarted>,
     mut ev_damage: EventWriter<DamageEvent>,
@@ -247,18 +249,28 @@ fn queue_spawn_player_projectiles(
 
 /// Applies damage to the target,
 /// except for the player
-// TODO! Check for bounce/penetration count and
-// handle it correctly, despawing the projectile when the count is 0
 fn damage_applier(
+    mut commands: Commands,
     mut ev_damage: EventReader<DamageEvent>,
     mut health: Query<&mut Health, Without<PlayerMarker>>,
     mut death_event: EventWriter<DeathEvent>,
     mut display_damage: EventWriter<DisplayDamageEvent>,
+    mut player_projectile: Query<(Entity, &mut Penetration), With<PlayerProjectileMarker>>,
 ) {
     if ev_damage.is_empty() {
         return;
     }
     for ev in ev_damage.read() {
+        if let Ok((_, mut pen)) = player_projectile.get_mut(ev.source) {
+            if pen.0 == 0 {
+                // as the command isn't applied until at least after the end of the function,
+                // it is safe to do so
+                commands.entity(ev.source).despawn_recursive();
+            } else {
+                pen.0 -= 1;
+            }
+        }
+
         if let Ok(mut health) = health.get_mut(ev.target) {
             if health.0 <= ev.damage {
                 death_event.send(DeathEvent { target: ev.target });
@@ -350,9 +362,13 @@ fn spawn_player_projectiles(
                 [Layer::Monster, Layer::MonsterProjectile],
             ))
             .insert(Damage(proj.damage))
+            .insert(Penetration(proj.penetration))
             .insert(LifeTime {
                 timer: Timer::from_seconds(proj.lifetime, TimerMode::Once),
             })
+            .insert(CollidedHash(HashSet::with_capacity(
+                proj.penetration.into(),
+            )))
             .remove::<PlayerProjectileSpawner>();
     }
 }

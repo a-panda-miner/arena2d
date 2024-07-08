@@ -6,12 +6,12 @@ pub struct ParticlesPlugin;
 
 impl Plugin for ParticlesPlugin {
     fn build(&self, _app: &mut App) {
-//        app.add_plugins(HanabiPlugin)
-//            .add_systems(FixedUpdate, player_damaged_particles);
+        //        app.add_plugins(HanabiPlugin)
+        //            .add_systems(FixedUpdate, player_damaged_particles);
     }
 }
 
-// 
+//
 //fn setup_particle_effects(mut effects: ResMut<Assets<EffectAsset>>) {
 //
 //}
@@ -25,4 +25,3 @@ impl Plugin for ParticlesPlugin {
 //    }
 //
 //}
-

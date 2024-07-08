@@ -1,10 +1,10 @@
 // Structs and enums that are used by more than one crate
 // to avoid a circular dependency
 
-use bevy::prelude::*;
-use bevy::utils::HashMap;
-use bevy::ecs::system::SystemId;
 use avian2d::prelude::*;
+use bevy::ecs::system::SystemId;
+use bevy::prelude::*;
+use bevy::utils::{HashMap, HashSet};
 use serde::Deserialize;
 
 /// Defines tha main states of the app
@@ -104,6 +104,18 @@ pub struct MonsterMarker;
 #[derive(Component)]
 pub struct MonsterMarkerSmall;
 
+/// A hashset containing entities' ID that the projectile has collided with already,
+/// so there are no collisions events happening multiple times when a projectile collides
+/// with a monster/object
+/// Performance concerns:
+/// to avoid extra allocations initiate with 'with_capacity(n)', where n is the projectile_penetration number
+#[derive(Component)]
+pub struct CollidedHash(pub HashSet<Entity>);
+
+/// The number of times the projectile can hit different monsters before despawning
+#[derive(Component)]
+pub struct Penetration(pub u8);
+
 #[derive(Component)]
 pub struct UiMarker;
 
@@ -167,7 +179,6 @@ pub struct ZoomIn;
 /// the camera zoom levels is predetermined in the camera plugin
 #[derive(Debug, Event)]
 pub struct ZoomOut;
-
 
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'
@@ -303,7 +314,7 @@ pub struct PlayerDash {
     pub dashing: bool,
 }
 
-/// Handles the player's stamina, used for boosting movespeed 
+/// Handles the player's stamina, used for boosting movespeed
 /// and special attacks
 #[derive(Resource)]
 pub struct Stamina {

@@ -3,7 +3,7 @@
 
 use bevy::prelude::*;
 
-pub const BG_COLOR: (u8, u8, u8) = (0, 0, 0); 
+pub const BG_COLOR: (u8, u8, u8) = (0, 0, 0);
 
 pub const PFPS: f64 = 64.0;
 
@@ -29,7 +29,6 @@ pub enum CameraMode {
     #[default]
     Follow,
 }
-
 
 #[derive(Debug, Default, Resource)]
 pub struct NumbersDisplayConf {

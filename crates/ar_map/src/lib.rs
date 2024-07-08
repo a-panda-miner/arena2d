@@ -2,7 +2,7 @@ use ar_core::{AppState, MapSet};
 use bevy::math::{uvec2, vec2};
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
-use bevy_fast_tilemap::{map::Map, bundle::MapBundleManaged};
+use bevy_fast_tilemap::{bundle::MapBundleManaged, map::Map};
 use rand::prelude::*;
 
 const TILE_SIZE: u32 = 16;

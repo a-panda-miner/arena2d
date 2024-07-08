@@ -3,9 +3,9 @@ use ar_core::{
     PlayerLastDirection, PlayerMarker, PlayerSet,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
+use avian2d::prelude::*;
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
-use avian2d::prelude::*;
 
 pub struct PlayerPlugin;
 
@@ -68,9 +68,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .id();
 
     commands.insert_resource(PlayerHandler { player_id });
-    commands.insert_resource(PlayerLastDirection {
-        direction: Vec2::Y,
-    });
+    commands.insert_resource(PlayerLastDirection { direction: Vec2::Y });
 }
 
 // TODO! This should be chosen by the player at the menu before the game starts

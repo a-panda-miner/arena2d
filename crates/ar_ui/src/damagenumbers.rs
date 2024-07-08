@@ -1,6 +1,6 @@
 use crate::{DisplayDamageEvent, FontAssets, LifeTime, PlayerMarker, PlayerMinusHpEvent, UiSet};
-use bevy::prelude::*;
 use bevy::color::palettes::css::{TOMATO, YELLOW};
+use bevy::prelude::*;
 pub struct DamageNumbersPlugin;
 
 impl Plugin for DamageNumbersPlugin {

@@ -7,9 +7,9 @@ use ar_core::{
     AppState, DisplayDamageEvent, Health, LifeTime, MaxHealth, PlayerMarker, PlayerMinusHpEvent,
     UiMarker, UiSet,
 };
+use bevy::color::palettes::css::SILVER;
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
-use bevy::color::palettes::css::SILVER;
 
 #[derive(AssetCollection, Resource)]
 pub struct FontAssets {

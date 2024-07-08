@@ -1,7 +1,6 @@
 use ar_core::{
-    BGMusicMarker, BoostUsage, ChangeBackgroundEvent, Cooldown, DashUsage, InputSet,
-    PlayerDirection, PlayerLastDirection, PlayerMarker, ZoomIn, ZoomOut, CameraFollowState,
-    OneShotSystems
+    BGMusicMarker, BoostUsage, CameraFollowState, ChangeBackgroundEvent, Cooldown, DashUsage,
+    InputSet, OneShotSystems, PlayerDirection, PlayerLastDirection, PlayerMarker, ZoomIn, ZoomOut,
 };
 use bevy::prelude::*;
 
@@ -12,7 +11,6 @@ struct BButtonCooldown(Timer);
 
 #[derive(Resource)]
 struct RButtonCooldown(Timer);
-
 
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
@@ -59,7 +57,7 @@ fn player_input_manager(
     let boost = keys.pressed(KeyCode::ShiftLeft);
     let dash = keys.pressed(KeyCode::Space);
 
-    if !w && !a && !s && !d && !q && !e && !boost && !dash && !r{
+    if !w && !a && !s && !d && !q && !e && !boost && !dash && !r {
         return;
     }
     let mut direction = Vec2::ZERO;
@@ -100,7 +98,12 @@ fn player_input_manager(
     let r_timer = timer.0.tick(time.delta()).finished();
 
     if r && r_timer {
-        commands.run_system(*oneshot.0.get("change_camera_follow_state").expect("Missing change_camera_follow_state system"));
+        commands.run_system(
+            *oneshot
+                .0
+                .get("change_camera_follow_state")
+                .expect("Missing change_camera_follow_state system"),
+        );
         timer.0.reset();
     }
 }
@@ -180,14 +183,11 @@ fn change_background_music(
     timer.0.reset();
 }
 
-pub fn change_camera_follow_state(
-    mut camera_state: ResMut<CameraFollowState>,
-) {
-
+pub fn change_camera_follow_state(mut camera_state: ResMut<CameraFollowState>) {
     let state;
     match *camera_state {
-        CameraFollowState::Player => { state = CameraFollowState::Rect },
-        CameraFollowState::Rect => { state = CameraFollowState::Player },
+        CameraFollowState::Player => state = CameraFollowState::Rect,
+        CameraFollowState::Rect => state = CameraFollowState::Player,
     }
     *camera_state = state;
 }
