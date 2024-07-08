@@ -1,6 +1,6 @@
 use ar_core::{
-    AppState, Cooldown, Damage, Health, Layer, MaxHealth, PlayerInvulnerableFrames,
-    PlayerLastDirection, PlayerMarker, PlayerSet,
+    AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MaxHealth, MaxStamina,
+    PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerSet, StaminaRegen,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::prelude::*;
@@ -63,6 +63,9 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         })
         .insert(Health(100))
         .insert(MaxHealth(100))
+        .insert(CurrentStamina(1.))
+        .insert(MaxStamina(10.))
+        .insert(StaminaRegen(0.1))
         .insert(Damage(1))
         .insert(OwnedProjectileSpells { spells: vec![] })
         .id();

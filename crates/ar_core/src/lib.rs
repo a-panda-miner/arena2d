@@ -314,14 +314,17 @@ pub struct PlayerDash {
     pub dashing: bool,
 }
 
-/// Handles the player's stamina, used for boosting movespeed
-/// and special attacks
-#[derive(Resource)]
-pub struct Stamina {
-    pub current_stamina: u32,
-    pub max_stamina: u32,
-    pub stamina_regen: u32,
-}
+/// The max stamina the entity can have
+#[derive(Component)]
+pub struct MaxStamina(pub f32);
+
+/// The current stamina of the entity
+#[derive(Component)]
+pub struct CurrentStamina(pub f32);
+
+/// Regenerates stamina over time
+#[derive(Component)]
+pub struct StaminaRegen(pub f32);
 
 #[derive(Clone, Deserialize, Debug)]
 pub enum SpellAOEType {

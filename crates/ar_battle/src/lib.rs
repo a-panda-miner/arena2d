@@ -1,8 +1,9 @@
 use ar_core::{
-    AppState, BattleSet, BoostUsage, CollidedHash, Damage, DashUsage, DeathEvent,
-    DisplayDamageEvent, Health, Layer, LifeTime, MonsterMarker, MonsterProjectileMarker,
-    Penetration, PlayerDirection, PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker,
-    PlayerMinusHpEvent, PlayerProjectileMarker, ProjectilePattern,
+    AppState, BattleSet, BoostUsage, CollidedHash, CurrentStamina, Damage, DashUsage, DeathEvent,
+    DisplayDamageEvent, Health, Layer, LifeTime, MaxStamina, MonsterMarker,
+    MonsterProjectileMarker, Penetration, PlayerDirection, PlayerInvulnerableFrames,
+    PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent, PlayerProjectileMarker,
+    ProjectilePattern, StaminaRegen,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::{prelude::*, schedule::PhysicsSchedule, schedule::PhysicsStepSet};
@@ -50,7 +51,11 @@ impl Plugin for BattlePlugin {
             )
             .add_systems(
                 FixedUpdate,
-                (queue_spawn_player_projectiles, spawn_player_projectiles)
+                (
+                    queue_spawn_player_projectiles,
+                    spawn_player_projectiles,
+                    regenerate_stamina,
+                )
                     .chain()
                     .in_set(BattleSet),
             );
@@ -391,5 +396,16 @@ fn spawn_player_projectiles(
                 proj.penetration.into(),
             )))
             .remove::<PlayerProjectileSpawner>();
+    }
+}
+
+fn regenerate_stamina(
+    mut stamina_query: Query<(&mut CurrentStamina, &MaxStamina, &StaminaRegen)>,
+    time: Res<Time>,
+) {
+    for (mut stamina, max_stamina, regen) in stamina_query.iter_mut() {
+        if stamina.0 < max_stamina.0 {
+            stamina.0 = (stamina.0 + regen.0 * time.delta().as_secs_f32()).max(max_stamina.0);
+        }
     }
 }
