@@ -14,3 +14,6 @@
 
 ### LICENSE 
 All assets and written code are CC0 
+
+### Version 0.2
+This was upgraded from Bevy 0.13 to 0.14 and from xpbd2d to avian2d
