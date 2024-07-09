@@ -5,14 +5,15 @@ use ar_battle::{BattlePlugin, SpellsSheetSmall};
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{
-    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, MapSet, MonsterSet, PlayerSet,
-    SpellSet, UiSet, UtilSet,
+    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, MapSet, MonsterSet, ParticleSet,
+    PlayerSet, SpellSet, UiSet, UtilSet,
 };
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
 use ar_map::{MapPlugin, TilesetHandle};
 use ar_monsters::MonsterPlugin;
 use ar_oneshot::OneShotPlugin;
+use ar_particles::ParticlesPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_spells::SpellsPlugin;
 use ar_template::TemplatePlugin;
@@ -24,6 +25,7 @@ use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     log::{Level, LogPlugin},
     prelude::*,
+    render::{render_resource::WgpuFeatures, settings::WgpuSettings, RenderPlugin},
     window::{PresentMode, WindowTheme},
 };
 
@@ -40,6 +42,11 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
+        let mut wgpu_settings = WgpuSettings::default();
+        wgpu_settings
+            .features
+            .set(WgpuFeatures::VERTEX_WRITABLE_STORAGE, true);
+
         app.add_plugins(
             DefaultPlugins
                 .set(LogPlugin {
@@ -79,6 +86,10 @@ impl Plugin for GamePlugin {
                     },
                 })
                 .set(ImagePlugin::default_nearest())
+                .set(RenderPlugin {
+                    render_creation: wgpu_settings.into(),
+                    synchronous_pipeline_compilation: false,
+                })
                 .build(),
         )
         .init_state::<AppState>()
@@ -97,6 +108,7 @@ impl Plugin for GamePlugin {
         .add_plugins(UiPlugin)
         .add_plugins(UtilPlugin)
         .add_plugins(SpellsPlugin)
+        .add_plugins(ParticlesPlugin)
         .add_plugins(PhysicsPlugins::new(FixedUpdate))
         .add_plugins(FrameTimeDiagnosticsPlugin::default())
         .add_plugins(LogDiagnosticsPlugin::default())
@@ -136,9 +148,11 @@ impl Plugin for GamePlugin {
                 (UiSet.run_if(in_state(AppState::InBattle))),
                 (UtilSet.run_if(in_state(AppState::InBattle))),
                 (BattleSet.run_if(in_state(AppState::InBattle))),
+                (ParticleSet.run_if(in_state(AppState::InBattle))),
             ),
         )
         .configure_sets(OnEnter(AppState::InBattle), (UiSet).after(PlayerSet))
-        .configure_sets(OnEnter(AppState::InBattle), (SpellSet).before(PlayerSet));
+        .configure_sets(OnEnter(AppState::InBattle), (SpellSet).before(PlayerSet))
+        .configure_sets(OnEnter(AppState::InBattle), (ParticleSet).after(UiSet));
     }
 }

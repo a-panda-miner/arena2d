@@ -70,8 +70,8 @@ bevy_fast_tilemap = { git = "https://github.com/droggelbecher/bevy-fast-tilemap"
 bevy-inspector-egui = "0.25"
 
 # Particles
-# not updated to bevy 0.14 yet
-#bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
+bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main", default-features = false, features = ["2d"] }
+#bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] } # not released on crates.io yet
 
 [workspace.dependencies.bevy]
 version = "0.14"

@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 
-#bevy_hanabi = { workspace = true }
+bevy_hanabi = { workspace = true }
 bevy = { workspace = true }
 
 [lints]
