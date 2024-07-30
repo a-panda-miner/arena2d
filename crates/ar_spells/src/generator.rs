@@ -51,6 +51,26 @@ pub struct SpellProjectile {
 }
 
 #[derive(Clone, Debug)]
+pub struct SpellProjectileExplosive {
+    pub name: String,
+    pub sprite: String,
+    pub cooldown: Timer,
+    pub count: u8,
+    pub pattern: ProjectilePattern,
+    pub projectile_radius: f32,
+    pub projectile_mass: f32,
+    pub projectile_movespeed: f32,
+    pub projectile_lifetime: f32,
+    pub damage_max: usize,
+    pub damage_min: usize,
+    pub explosion_radius: f32,
+    pub max_damage_aoe: f32,
+    pub min_damage_aoe: f32,
+    pub trail_damage: Option<usize>,
+    pub trail_lifetime: Option<f32>,    
+}
+
+#[derive(Clone, Debug)]
 pub struct SpellSwing {
     pub name: String,
     pub sprite: String,
@@ -60,6 +80,8 @@ pub struct SpellSwing {
     pub length: f32,
     pub aoe: SpellAOEType,
 }
+
+
 
 /// Creates the SpellSwing, SpellProjectile structs from the SpellTemplates
 /// Must be run before setup_player as the player is spawned with a spell

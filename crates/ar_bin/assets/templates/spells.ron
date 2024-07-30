@@ -21,11 +21,29 @@ SpellTemplates(
             cooldown: 2.4,
             spell_main_type: Swing,
             swing_type_struct: Some(SpellSwingType(
-                swing_sprite: "sword.png",
+                swing_sprite: "sword8x8",
                 swing_damage: 1,
                 swing_arc: 60.0,
                 swing_length: 5.0,
             )),
-        )
+        ),
+        "fireball": SpellTemplate(
+            name: "fireball",
+            cooldown: 5.0,
+            spell_main_type: ProjectileExplosive,
+            explosive_projectile_struct: Some(SpellProjectileExplosiveType(
+                projectile_sprite: "fireball8x8",
+                projectile_radius: 10.,
+                projectile_mass: 4.,
+                projectile_movespeed: 15.,
+                projectile_lifetime: 10.,
+                damage_max: 5,
+                damage_min: 2,
+                explosion_sprite: "explosion8x8",
+                max_damage_aoe: 20.,
+                min_damage_aoe: 35.,
+
+            )),
+        ),
     }
 )

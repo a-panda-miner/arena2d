@@ -226,6 +226,7 @@ pub enum MonsterLayoutType {
 pub enum SpellType {
     Summon,
     Projectile,
+    ProjectileExplosive,
     Swing,
     Buff,
     AoE,
@@ -369,6 +370,21 @@ pub struct SpellProjectileType {
     pub projectile_penetration: Option<u8>,
 }
 
+#[derive(Clone, Deserialize, Debug)]
+pub struct SpellProjectileExplosiveType {
+    pub projectile_sprite: String,
+    pub projectile_radius: f32,
+    pub projectile_mass: f32,
+    pub projectile_movespeed: f32,
+    pub projectile_lifetime: f32,
+    pub damage_max: usize,
+    pub damage_min: usize,
+    pub explosion_sprite: String,
+    pub max_damage_aoe: f32,
+    pub min_damage_aoe: f32,
+    pub trail_damage: Option<usize>,
+    pub trail_lifetime: Option<f32>,
+}
 #[derive(Clone, Deserialize, Debug)]
 pub struct SpellSwingType {
     pub swing_sprite: String,

@@ -50,7 +50,7 @@ impl Plugin for GamePlugin {
         app.add_plugins(
             DefaultPlugins
                 .set(LogPlugin {
-                    filter: "wpgu=error,bevy_render=info,bevy_ecs=trace".to_string(),
+                    filter: "wpgu=error,bevy_render=error,bevy_ecs=trace,bevy_pbr=error,naga=warn".to_string(),
                     level: Level::INFO,
                     custom_layer: |_| None,
                 })

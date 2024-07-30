@@ -24,7 +24,7 @@ codegen-units = 1
 # no unwinding on panic
 panic = "abort"
 # debug info
-debug = 0 #change to 1 or 2 to get more useful backtraces in debugger
+debug = 0
 # strip debug symbols
 strip = "symbols"
 
@@ -70,8 +70,7 @@ bevy_fast_tilemap = { git = "https://github.com/droggelbecher/bevy-fast-tilemap"
 bevy-inspector-egui = "0.25"
 
 # Particles
-bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main", default-features = false, features = ["2d"] }
-#bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] } # not released on crates.io yet
+bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
 
 [workspace.dependencies.bevy]
 version = "0.14"

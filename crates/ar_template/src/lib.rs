@@ -1,6 +1,7 @@
 use ar_core::{
     AppState, DropType, LoadingTemplatesSet, MonsterLayoutType, RewardType, SpellAOEType,
     SpellBuffType, SpellProjectileType, SpellSummonType, SpellSwingType, SpellType, WeaponType,
+    SpellProjectileExplosiveType,
 };
 use ar_enemies::{MonsterAI, QualityMonster};
 use bevy::prelude::*;
@@ -85,6 +86,7 @@ pub struct SpellTemplate {
     pub swing_type_struct: Option<SpellSwingType>,
     pub buff_type_struct: Option<SpellBuffType>,
     pub aoe_type_struct: Option<SpellAOEType>,
+    pub explosive_projectile_struct: Option<SpellProjectileExplosiveType>,
 }
 
 #[derive(Clone, Deserialize, Debug, Resource)]
