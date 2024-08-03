@@ -10,6 +10,7 @@ use serde::Deserialize;
 /// Defines tha main states of the app
 /// LoadingAssets loads the assets during the App startup,
 /// LoadingTemplates initiates some of those assets into resources,
+/// Setup reads the save file and loads the associated resources and options (not implemented)
 /// InitialScreen is the main menu before starting the game (not implemented)
 /// InBattle is the main game state
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
@@ -37,6 +38,16 @@ pub enum PauseState {
     Shop,
     PowerUp,
     MetaUpgrades,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+pub enum ItemType {
+    Coin,
+    Ore,
+    Lumber,
+    Diamond,
+    ExperienceOrb,
+    Booster,
 }
 
 /// These systems are One-Shot systems, they are ran by calling commands.run_system(id)
@@ -183,6 +194,14 @@ pub struct ZoomIn;
 #[derive(Debug, Event)]
 pub struct ZoomOut;
 
+/// An event to spawn items, triggered on monsters' death with a % chance
+#[derive(Debug, Event)]
+pub struct SpawnItemEvent {
+    pub name: String,
+    pub value_added: usize,
+    pub position: Vec3,
+}
+
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'
 /// Player moves the camera to follow the player each frame
@@ -279,6 +298,9 @@ pub struct PlayerProjectileMarker;
 #[derive(Component)]
 pub struct MonsterProjectileMarker;
 
+#[derive(Component)]
+pub struct MagnetMarker;
+
 #[derive(PhysicsLayer)]
 pub enum Layer {
     Player,
@@ -287,6 +309,15 @@ pub enum Layer {
     PlayerProjectile,
     MonsterProjectile,
     Pet,
+    Item,
+    Magnet,
+}
+
+#[derive(Resource, Debug)]
+pub struct PickupRadius {
+    pub default_radius: f32,
+    pub multiplier: f32,
+    pub max_radius: f32,
 }
 
 /// Keeps the internal score of the game,

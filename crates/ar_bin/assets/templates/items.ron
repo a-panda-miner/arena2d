@@ -1,0 +1,20 @@
+ItemTemplates(
+    items: {
+        "exporb1": ItemTemplate(
+            name: "exorb1",
+            item_type: ExperienceOrb,
+            sprite: "exporb",
+            loot_table: 0,
+            unique: false,
+            base_value: 1,
+        ),
+        "ore": ItemTemplate(
+            name: "ore",
+            item_type: Ore,
+            sprite: "ore",
+            loot_table: 1,
+            unique: false,
+            base_value: 1,
+        )
+    }
+)

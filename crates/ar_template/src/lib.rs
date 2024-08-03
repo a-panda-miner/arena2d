@@ -1,7 +1,7 @@
 use ar_core::{
     AppState, DropType, LoadingTemplatesSet, MonsterLayoutType, RewardType, SpellAOEType,
-    SpellBuffType, SpellProjectileType, SpellSummonType, SpellSwingType, SpellType, WeaponType,
-    SpellProjectileExplosiveType,
+    SpellBuffType, SpellProjectileExplosiveType, SpellProjectileType, SpellSummonType,
+    SpellSwingType, SpellType, WeaponType, ItemType
 };
 use ar_enemies::{MonsterAI, QualityMonster};
 use bevy::prelude::*;
@@ -100,21 +100,65 @@ impl FromReader<File> for SpellTemplates {
     }
 }
 
+/// The template of an item, 
+/// used to deserialize the items from .ron file
+/// and for spawining items
+#[derive(Clone, Deserialize, Debug)]
+pub struct ItemTemplate {
+    pub name: String,
+    pub item_type: ItemType,
+    pub sprite: String,
+    pub loot_table: usize,
+    pub unique: bool,
+    pub base_value: usize,
+}
+
+
+#[derive(Resource, Clone, Deserialize, Debug)]
+pub struct ItemTemplates {
+    pub items: HashMap<String, ItemTemplate>,
+}
+
+/// A resource that contains all items loaded from the .ron,
+/// both in a flat way and organized by the loot table's number
+#[derive(Resource, Clone, Deserialize, Debug)]
+pub struct ItemsUtil {
+    pub item_names_flat: Vec<String>,
+    pub items_names_by_loot_table: HashMap<usize, Vec<String>>,
+}
+
+impl FromReader<File> for ItemTemplates {
+    fn from_reader(reader: File) -> Result<Self, ron::error::SpannedError> {
+        from_reader(reader)
+    }
+}
+
 pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<AppState>>) {
     let mut spell_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let mut monster_path = spell_path.clone();
+    let mut item_path = spell_path.clone();
+
     spell_path.push("../ar_bin/assets/templates/spells.ron");
     monster_path.push("../ar_bin/assets/templates/monsters.ron");
+    item_path.push("../ar_bin/assets/templates/items.ron");
+
     let spell_file =
         File::open(spell_path.clone()).expect(&format!("failed to load {:?}", spell_path));
     let monster_file =
         File::open(monster_path.clone()).expect(&format!("failed to load {:?}", monster_path));
+    let item_file =
+        File::open(item_path.clone()).expect(&format!("failed to load {:?}", item_path));
+
     let monstertemplate =
         MonsterTemplates::from_reader(monster_file).expect("failed to parse monsters.ron");
     let spelltemplate =
         SpellTemplates::from_reader(spell_file).expect("failed to parse spells.ron");
+    let itemtemplate =
+        ItemTemplates::from_reader(item_file).expect("failed to parse items.ron");
+
     commands.insert_resource(monstertemplate);
     commands.insert_resource(spelltemplate);
+    commands.insert_resource(itemtemplate);
 
     next_state.set(AppState::InBattle);
 }

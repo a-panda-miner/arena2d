@@ -1,6 +1,7 @@
 use ar_core::{
     AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MaxHealth, MaxStamina,
     PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerSet, StaminaRegen,
+    MagnetMarker,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::prelude::*;
@@ -68,6 +69,17 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert(StaminaRegen(0.1))
         .insert(Damage(1))
         .insert(OwnedProjectileSpells { spells: vec![] })
+        // This child is the magnet collider, used for item pickup
+        .with_children(|children| {
+            children.spawn((
+                Collider::circle(1.0),
+                CollisionLayers::new(
+                    [Layer::Magnet],
+                    [Layer::Item],
+                ),
+                MagnetMarker,
+            ));
+        })
         .id();
 
     commands.insert_resource(PlayerHandler { player_id });

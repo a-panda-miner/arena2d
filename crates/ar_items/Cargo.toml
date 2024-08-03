@@ -1,0 +1,17 @@
+[package]
+name = "ar_items"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { workspace = true }
+avian2d = { workspace = true }
+
+[lints]
+workspace = true
+
+[dependencies.ar_core]
+path = "../ar_core"
+
+[dependencies.ar_template]
+path = "../ar_template"
