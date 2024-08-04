@@ -50,6 +50,12 @@ pub enum ItemType {
     Booster,
 }
 
+#[derive(Component, Debug)]
+pub struct ItemComponent {
+    pub item_type: ItemType,
+    pub value: usize,
+}
+
 /// These systems are One-Shot systems, they are ran by calling commands.run_system(id)
 #[derive(Resource, Debug)]
 pub struct OneShotSystems(pub HashMap<String, SystemId>);
@@ -214,6 +220,12 @@ pub struct SpawnItemEvent {
     pub position: Vec3,
 }
 
+/// An event that is triggered when the player picks up an item
+#[derive(Debug, Event)]
+pub struct PickupEvent {
+    pub entity: Entity,
+}
+
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'
 /// Player moves the camera to follow the player each frame
@@ -367,6 +379,9 @@ pub struct MonstersAlive(pub usize);
 #[derive(Resource)]
 pub struct MinutesSurvived(pub usize);
 
+#[derive(Resource)]
+pub struct PlayerExperience(pub usize);
+
 /// Used for spawning projectiles and dashing from where the player was last facing
 #[derive(Resource)]
 pub struct PlayerLastDirection {
@@ -465,4 +480,20 @@ pub struct SpellBuffType {
 pub enum ProjectilePattern {
     Circle, // Shoots projectiles in a circle pattern, starting at 360° and reducing by 360°/n for each projectile, where n is projectile_count
     Line,   // Shoots projectiles one after the other in quick succession
+}
+
+// Once the player's entity is spawned, it should never be despawned
+// so the player_id is always valid to deference
+// TODO! Either initialize with a default and change it during the spawn_player() system,
+// or make a exclusive &World system that handles initialization
+#[derive(Resource)]
+pub struct PlayerHandler {
+    pub player_id: Entity,
+}
+
+/// Used to help collision logic, every collision that has this ID is
+/// a item pickup event
+#[derive(Resource)]
+pub struct MagnetHandler {
+    pub magnet_id: Entity,
 }

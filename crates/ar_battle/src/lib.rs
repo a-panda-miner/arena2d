@@ -1,9 +1,9 @@
 use ar_core::{
     AppState, BattleSet, BoostUsage, CollidedHash, CurrentStamina, Damage, DashUsage, DeathEvent,
     DisplayDamageEvent, DropItemEvent, DropsChance, Health, Layer, LifeTime, LootTables,
-    MaxStamina, MonsterMarker, MonsterProjectileMarker, Penetration, PlayerDirection,
-    PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent,
-    PlayerProjectileMarker, ProjectilePattern, StaminaRegen,
+    MagnetMarker, MaxStamina, MonsterMarker, MonsterProjectileMarker, Penetration, PickupEvent,
+    PlayerDirection, PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker,
+    PlayerMinusHpEvent, PlayerProjectileMarker, ProjectilePattern, StaminaRegen,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::{prelude::*, schedule::PhysicsSchedule, schedule::PhysicsStepSet};
@@ -40,6 +40,7 @@ impl Plugin for BattlePlugin {
             .add_event::<DisplayDamageEvent>()
             .add_event::<DeathEvent>()
             .add_event::<DropItemEvent>()
+            .add_event::<PickupEvent>()
             .add_systems(
                 PhysicsSchedule,
                 (
@@ -125,11 +126,13 @@ fn handle_collision(
     mut ev_collision_reader: EventReader<CollisionStarted>,
     mut ev_damage: EventWriter<DamageEvent>,
     mut ev_player_damage: EventWriter<PlayerDamageEvent>,
+    mut ev_itempickup: EventWriter<PickupEvent>,
     damage: Query<&Damage>,
     monster_query: Query<Entity, With<MonsterMarker>>,
     monster_projectile_query: Query<Entity, With<MonsterProjectileMarker>>,
     mut player_projectile_query: Query<(Entity, &mut CollidedHash), With<PlayerProjectileMarker>>,
     player_query: Query<Entity, With<PlayerMarker>>,
+    magnet_query: Query<Entity, With<MagnetMarker>>,
 ) {
     if ev_collision_reader.is_empty() {
         return;
@@ -155,6 +158,10 @@ fn handle_collision(
                     source = entity1;
                 }
             }
+        } else if magnet_query.contains(entity1) {
+            ev_itempickup.send(PickupEvent { entity: entity2 });
+        } else if magnet_query.contains(entity2) {
+            ev_itempickup.send(PickupEvent { entity: entity1 });
         } else if monster_query.contains(entity1) {
             if player_projectile_query.contains(entity2) {
                 // Unwrap safety: It is guaranteed to have the entity as we just checked in the 'if'

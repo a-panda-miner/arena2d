@@ -1,6 +1,7 @@
 use ar_core::{
-    AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MagnetMarker, MaxHealth, MaxStamina,
-    PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerSet, StaminaRegen,
+    AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MagnetHandler, MagnetMarker,
+    MaxHealth, MaxStamina, PlayerHandler, PlayerInvulnerableFrames, PlayerLastDirection,
+    PlayerMarker, PlayerSet, StaminaRegen, PlayerExperience,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::prelude::*;
@@ -18,15 +19,6 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-// Once the player's entity is spawned, it should never be despawned
-// so the player_id is always valid to deference
-// TODO! Either initialize with a default and change it during the spawn_player() system,
-// or make a exclusive &World system that handles initialization
-#[derive(Resource)]
-pub struct PlayerHandler {
-    pub player_id: Entity,
-}
-
 #[derive(AssetCollection, Resource)]
 pub struct SheetHandle {
     #[asset(texture_atlas_layout(tile_size_x = 16, tile_size_y = 16, columns = 2, rows = 4))]
@@ -36,6 +28,10 @@ pub struct SheetHandle {
 }
 
 fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
+    let mut magnet_id: Entity = Entity::from_raw(0);
+    
+    commands.insert_resource(PlayerExperience(0));
+
     let player_id = commands
         .spawn(PlayerMarker)
         .insert((
@@ -70,16 +66,19 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert(OwnedProjectileSpells { spells: vec![] })
         // This child is the magnet collider, used for item pickup
         .with_children(|children| {
-            children.spawn((
-                Collider::circle(1.0),
-                CollisionLayers::new([Layer::Magnet], [Layer::Item]),
-                MagnetMarker,
-            ));
+            magnet_id = children
+                .spawn((
+                    Collider::circle(1.0),
+                    CollisionLayers::new([Layer::Magnet], [Layer::Item]),
+                    MagnetMarker,
+                ))
+                .id();
         })
         .id();
 
     commands.insert_resource(PlayerHandler { player_id });
     commands.insert_resource(PlayerLastDirection { direction: Vec2::Y });
+    commands.insert_resource(MagnetHandler { magnet_id });
 }
 
 // TODO! This should be chosen by the player at the menu before the game starts

@@ -20,10 +20,9 @@ use ar_camera::{ARENA_HEIGHT_ZOOMOUT, ARENA_WIDTH_ZOOMOUT};
 use ar_core::{
     AppState, BaseSpeed, Cooldown, Damage, DropsChance, GameScore, Health, Layer, LootTables,
     MinutesSurvived, MonsterLayoutType, MonsterMarker, MonsterMarkerSmall, MonsterSet,
-    MonstersAlive, PlayerMarker,
+    MonstersAlive, PlayerHandler, PlayerMarker,
 };
 use ar_enemies::MonsterSprites;
-use ar_player::PlayerHandler;
 use ar_template::{MonsterDifficultyLists, MonsterTemplates};
 
 pub struct MonsterPlugin;

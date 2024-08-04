@@ -1,7 +1,10 @@
 // This crate handles all items that are spawned in the game world
 // and can be picked up
 
-use ar_core::{DropItemEvent, ItemMarker, ItemsSet, Layer};
+use ar_core::{
+    DropItemEvent, ItemComponent, ItemMarker, ItemsSet, Layer, PickupEvent, PlayerExperience,
+    ItemType,
+};
 use ar_template::{ItemTemplates, ItemsUtil};
 use avian2d::prelude::*;
 use bevy::prelude::*;
@@ -31,7 +34,7 @@ pub struct ItemsPlugin;
 
 impl Plugin for ItemsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(FixedUpdate, item_spanwer.in_set(ItemsSet));
+        app.add_systems(FixedUpdate, (item_spanwer, pickup_item).in_set(ItemsSet));
     }
 }
 
@@ -81,8 +84,33 @@ pub fn item_spanwer(
                 layout,
                 ..Default::default()
             })
-            .insert(Collider::circle(0.5))
+            .insert(Collider::circle(2.0))
+            .insert(Mass::from(0.1))
             .insert(RigidBody::Kinematic)
-            .insert(CollisionLayers::new([Layer::Item], [Layer::Item]));
+            .insert(CollisionLayers::new([Layer::Item], [Layer::Item, Layer::Magnet]))
+            .insert(ItemComponent {
+                item_type: item.item_type,
+                value: item.base_value,
+            });
     }
+}
+
+pub fn pickup_item(
+    mut commands: Commands,
+    mut ev_pickup: EventReader<PickupEvent>,
+    mut player_experience: ResMut<PlayerExperience>,
+    query: Query<&ItemComponent, With<ItemMarker>>,
+) {
+    for ev in ev_pickup.read() {
+        if let Ok(item) = query.get(ev.entity) {
+            match item.item_type {
+                ItemType::ExperienceOrb => {
+                    player_experience.0 += item.value;
+                }
+                _ => {}
+            }
+        }
+        commands.entity(ev.entity).despawn_recursive();
+    }
+
 }
