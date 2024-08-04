@@ -113,6 +113,9 @@ pub struct PlayerMarker;
 #[derive(Component)]
 pub struct MonsterMarker;
 
+#[derive(Component)]
+pub struct ItemMarker;
+
 /// The marker for monsters with small layout,
 /// used for animation purposes
 #[derive(Component)]
@@ -194,7 +197,13 @@ pub struct ZoomIn;
 #[derive(Debug, Event)]
 pub struct ZoomOut;
 
-/// An event to spawn items, triggered on monsters' death with a % chance
+#[derive(Debug, Event)]
+pub struct DropItemEvent {
+    pub position: Vec3,
+    pub loot_table: LootTable,
+}
+
+/// An event to spawn items
 #[derive(Debug, Event)]
 pub struct SpawnItemEvent {
     pub name: String,
@@ -259,12 +268,32 @@ pub enum RewardType {
     PetXp,
 }
 
-/// Drop is dropped on the ground and the player must pick it up
-#[derive(Clone, Debug, Deserialize)]
-pub enum DropType {
-    Currency,
-    SpecialCurrency,
-    PetXp,
+/// Loot table
+#[derive(Copy, Clone, Debug, Deserialize)]
+pub struct LootTable(pub u8);
+
+impl From<u8> for LootTable {
+    fn from(value: u8) -> Self {
+        Self(value)
+    }
+}
+
+#[derive(Clone, Debug, Component, Deserialize)]
+pub struct LootTables(pub Vec<LootTable>);
+
+impl From<Vec<u8>> for LootTables {
+    fn from(value: Vec<u8>) -> Self {
+        Self(value.into_iter().map(|x| LootTable::from(x)).collect())
+    }
+}
+
+#[derive(Clone, Debug, Component, Deserialize)]
+pub struct DropsChance(pub f32);
+
+impl From<f32> for DropsChance {
+    fn from(value: f32) -> Self {
+        Self(value)
+    }
 }
 
 #[derive(Clone, Debug, Component, Deserialize)]

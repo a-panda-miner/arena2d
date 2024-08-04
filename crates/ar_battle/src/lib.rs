@@ -1,15 +1,18 @@
 use ar_core::{
     AppState, BattleSet, BoostUsage, CollidedHash, CurrentStamina, Damage, DashUsage, DeathEvent,
-    DisplayDamageEvent, Health, Layer, LifeTime, MaxStamina, MonsterMarker,
-    MonsterProjectileMarker, Penetration, PlayerDirection, PlayerInvulnerableFrames,
-    PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent, PlayerProjectileMarker,
-    ProjectilePattern, StaminaRegen,
+    DisplayDamageEvent, DropItemEvent, DropsChance, Health, ItemMarker, Layer, LifeTime,
+    LootTables, MaxStamina, MonsterMarker, MonsterProjectileMarker, Penetration, PlayerDirection,
+    PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent,
+    PlayerProjectileMarker, ProjectilePattern, StaminaRegen,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::{prelude::*, schedule::PhysicsSchedule, schedule::PhysicsStepSet};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_asset_loader::prelude::*;
+use bevy_rand::prelude::WyRand;
+use bevy_rand::resource::GlobalEntropy;
+use rand_core::RngCore;
 
 pub struct BattlePlugin;
 
@@ -36,6 +39,7 @@ impl Plugin for BattlePlugin {
             .add_event::<DamageEvent>()
             .add_event::<DisplayDamageEvent>()
             .add_event::<DeathEvent>()
+            .add_event::<DropItemEvent>()
             .add_systems(
                 PhysicsSchedule,
                 (
@@ -312,11 +316,27 @@ fn damage_applier(
     ev_damage.clear();
 }
 
-fn death_applier(mut commands: Commands, mut ev_death: EventReader<DeathEvent>) {
+fn death_applier(
+    mut commands: Commands,
+    mut rng: ResMut<GlobalEntropy<WyRand>>,
+    item_query: Query<(&GlobalTransform, &LootTables, &DropsChance), With<ItemMarker>>,
+    mut ev_itemdrop: EventWriter<DropItemEvent>,
+    mut ev_death: EventReader<DeathEvent>,
+) {
     if ev_death.is_empty() {
         return;
     }
     for ev in ev_death.read() {
+        if let Ok((transform, table, chance)) = item_query.get(ev.target) {
+            for i in 0..table.0.len() {
+                if rng.next_u64() % 1000 < (chance.0 * 100.0) as u64 {
+                    ev_itemdrop.send(DropItemEvent {
+                        position: transform.translation(),
+                        loot_table: table.0[i],
+                    });
+                }
+            }
+        }
         commands.entity(ev.target).despawn_recursive();
     }
     ev_death.clear();

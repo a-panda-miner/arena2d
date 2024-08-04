@@ -7,6 +7,7 @@ MonsterTemplates(
             hp: 80,
             damage: 10,
             difficulty: 4,
+            loot_tables: [],
         ),
         "smallrat": MonsterTemplate(
             name: "small rat",
@@ -16,6 +17,7 @@ MonsterTemplates(
             damage: 3,
             difficulty: 0,
             movespeed: Some(2.0),
+            loot_tables: [0],
         ),
         "smallslime": MonsterTemplate(
             name: "small slime",
@@ -25,6 +27,7 @@ MonsterTemplates(
             damage: 2,
             difficulty: 3,
             movespeed: Some(1.5),
+            loot_tables: [0, 1],
         ),
         "smallzombie": MonsterTemplate(
             name: "small zombie",
@@ -34,6 +37,7 @@ MonsterTemplates(
             damage: 2,
             difficulty: 1,
             movespeed: Some(1.2),
+            loot_tables: [0, 1],
         ),
         "smallrabbit": MonsterTemplate(
             name: "small rabbit",
@@ -43,6 +47,7 @@ MonsterTemplates(
             damage: 1,
             difficulty: 2,
             movespeed: Some(2.0),
+            loot_tables: [0],
         ),
         "smallbat": MonsterTemplate(
             name: "small bat",
@@ -52,6 +57,7 @@ MonsterTemplates(
             damage: 2,
             difficulty: 1,
             movespeed: Some(1.7),
+            loot_tables: [0],
         ),
         "smallchicken": MonsterTemplate(
             name: "small chicken",
@@ -61,6 +67,7 @@ MonsterTemplates(
             damage: 2,
             difficulty: 4,
             movespeed: Some(1.3),
+            loot_tables: [0],
         ),
 
     }

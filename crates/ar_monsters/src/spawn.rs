@@ -80,6 +80,10 @@ fn spawn_monsters(
         };
         let speed: Vec2 = vec2(base_speed * direction.x, base_speed * direction.y);
 
+        let loot_tables: LootTables = monster.loot_tables.clone().into();
+
+        let drop_chance: DropsChance = monster.drops_chance.unwrap_or(1.0).into();
+
         let (layout, collider_size, mass) = match monster.layout {
             MonsterLayoutType::Small => (monster_sprites.monster_layout_small.clone(), 8.0, 20.0),
             MonsterLayoutType::Medium => (
@@ -130,6 +134,8 @@ fn spawn_monsters(
             ))
             .insert(Health(monster.hp))
             .insert(Damage(monster.damage))
+            .insert(loot_tables)
+            .insert(drop_chance)
             .insert(Cooldown(Timer::from_seconds(0.55, TimerMode::Repeating))) // Animation timer
             .insert(Chase {
                 target: target.player_id,

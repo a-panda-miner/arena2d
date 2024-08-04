@@ -205,6 +205,8 @@ dependencies = [
  "avian2d",
  "bevy",
  "bevy_asset_loader",
+ "bevy_rand",
+ "rand_core",
  "serde",
 ]
 
@@ -311,6 +313,9 @@ dependencies = [
  "ar_template",
  "avian2d",
  "bevy",
+ "bevy_asset_loader",
+ "bevy_rand",
+ "rand_core",
 ]
 
 [[package]]

@@ -1,7 +1,7 @@
 use ar_core::{
-    AppState, DropType, LoadingTemplatesSet, MonsterLayoutType, RewardType, SpellAOEType,
+    AppState, ItemType, LoadingTemplatesSet, MonsterLayoutType, RewardType, SpellAOEType,
     SpellBuffType, SpellProjectileExplosiveType, SpellProjectileType, SpellSummonType,
-    SpellSwingType, SpellType, WeaponType, ItemType
+    SpellSwingType, SpellType, WeaponType,
 };
 use ar_enemies::{MonsterAI, QualityMonster};
 use bevy::prelude::*;
@@ -25,7 +25,10 @@ impl Plugin for TemplatePlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             OnEnter(AppState::LoadingTemplates),
-            (load_templates, cache_templates_info)
+            (
+                load_templates,
+                (cache_templates_monsters_info, cache_templates_items_info),
+            )
                 .chain()
                 .in_set(LoadingTemplatesSet),
         );
@@ -55,7 +58,7 @@ pub struct MonsterTemplate {
     // and when it should be spawned
     pub quality: Option<QualityMonster>,
     // Determines what items can be dropped
-    pub drops: Option<Vec<DropType>>,
+    pub loot_tables: Vec<u8>,
     // Multiplier for the drop chance, the base is tied to DropType then multiplied
     // by this
     pub drops_chance: Option<f32>,
@@ -100,7 +103,7 @@ impl FromReader<File> for SpellTemplates {
     }
 }
 
-/// The template of an item, 
+/// The template of an item,
 /// used to deserialize the items from .ron file
 /// and for spawining items
 #[derive(Clone, Deserialize, Debug)]
@@ -108,11 +111,10 @@ pub struct ItemTemplate {
     pub name: String,
     pub item_type: ItemType,
     pub sprite: String,
-    pub loot_table: usize,
+    pub loot_table: u8,
     pub unique: bool,
     pub base_value: usize,
 }
-
 
 #[derive(Resource, Clone, Deserialize, Debug)]
 pub struct ItemTemplates {
@@ -124,7 +126,7 @@ pub struct ItemTemplates {
 #[derive(Resource, Clone, Deserialize, Debug)]
 pub struct ItemsUtil {
     pub item_names_flat: Vec<String>,
-    pub items_names_by_loot_table: HashMap<usize, Vec<String>>,
+    pub items_names_by_loot_table: HashMap<u8, Vec<String>>,
 }
 
 impl FromReader<File> for ItemTemplates {
@@ -153,8 +155,7 @@ pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<A
         MonsterTemplates::from_reader(monster_file).expect("failed to parse monsters.ron");
     let spelltemplate =
         SpellTemplates::from_reader(spell_file).expect("failed to parse spells.ron");
-    let itemtemplate =
-        ItemTemplates::from_reader(item_file).expect("failed to parse items.ron");
+    let itemtemplate = ItemTemplates::from_reader(item_file).expect("failed to parse items.ron");
 
     commands.insert_resource(monstertemplate);
     commands.insert_resource(spelltemplate);
@@ -181,7 +182,10 @@ pub struct MonsterDifficultyLists {
 }
 
 /// Builds and inserts MonsterFlatList and MonsterDifficultyLists
-pub fn cache_templates_info(mut commands: Commands, monstertemplate: Res<MonsterTemplates>) {
+pub fn cache_templates_monsters_info(
+    mut commands: Commands,
+    monstertemplate: Res<MonsterTemplates>,
+) {
     let mut name_difficulty = MonsterFlatList {
         name_difficulty: Vec::new(),
     };
@@ -230,4 +234,24 @@ pub fn cache_templates_info(mut commands: Commands, monstertemplate: Res<Monster
         difficulty_3,
         difficulty_4,
     });
+}
+
+fn cache_templates_items_info(mut commands: Commands, itemtemplate: Res<ItemTemplates>) {
+    let mut item_names_flat = Vec::new();
+    let mut items_names_by_loot_table = HashMap::new();
+    for (key, template) in itemtemplate.items.iter() {
+        item_names_flat.push(key.clone());
+        items_names_by_loot_table
+            .entry(template.loot_table)
+            .or_insert(Vec::new())
+            .push(key.clone());
+    }
+    item_names_flat.sort();
+
+    let items_util = ItemsUtil {
+        item_names_flat,
+        items_names_by_loot_table,
+    };
+
+    commands.insert_resource(items_util);
 }

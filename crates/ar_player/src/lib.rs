@@ -1,7 +1,6 @@
 use ar_core::{
-    AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MaxHealth, MaxStamina,
+    AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MagnetMarker, MaxHealth, MaxStamina,
     PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerSet, StaminaRegen,
-    MagnetMarker,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::prelude::*;
@@ -73,10 +72,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .with_children(|children| {
             children.spawn((
                 Collider::circle(1.0),
-                CollisionLayers::new(
-                    [Layer::Magnet],
-                    [Layer::Item],
-                ),
+                CollisionLayers::new([Layer::Magnet], [Layer::Item]),
                 MagnetMarker,
             ));
         })

@@ -6,6 +6,9 @@ edition = "2021"
 [dependencies]
 bevy = { workspace = true }
 avian2d = { workspace = true }
+bevy_asset_loader = { workspace = true }
+rand_core = { workspace = true }
+bevy_rand = { workspace = true }
 
 [lints]
 workspace = true
