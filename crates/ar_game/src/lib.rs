@@ -5,11 +5,12 @@ use ar_battle::{BattlePlugin, SpellsSheetSmall};
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{
-    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, MapSet, MonsterSet, ParticleSet,
-    PlayerSet, SpellSet, UiSet, UtilSet,
+    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, ItemsSet, MapSet, MonsterSet,
+    ParticleSet, PlayerSet, SpellSet, UiSet, UtilSet,
 };
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
+use ar_items::{ItemSheetSmall, ItemsPlugin};
 use ar_map::{MapPlugin, TilesetHandle};
 use ar_monsters::MonsterPlugin;
 use ar_oneshot::OneShotPlugin;
@@ -50,7 +51,7 @@ impl Plugin for GamePlugin {
         app.add_plugins(
             DefaultPlugins
                 .set(LogPlugin {
-                    filter: "wpgu=error,bevy_render=error,bevy_ecs=trace,bevy_pbr=error,naga=warn"
+                    filter: "wpgu=off,bevy_render=off,bevy_ecs=trace,bevy_pbr=error,naga=warn,wgpu_hal=off"
                         .to_string(),
                     level: Level::INFO,
                     custom_layer: |_| None,
@@ -110,6 +111,7 @@ impl Plugin for GamePlugin {
         .add_plugins(UtilPlugin)
         .add_plugins(SpellsPlugin)
         .add_plugins(ParticlesPlugin)
+        .add_plugins(ItemsPlugin)
         .add_plugins(PhysicsPlugins::new(FixedUpdate))
         .add_plugins(FrameTimeDiagnosticsPlugin::default())
         .add_plugins(LogDiagnosticsPlugin::default())
@@ -123,7 +125,8 @@ impl Plugin for GamePlugin {
                 .load_collection::<TilesetHandle>()
                 .load_collection::<GameAudioAssets>()
                 .load_collection::<FontAssets>()
-                .load_collection::<SpellsSheetSmall>(),
+                .load_collection::<SpellsSheetSmall>()
+                .load_collection::<ItemSheetSmall>()
         )
         .insert_resource(Msaa::Off)
         .insert_resource(ClearColor(Color::srgba_u8(
@@ -150,6 +153,7 @@ impl Plugin for GamePlugin {
                 (UtilSet.run_if(in_state(AppState::InBattle))),
                 (BattleSet.run_if(in_state(AppState::InBattle))),
                 (ParticleSet.run_if(in_state(AppState::InBattle))),
+                (ItemsSet.run_if(in_state(AppState::InBattle))),
             ),
         )
         .configure_sets(OnEnter(AppState::InBattle), (UiSet).after(PlayerSet))

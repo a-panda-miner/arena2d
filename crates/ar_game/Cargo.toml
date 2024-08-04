@@ -66,3 +66,6 @@ path = "../ar_oneshot"
 
 [dependencies.ar_particles]
 path = "../ar_particles"
+
+[dependencies.ar_items]
+path = "../ar_items"

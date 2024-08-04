@@ -96,6 +96,9 @@ pub struct SpellSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ParticleSet;
 
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ItemsSet;
+
 /// The base speed of the entity,
 /// Needed for reference when applying and removing slow/stun effects
 #[derive(Component)]

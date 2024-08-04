@@ -1,7 +1,7 @@
 use ar_core::{
     AppState, BattleSet, BoostUsage, CollidedHash, CurrentStamina, Damage, DashUsage, DeathEvent,
-    DisplayDamageEvent, DropItemEvent, DropsChance, Health, ItemMarker, Layer, LifeTime,
-    LootTables, MaxStamina, MonsterMarker, MonsterProjectileMarker, Penetration, PlayerDirection,
+    DisplayDamageEvent, DropItemEvent, DropsChance, Health, Layer, LifeTime, LootTables,
+    MaxStamina, MonsterMarker, MonsterProjectileMarker, Penetration, PlayerDirection,
     PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker, PlayerMinusHpEvent,
     PlayerProjectileMarker, ProjectilePattern, StaminaRegen,
 };
@@ -319,7 +319,7 @@ fn damage_applier(
 fn death_applier(
     mut commands: Commands,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
-    item_query: Query<(&GlobalTransform, &LootTables, &DropsChance), With<ItemMarker>>,
+    item_query: Query<(&GlobalTransform, &LootTables, &DropsChance), With<MonsterMarker>>,
     mut ev_itemdrop: EventWriter<DropItemEvent>,
     mut ev_death: EventReader<DeathEvent>,
 ) {
@@ -329,7 +329,9 @@ fn death_applier(
     for ev in ev_death.read() {
         if let Ok((transform, table, chance)) = item_query.get(ev.target) {
             for i in 0..table.0.len() {
-                if rng.next_u64() % 1000 < (chance.0 * 100.0) as u64 {
+                let random_number = rng.next_u32() % 100;
+                let chance = (chance.0 * 25.0).round() as u32;
+                if random_number <= chance {
                     ev_itemdrop.send(DropItemEvent {
                         position: transform.translation(),
                         loot_table: table.0[i],

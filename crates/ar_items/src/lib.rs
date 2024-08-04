@@ -1,7 +1,7 @@
 // This crate handles all items that are spawned in the game world
 // and can be picked up
 
-use ar_core::{DropItemEvent, ItemMarker, Layer};
+use ar_core::{DropItemEvent, ItemMarker, ItemsSet, Layer};
 use ar_template::{ItemTemplates, ItemsUtil};
 use avian2d::prelude::*;
 use bevy::prelude::*;
@@ -27,16 +27,18 @@ pub struct ItemSheetSmall {
     pub sprite: HashMap<AssetFileStem, Handle<Image>>,
 }
 
-pub struct ItemsPlugins;
+pub struct ItemsPlugin;
 
-impl Plugin for ItemsPlugins {
-    fn build(&self, app: &mut App) {}
+impl Plugin for ItemsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(FixedUpdate, item_spanwer.in_set(ItemsSet));
+    }
 }
 
 /// A system that handles the spawning of items in the world
 // TODO! Reduce the number of allocations
 pub fn item_spanwer(
-    commands: &mut Commands,
+    mut commands: Commands,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
     items: Res<ItemTemplates>,
     items_util: Res<ItemsUtil>,
