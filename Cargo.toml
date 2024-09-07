@@ -72,6 +72,12 @@ bevy-inspector-egui = "0.25"
 # Particles
 bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
 
+# Input
+leafwing-input-manager = "0.15"
+
+# Network
+lightyear = "0.17"
+
 [workspace.dependencies.bevy]
 version = "0.14"
 default-features = false

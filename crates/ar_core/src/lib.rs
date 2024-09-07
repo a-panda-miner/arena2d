@@ -191,7 +191,7 @@ pub struct PlayerDirection(pub Vec2);
 #[derive(Debug, Event)]
 pub struct BoostUsage(pub bool);
 
-/// Used for moving the player in an dash event,
+/// Used for moving the player in a dash event,
 /// not implemented
 #[derive(Debug, Event)]
 pub struct DashUsage(pub bool);
@@ -492,7 +492,7 @@ pub struct PlayerHandler {
 }
 
 /// Used to help collision logic, every collision that has this ID is
-/// a item pickup event
+/// an item pickup event
 #[derive(Resource)]
 pub struct MagnetHandler {
     pub magnet_id: Entity,

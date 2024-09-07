@@ -1,2 +1,6 @@
 /target
 /assets
+.idea/arena2d.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/.gitignore

@@ -69,7 +69,7 @@ impl Plugin for GamePlugin {
                 .set(TaskPoolPlugin {
                     task_pool_options: TaskPoolOptions {
                         min_total_threads: 1,
-                        max_total_threads: std::usize::MAX,
+                        max_total_threads: usize::MAX,
                         io: TaskPoolThreadAssignmentPolicy {
                             min_threads: 1,
                             max_threads: 1,
@@ -82,7 +82,7 @@ impl Plugin for GamePlugin {
                         },
                         compute: TaskPoolThreadAssignmentPolicy {
                             min_threads: 1,
-                            max_threads: std::usize::MAX,
+                            max_threads: usize::MAX,
                             percent: 50.0,
                         },
                     },
@@ -147,17 +147,17 @@ impl Plugin for GamePlugin {
         .configure_sets(
             FixedUpdate,
             (
-                (AISet.run_if(in_state(AppState::InBattle))),
-                (MonsterSet.run_if(in_state(AppState::InBattle))),
-                (UiSet.run_if(in_state(AppState::InBattle))),
-                (UtilSet.run_if(in_state(AppState::InBattle))),
-                (BattleSet.run_if(in_state(AppState::InBattle))),
-                (ParticleSet.run_if(in_state(AppState::InBattle))),
-                (ItemsSet.run_if(in_state(AppState::InBattle))),
+                AISet.run_if(in_state(AppState::InBattle)),
+                MonsterSet.run_if(in_state(AppState::InBattle)),
+                UiSet.run_if(in_state(AppState::InBattle)),
+                UtilSet.run_if(in_state(AppState::InBattle)),
+                BattleSet.run_if(in_state(AppState::InBattle)),
+                ParticleSet.run_if(in_state(AppState::InBattle)),
+                ItemsSet.run_if(in_state(AppState::InBattle)),
             ),
         )
-        .configure_sets(OnEnter(AppState::InBattle), (UiSet).after(PlayerSet))
-        .configure_sets(OnEnter(AppState::InBattle), (SpellSet).before(PlayerSet))
-        .configure_sets(OnEnter(AppState::InBattle), (ParticleSet).after(UiSet));
+        .configure_sets(OnEnter(AppState::InBattle), UiSet.after(PlayerSet))
+        .configure_sets(OnEnter(AppState::InBattle), SpellSet.before(PlayerSet))
+        .configure_sets(OnEnter(AppState::InBattle), ParticleSet.after(UiSet));
     }
 }

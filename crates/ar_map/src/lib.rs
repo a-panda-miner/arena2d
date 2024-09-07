@@ -37,7 +37,7 @@ fn map_builder_tileset(
     tile_set: Res<TilesetHandle>,
     mut materials: ResMut<Assets<Map>>,
 ) {
-    let mut rng = rand::thread_rng();
+    let mut rng = thread_rng();
 
     let map = Map::builder(
         // The size of the map

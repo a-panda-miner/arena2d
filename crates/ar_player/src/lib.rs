@@ -1,7 +1,7 @@
 use ar_core::{
     AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MagnetHandler, MagnetMarker,
-    MaxHealth, MaxStamina, PlayerHandler, PlayerInvulnerableFrames, PlayerLastDirection,
-    PlayerMarker, PlayerSet, StaminaRegen, PlayerExperience,
+    MaxHealth, MaxStamina, PlayerExperience, PlayerHandler, PlayerInvulnerableFrames,
+    PlayerLastDirection, PlayerMarker, PlayerSet, StaminaRegen,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::prelude::*;
@@ -29,7 +29,7 @@ pub struct SheetHandle {
 
 fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
     let mut magnet_id: Entity = Entity::from_raw(0);
-    
+
     commands.insert_resource(PlayerExperience(0));
 
     let player_id = commands

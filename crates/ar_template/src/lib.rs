@@ -105,7 +105,7 @@ impl FromReader<File> for SpellTemplates {
 
 /// The template of an item,
 /// used to deserialize the items from .ron file
-/// and for spawining items
+/// and for spawning items
 #[derive(Clone, Deserialize, Debug)]
 pub struct ItemTemplate {
     pub name: String,
@@ -171,7 +171,7 @@ pub struct MonsterFlatList {
 }
 
 /// Flat lists of all monsters in the game,
-/// excpet for bosses, each list
+/// except for bosses, each list
 /// represents a different difficulty
 #[derive(Debug, Resource)]
 pub struct MonsterDifficultyLists {

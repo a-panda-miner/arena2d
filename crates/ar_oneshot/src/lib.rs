@@ -1,6 +1,6 @@
 // This crate initiates the resource OneShotSystems
 // It needs to be a new crate because of cyclic dependencies,
-// this crate should be right before the leaf node (ar_game) on the depedency graph, while the ar_core should be the root node
+// this crate should be right before the leaf node (ar_game) on the dependency graph, while the ar_core should be the root node
 // for the libraries crates
 
 use ar_core::OneShotSystems;

@@ -2,8 +2,8 @@
 // and can be picked up
 
 use ar_core::{
-    DropItemEvent, ItemComponent, ItemMarker, ItemsSet, Layer, PickupEvent, PlayerExperience,
-    ItemType,
+    DropItemEvent, ItemComponent, ItemMarker, ItemType, ItemsSet, Layer, PickupEvent,
+    PlayerExperience,
 };
 use ar_template::{ItemTemplates, ItemsUtil};
 use avian2d::prelude::*;
@@ -34,13 +34,13 @@ pub struct ItemsPlugin;
 
 impl Plugin for ItemsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(FixedUpdate, (item_spanwer, pickup_item).in_set(ItemsSet));
+        app.add_systems(FixedUpdate, (item_spawner, pickup_item).in_set(ItemsSet));
     }
 }
 
 /// A system that handles the spawning of items in the world
 // TODO! Reduce the number of allocations
-pub fn item_spanwer(
+pub fn item_spawner(
     mut commands: Commands,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
     items: Res<ItemTemplates>,
@@ -61,7 +61,7 @@ pub fn item_spanwer(
         }
         let random = (rng.next_u64() as usize) % table_len;
 
-        let item_random = &table[random as usize];
+        let item_random = &table[random];
         let item = &items.items.get(item_random).expect("Item not found");
 
         let position = ev.position;
@@ -87,7 +87,10 @@ pub fn item_spanwer(
             .insert(Collider::circle(2.0))
             .insert(Mass::from(0.1))
             .insert(RigidBody::Kinematic)
-            .insert(CollisionLayers::new([Layer::Item], [Layer::Item, Layer::Magnet]))
+            .insert(CollisionLayers::new(
+                [Layer::Item],
+                [Layer::Item, Layer::Magnet],
+            ))
             .insert(ItemComponent {
                 item_type: item.item_type,
                 value: item.base_value,
@@ -112,5 +115,4 @@ pub fn pickup_item(
         }
         commands.entity(ev.entity).despawn_recursive();
     }
-
 }

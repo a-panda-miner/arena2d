@@ -75,7 +75,7 @@ fn move_player(
     mut ev_dash: EventReader<DashUsage>,
 ) {
     let mut linear_vel = q.single_mut();
-    // deaccelerates the player
+    // decelerates the player
     linear_vel.x *= 0.90;
     linear_vel.y *= 0.90;
     let direction: Vec2;
@@ -118,7 +118,7 @@ pub struct PlayerDamageEvent {
     pub source: Entity,
 }
 
-/// Handles the possible collisions accordinly to Layers' rules,
+/// Handles the possible collisions accordingly to Layers' rules,
 /// Player only gets damaged by the largest damage source possible
 // TODO! Check for collided entities with projectiles,
 // ignore collisions with entities already collided with the same projectile
@@ -126,7 +126,7 @@ fn handle_collision(
     mut ev_collision_reader: EventReader<CollisionStarted>,
     mut ev_damage: EventWriter<DamageEvent>,
     mut ev_player_damage: EventWriter<PlayerDamageEvent>,
-    mut ev_itempickup: EventWriter<PickupEvent>,
+    mut ev_item_pickup: EventWriter<PickupEvent>,
     damage: Query<&Damage>,
     monster_query: Query<Entity, With<MonsterMarker>>,
     monster_projectile_query: Query<Entity, With<MonsterProjectileMarker>>,
@@ -159,9 +159,9 @@ fn handle_collision(
                 }
             }
         } else if magnet_query.contains(entity1) {
-            ev_itempickup.send(PickupEvent { entity: entity2 });
+            ev_item_pickup.send(PickupEvent { entity: entity2 });
         } else if magnet_query.contains(entity2) {
-            ev_itempickup.send(PickupEvent { entity: entity1 });
+            ev_item_pickup.send(PickupEvent { entity: entity1 });
         } else if monster_query.contains(entity1) {
             if player_projectile_query.contains(entity2) {
                 // Unwrap safety: It is guaranteed to have the entity as we just checked in the 'if'
@@ -251,14 +251,14 @@ fn player_damaged_handler(
 fn queue_spawn_player_projectiles(
     mut commands: Commands,
     time: Res<Time>,
-    mut projs: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
+    mut projectiles: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
 ) {
-    if projs.is_empty() {
+    if projectiles.is_empty() {
         return;
     }
 
-    let mut projs = projs.single_mut();
-    for proj in projs.spells.iter_mut() {
+    let mut projectiles = projectiles.single_mut();
+    for proj in projectiles.spells.iter_mut() {
         if !proj.cooldown.tick(time.delta()).finished() {
             break;
         }
@@ -271,7 +271,7 @@ fn queue_spawn_player_projectiles(
             };
             commands.spawn(PlayerProjectileSpawner {
                 timer: Timer::from_seconds(time_to_spawn, TimerMode::Once),
-                angle: angle,
+                angle,
                 spell_name: proj.name.clone(),
             });
         }
@@ -313,7 +313,7 @@ fn damage_applier(
                 // it is safe to do so
                 commands.entity(ev.source).despawn_recursive();
 
-                // flags the entity so it can't do any more damage this frame
+                // flags the entity, so it can't do any more damage this frame
                 despawned_projectiles.insert(projectile_id);
             } else {
                 pen.0 -= 1;

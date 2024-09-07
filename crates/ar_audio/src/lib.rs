@@ -43,7 +43,7 @@ impl Plugin for GameAudioPlugin {
         )
         .add_systems(
             Update,
-            ((change_bgm).in_set(AudioSet), (play_music).in_set(AudioSet)).chain(),
+            (change_bgm.in_set(AudioSet), play_music.in_set(AudioSet)).chain(),
         );
     }
 }

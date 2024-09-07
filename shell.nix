@@ -31,5 +31,5 @@ in
       rust-bin.stable.latest.default
       rust-analyzer
 	];
-	RUST_BACKTACE = 1;
+	RUST_BACKTRACE = 1;
 }
