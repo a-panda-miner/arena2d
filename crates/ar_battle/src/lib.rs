@@ -73,6 +73,7 @@ fn move_player(
     mut ev_direction: EventReader<PlayerDirection>,
     mut ev_boost: EventReader<BoostUsage>,
     mut ev_dash: EventReader<DashUsage>,
+    mut player_last_direction: ResMut<PlayerLastDirection>,
 ) {
     let mut linear_vel = q.single_mut();
     // decelerates the player
@@ -87,6 +88,7 @@ fn move_player(
         // unwrap safety: the event is guaranteed to have at least 1 element
         direction = ev_direction.read().next().unwrap().0;
         ev_direction.clear();
+        player_last_direction.direction = direction;
     }
     if !ev_boost.is_empty() {
         boost = 5.;
@@ -97,11 +99,7 @@ fn move_player(
     ev_boost.clear();
     ev_dash.clear();
     linear_vel.x += direction.x * 10.0 * (2.5 + boost + dash);
-    //if linear_vel.x > max_vel { linear_vel.x = max_vel;}
-    //if linear_vel.x < (-1. * max_vel) { linear_vel.x = -1.0 * max_vel; }
     linear_vel.y += direction.y * 10.0 * (2.5 + boost + dash);
-    //if linear_vel.y > max_vel { linear_vel.y = max_vel;}
-    //if linear_vel.y < (-1. * max_vel) { linear_vel.y = -1.0 * max_vel; }
 }
 
 #[derive(Event)]

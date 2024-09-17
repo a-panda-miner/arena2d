@@ -21,7 +21,7 @@ impl Plugin for PlayerPlugin {
 
 #[derive(AssetCollection, Resource)]
 pub struct SheetHandle {
-    #[asset(texture_atlas_layout(tile_size_x = 16, tile_size_y = 16, columns = 2, rows = 4))]
+    #[asset(texture_atlas_layout(tile_size_x = 16, tile_size_y = 16, columns = 2, rows = 8))]
     pub layout: Handle<TextureAtlasLayout>,
     #[asset(path = "characters/character.png")]
     pub sprite: Handle<Image>,

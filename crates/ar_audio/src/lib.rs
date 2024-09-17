@@ -11,7 +11,6 @@ pub struct GameAudioAssets {
             "audio/background/bg1.wav",
             "audio/background/bg2.wav",
             "audio/background/bg3.wav",
-            "audio/background/bg4.wav"
         ),
         collection(mapped, typed)
     )]

@@ -73,7 +73,7 @@ bevy-inspector-egui = "0.25"
 bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
 
 # Input
-leafwing-input-manager = "0.15"
+leafwing-input-manager = { git = "https://github.com/Leafwing-Studios/leafwing-input-manager", branch = "main" }
 
 # Network
 lightyear = "0.17"

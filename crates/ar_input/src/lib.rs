@@ -1,193 +1,229 @@
 use ar_core::{
-    BGMusicMarker, BoostUsage, CameraFollowState, ChangeBackgroundEvent, Cooldown, DashUsage,
-    InputSet, OneShotSystems, PlayerDirection, PlayerLastDirection, PlayerMarker, ZoomIn, ZoomOut,
+    BoostUsage, CameraFollowState, ChangeBackgroundEvent, DashUsage,
+    InputSet, PlayerDirection, ZoomIn, ZoomOut, PlayerMarker
 };
 use bevy::prelude::*;
+use leafwing_input_manager::prelude::*;
+use bevy::time::common_conditions::on_timer;
+use bevy::utils::Duration;
 
 pub struct InputPlugin;
 
-#[derive(Resource)]
-struct BButtonCooldown(Timer);
-
-#[derive(Resource)]
-struct RButtonCooldown(Timer);
-
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<PlayerDirection>()
+        app.add_plugins(InputManagerPlugin::<Action>::default())
+            .add_event::<PlayerDirection>()
             .add_event::<BoostUsage>()
             .add_event::<DashUsage>()
             .add_event::<ChangeBackgroundEvent>()
-            .insert_resource(BButtonCooldown(Timer::from_seconds(2.0, TimerMode::Once)))
-            .insert_resource(RButtonCooldown(Timer::from_seconds(2.0, TimerMode::Once)))
+            .init_resource::<ActionState<Action>>()
+            .insert_resource(Action::input_map())
             .add_systems(
                 Update,
                 (
-                    player_input_manager.in_set(InputSet),
-                    animate_player.in_set(InputSet),
-                    animate_player_loop.in_set(InputSet),
+                    player_movement_direction.in_set(InputSet),
+                    dash.in_set(InputSet),
+                    boost.in_set(InputSet),
                     change_background_music.in_set(InputSet),
+                    change_camera_follow_state.in_set(InputSet),
+                    check_input.in_set(InputSet),
+                    zoom_in_out.in_set(InputSet),
+                    player_animation
+                    .run_if(on_timer(Duration::from_millis(240)))
+                    .in_set(InputSet),
                 )
                     .chain(),
             );
     }
 }
 
-fn player_input_manager(
-    mut commands: Commands,
+#[derive(Actionlike, PartialEq, Eq, Hash, Clone, Copy, Debug, Reflect)]
+pub enum Action {
+    Up,
+    Down,
+    Left,
+    Right,
+    ZoomIn,
+    ZoomOut,
+    ChangeMusic,
+    ChangeCamera,
+    Dash,
+    Boost,
+}
+
+impl Action {
+    const DIRECTIONS: [Self; 4] = [Self::Up, Self::Down, Self::Left, Self::Right];
+
+    fn direction(self) -> Option<Dir2> {
+        match self {
+            Self::Up => Some(Dir2::Y),
+            Self::Down => Some(Dir2::NEG_Y),
+            Self::Left => Some(Dir2::NEG_X),
+            Self::Right => Some(Dir2::X),
+            _ => None,
+        }
+    }
+
+    fn input_map() -> InputMap<Self> {
+        let mut input_map = InputMap::default();
+        input_map.insert(Self::Up, KeyCode::KeyW);
+        input_map.insert(Self::Down, KeyCode::KeyS);
+        input_map.insert(Self::Left, KeyCode::KeyA);
+        input_map.insert(Self::Right, KeyCode::KeyD);
+        input_map.insert(Self::ChangeMusic, KeyCode::KeyV);
+        input_map.insert(Self::ChangeCamera, KeyCode::KeyC);
+        input_map.insert(Self::Dash, KeyCode::Space);
+        input_map.insert(Self::Boost, KeyCode::ShiftLeft);
+        input_map.insert(Self::ZoomIn, KeyCode::KeyQ);
+        input_map.insert(Self::ZoomOut, KeyCode::KeyE);
+        input_map
+    }
+}
+
+fn player_movement_direction(
+    action_state: Res<ActionState<Action>>,
     mut ev_direction: EventWriter<PlayerDirection>,
-    mut ev_boost: EventWriter<BoostUsage>,
-    mut ev_dash: EventWriter<DashUsage>,
-    mut ev_zoom_out: EventWriter<ZoomOut>,
-    mut ev_zoom_in: EventWriter<ZoomIn>,
-    mut last_direction: ResMut<PlayerLastDirection>,
-    keys: Res<ButtonInput<KeyCode>>,
-    oneshot: Res<OneShotSystems>,
-    time: Res<Time>,
-    mut timer: ResMut<RButtonCooldown>,
 ) {
-    let w = keys.pressed(KeyCode::KeyW);
-    let a = keys.pressed(KeyCode::KeyA);
-    let s = keys.pressed(KeyCode::KeyS);
-    let d = keys.pressed(KeyCode::KeyD);
-    let q = keys.just_pressed(KeyCode::KeyQ);
-    let e = keys.just_pressed(KeyCode::KeyE);
-    let r = keys.just_pressed(KeyCode::KeyR);
+    let mut direction_vec = Vec2::ZERO;
 
-    let boost = keys.pressed(KeyCode::ShiftLeft);
-    let dash = keys.pressed(KeyCode::Space);
-
-    if !w && !a && !s && !d && !q && !e && !boost && !dash && !r {
-        return;
-    }
-    let mut direction = Vec2::ZERO;
-
-    if d {
-        direction.x += 1.;
-    }
-    if a {
-        direction.x += -1.;
-    }
-    if w {
-        direction.y += 1.;
-    }
-    if s {
-        direction.y += -1.;
+    for input_direction in Action::DIRECTIONS {
+        if action_state.pressed(&input_direction) {
+            if let Some(direction) = input_direction.direction() {
+                direction_vec += *direction;
+            }
+        }
     }
 
-    // A normalized direction vector
-    let direction = direction.normalize_or_zero();
-    last_direction.direction = direction;
-    ev_direction.send(PlayerDirection(direction));
-    if boost {
-        ev_boost.send(BoostUsage(boost));
+    let direction = direction_vec.normalize_or_zero();
+    if direction != Vec2::ZERO {
+        ev_direction.send(PlayerDirection(direction));
     }
+}
 
-    if dash {
-        ev_dash.send(DashUsage(dash));
+fn dash(action_state: Res<ActionState<Action>>, mut ev_dash: EventWriter<DashUsage>) {
+    if action_state.just_pressed(&Action::Dash) {
+        ev_dash.send(DashUsage(true));
     }
+}
 
-    if q {
-        ev_zoom_out.send(ZoomOut);
+fn boost(action_state: Res<ActionState<Action>>, mut ev_boost: EventWriter<BoostUsage>) {
+    if action_state.pressed(&Action::Boost) {
+        ev_boost.send(BoostUsage(true));
     }
+}
 
-    if e {
+pub fn change_background_music(
+    action_state: Res<ActionState<Action>>,
+    mut ev: EventWriter<ChangeBackgroundEvent>,
+) {
+    if action_state.just_pressed(&Action::ChangeMusic) {
+        ev.send(ChangeBackgroundEvent);
+    }
+}
+
+pub fn change_camera_follow_state(
+    action_state: Res<ActionState<Action>>,
+    mut camera_state: ResMut<CameraFollowState>,
+) {
+    if action_state.just_pressed(&Action::ChangeCamera) {
+        let state;
+        match *camera_state {
+            CameraFollowState::Player => state = CameraFollowState::Rect,
+            CameraFollowState::Rect => state = CameraFollowState::Player,
+        }
+        *camera_state = state;
+    }
+}
+
+pub fn zoom_in_out(
+    action_state: Res<ActionState<Action>>,
+    mut ev_zoom_in: EventWriter<ZoomIn>,
+    mut ev_zoom_out: EventWriter<ZoomOut>,
+) {
+    if action_state.just_pressed(&Action::ZoomIn) {
         ev_zoom_in.send(ZoomIn);
     }
-
-    let r_timer = timer.0.tick(time.delta()).finished();
-
-    if r && r_timer {
-        commands.run_system(
-            *oneshot
-                .0
-                .get("change_camera_follow_state")
-                .expect("Missing change_camera_follow_state system"),
-        );
-        timer.0.reset();
+    if action_state.just_pressed(&Action::ZoomOut) {
+        ev_zoom_out.send(ZoomOut);
     }
 }
 
-fn animate_player(
+pub fn check_input(action_state: Res<ActionState<Action>>) {
+    for action in action_state.get_pressed() {
+        info!("Pressed {action:?}");
+    }
+}
+
+
+
+fn player_animation(
+    action_state: Res<ActionState<Action>>,
     mut query: Query<&mut TextureAtlas, With<PlayerMarker>>,
-    keys: Res<ButtonInput<KeyCode>>,
 ) {
-    let mut texture_atlas = query.single_mut();
-    let w = keys.pressed(KeyCode::KeyW);
-    let a = keys.pressed(KeyCode::KeyA);
-    let s = keys.pressed(KeyCode::KeyS);
-    let d = keys.pressed(KeyCode::KeyD);
-    if !w && !a && !s && !d {
-        return;
-    }
-    if w {
-        texture_atlas.index = 7;
-        return;
-    }
-    if a {
-        texture_atlas.index = 5;
-        return;
-    }
-    if s {
-        texture_atlas.index = 0;
-        return;
-    }
-    if d {
-        texture_atlas.index = 3;
-        return;
-    }
-}
+    let mut texture_atlas = query.get_single_mut().unwrap();
 
-fn animate_player_loop(
-    time: Res<Time>,
-    mut query: Query<(&mut TextureAtlas, &mut Cooldown), With<PlayerMarker>>,
-) {
-    let (mut texture_atlas, mut cooldown) = query.single_mut();
-    if cooldown.0.tick(time.delta()).just_finished() {
-        match texture_atlas.index {
-            0 => texture_atlas.index = 1,
-            1 => texture_atlas.index = 0,
-            2 => texture_atlas.index = 3,
-            3 => texture_atlas.index = 2,
-            4 => texture_atlas.index = 5,
-            5 => texture_atlas.index = 4,
-            6 => texture_atlas.index = 7,
-            7 => texture_atlas.index = 6,
-            _ => {}
+    if action_state.pressed(&Action::Up) && action_state.pressed(&Action::Right) {
+        if texture_atlas.index == 8 {
+            texture_atlas.index = 9;
+        } else {
+            texture_atlas.index = 8;
         }
-    }
-}
-
-fn change_background_music(
-    time: Res<Time>,
-    mut timer: ResMut<BButtonCooldown>,
-    keys: Res<ButtonInput<KeyCode>>,
-    mut ev: EventWriter<ChangeBackgroundEvent>,
-    mut query: Query<&mut Cooldown, With<BGMusicMarker>>,
-) {
-    let mut flag = false;
-    for mut cooldown in query.iter_mut() {
-        if cooldown.0.tick(time.delta()).just_finished() {
-            flag = true;
-        }
-    }
-    let a = timer.0.tick(time.delta()).finished();
-    let mut b = keys.pressed(KeyCode::KeyB);
-    if !a {
-        b = false;
-    }
-    if !b && !flag {
         return;
     }
-    ev.send(ChangeBackgroundEvent);
-    timer.0.reset();
-}
-
-pub fn change_camera_follow_state(mut camera_state: ResMut<CameraFollowState>) {
-    let state;
-    match *camera_state {
-        CameraFollowState::Player => state = CameraFollowState::Rect,
-        CameraFollowState::Rect => state = CameraFollowState::Player,
+    if action_state.pressed(&Action::Up) && action_state.pressed(&Action::Left) {
+        if texture_atlas.index == 10 {
+            texture_atlas.index = 11;
+        } else {
+            texture_atlas.index = 10;
+        }
+        return;
     }
-    *camera_state = state;
+    if action_state.pressed(&Action::Down) && action_state.pressed(&Action::Left) {
+        if texture_atlas.index == 12 {
+            texture_atlas.index = 13;
+        } else {
+            texture_atlas.index = 12;
+        }
+        return;
+    }
+    if action_state.pressed(&Action::Down) && action_state.pressed(&Action::Right) {
+        if texture_atlas.index == 14 {
+            texture_atlas.index = 15;
+        } else {
+            texture_atlas.index = 14;
+        }
+        return;
+    }
+    if action_state.pressed(&Action::Down) {
+        if texture_atlas.index == 0 {
+            texture_atlas.index = 1;
+        } else {
+            texture_atlas.index = 0;
+        }
+        return;
+    }
+    if action_state.pressed(&Action::Right) {
+        if texture_atlas.index == 2 {
+            texture_atlas.index = 3;
+        } else {
+            texture_atlas.index = 2;
+        }
+        return;
+    }
+    if action_state.pressed(&Action::Left) {
+        if texture_atlas.index == 4 {
+            texture_atlas.index = 5;
+        } else {
+            texture_atlas.index = 4;
+        }
+        return;
+    }
+    if action_state.pressed(&Action::Up) {
+        if texture_atlas.index == 6 {
+            texture_atlas.index = 7;
+        } else {
+            texture_atlas.index = 6;
+        }
+        return;
+    }
 }
