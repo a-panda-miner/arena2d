@@ -1,7 +1,7 @@
 use ar_core::{
     AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MagnetHandler, MagnetMarker,
     MaxHealth, MaxStamina, PlayerExperience, PlayerHandler, PlayerInvulnerableFrames,
-    PlayerLastDirection, PlayerMarker, PlayerSet, StaminaRegen,
+    PlayerLastDirection, PlayerLevel, PlayerMarker, PlayerSet, StaminaRegen,
 };
 use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
 use avian2d::prelude::*;
@@ -30,8 +30,6 @@ pub struct SheetHandle {
 fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
     let mut magnet_id: Entity = Entity::from_raw(0);
 
-    commands.insert_resource(PlayerExperience(0));
-
     let player_id = commands
         .spawn(PlayerMarker)
         .insert((
@@ -57,6 +55,8 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
             // Player invulnerability after getting hit
             timer: Timer::from_seconds(0.5, TimerMode::Once),
         })
+        .insert(PlayerExperience(0))
+        .insert(PlayerLevel(1))
         .insert(Health(100))
         .insert(MaxHealth(100))
         .insert(CurrentStamina(1.))

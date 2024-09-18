@@ -69,3 +69,6 @@ path = "../ar_particles"
 
 [dependencies.ar_items]
 path = "../ar_items"
+
+[dependencies.ar_level]
+path = "../ar_level"

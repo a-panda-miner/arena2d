@@ -7,6 +7,14 @@ use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use serde::Deserialize;
 
+/// Defines the maximum level in a run
+pub const MAX_LEVEL: u8 = 200;
+
+#[derive(Resource, Debug)]
+pub struct LevelTable {
+    pub table: [usize; MAX_LEVEL as usize],
+}
+
 /// Defines tha main states of the app
 /// LoadingAssets loads the assets during the App startup,
 /// LoadingTemplates initiates some of those assets into resources,
@@ -104,6 +112,9 @@ pub struct ParticleSet;
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemsSet;
+
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct LevelSet;
 
 /// The base speed of the entity,
 /// Needed for reference when applying and removing slow/stun effects
@@ -225,6 +236,9 @@ pub struct SpawnItemEvent {
 pub struct PickupEvent {
     pub entity: Entity,
 }
+
+#[derive(Debug, Event)]
+pub struct LevelUpEvent;
 
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'
@@ -379,8 +393,13 @@ pub struct MonstersAlive(pub usize);
 #[derive(Resource)]
 pub struct MinutesSurvived(pub usize);
 
-#[derive(Resource)]
+#[derive(Component)]
 pub struct PlayerExperience(pub usize);
+
+/// The level of the player
+/// The level starts at 1
+#[derive(Component)]
+pub struct PlayerLevel(pub u8);
 
 /// Used for spawning projectiles and dashing from where the player was last facing
 #[derive(Resource)]

@@ -1,0 +1,14 @@
+[package]
+name = "ar_level"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+bevy = { workspace = true }
+
+[lints]
+workspace = true
+
+[dependencies.ar_core]
+path = "../ar_core"

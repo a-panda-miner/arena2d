@@ -285,6 +285,7 @@ dependencies = [
  "ar_enemies",
  "ar_input",
  "ar_items",
+ "ar_level",
  "ar_map",
  "ar_monsters",
  "ar_oneshot",
@@ -325,6 +326,14 @@ dependencies = [
  "bevy_asset_loader",
  "bevy_rand",
  "rand_core",
+]
+
+[[package]]
+name = "ar_level"
+version = "0.1.0"
+dependencies = [
+ "ar_core",
+ "bevy",
 ]
 
 [[package]]

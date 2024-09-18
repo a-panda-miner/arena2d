@@ -3,7 +3,7 @@
 
 use ar_core::{
     DropItemEvent, ItemComponent, ItemMarker, ItemType, ItemsSet, Layer, PickupEvent,
-    PlayerExperience,
+    PlayerExperience, PlayerMarker,
 };
 use ar_template::{ItemTemplates, ItemsUtil};
 use avian2d::prelude::*;
@@ -101,9 +101,10 @@ pub fn item_spawner(
 pub fn pickup_item(
     mut commands: Commands,
     mut ev_pickup: EventReader<PickupEvent>,
-    mut player_experience: ResMut<PlayerExperience>,
+    mut player_experience: Query<&mut PlayerExperience, With<PlayerMarker>>,
     query: Query<&ItemComponent, With<ItemMarker>>,
 ) {
+    let mut player_experience = player_experience.single_mut();
     for ev in ev_pickup.read() {
         if let Ok(item) = query.get(ev.entity) {
             match item.item_type {

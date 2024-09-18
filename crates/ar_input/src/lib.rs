@@ -1,11 +1,11 @@
 use ar_core::{
-    BoostUsage, CameraFollowState, ChangeBackgroundEvent, DashUsage,
-    InputSet, PlayerDirection, ZoomIn, ZoomOut, PlayerMarker
+    BoostUsage, CameraFollowState, ChangeBackgroundEvent, DashUsage, InputSet, PlayerDirection,
+    PlayerMarker, ZoomIn, ZoomOut,
 };
 use bevy::prelude::*;
-use leafwing_input_manager::prelude::*;
 use bevy::time::common_conditions::on_timer;
 use bevy::utils::Duration;
+use leafwing_input_manager::prelude::*;
 
 pub struct InputPlugin;
 
@@ -26,14 +26,15 @@ impl Plugin for InputPlugin {
                     boost.in_set(InputSet),
                     change_background_music.in_set(InputSet),
                     change_camera_follow_state.in_set(InputSet),
-                    check_input.in_set(InputSet),
                     zoom_in_out.in_set(InputSet),
                     player_animation
-                    .run_if(on_timer(Duration::from_millis(240)))
-                    .in_set(InputSet),
+                        .run_if(on_timer(Duration::from_millis(240)))
+                        .in_set(InputSet),
                 )
                     .chain(),
             );
+            #[cfg(debug_assertions)]
+            app.add_systems(Update, check_input.in_set(InputSet).before(player_movement_direction));
     }
 }
 
@@ -148,13 +149,12 @@ pub fn zoom_in_out(
     }
 }
 
+#[cfg(debug_assertions)]
 pub fn check_input(action_state: Res<ActionState<Action>>) {
     for action in action_state.get_pressed() {
         info!("Pressed {action:?}");
     }
 }
-
-
 
 fn player_animation(
     action_state: Res<ActionState<Action>>,

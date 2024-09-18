@@ -5,12 +5,13 @@ use ar_battle::{BattlePlugin, SpellsSheetSmall};
 use ar_camera::ArenaCameraPlugin;
 use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{
-    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, ItemsSet, MapSet, MonsterSet,
-    ParticleSet, PlayerSet, SpellSet, UiSet, UtilSet,
+    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, ItemsSet, LevelSet, MapSet,
+    MonsterSet, ParticleSet, PlayerSet, SpellSet, UiSet, UtilSet,
 };
 use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
 use ar_items::{ItemSheetSmall, ItemsPlugin};
+use ar_level::LevelPlugin;
 use ar_map::{MapPlugin, TilesetHandle};
 use ar_monsters::MonsterPlugin;
 use ar_oneshot::OneShotPlugin;
@@ -21,10 +22,17 @@ use ar_template::TemplatePlugin;
 use ar_ui::{FontAssets, UiPlugin};
 use ar_utils::UtilPlugin;
 
+#[cfg(debug_assertions)]
+use bevy::{
+    log::Level, 
+    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin}};
+#[cfg(debug_assertions)]
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
+
+
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
-    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
-    log::{Level, LogPlugin},
+    log::{LogPlugin},
     prelude::*,
     render::{render_resource::WgpuFeatures, settings::WgpuSettings, RenderPlugin},
     window::{PresentMode, WindowTheme},
@@ -34,8 +42,6 @@ use avian2d::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_fast_tilemap::plugin::FastTileMapPlugin;
 use iyes_progress::ProgressPlugin;
-
-use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 use bevy_rand::prelude::{EntropyPlugin, WyRand};
 
@@ -48,6 +54,8 @@ impl Plugin for GamePlugin {
             .features
             .set(WgpuFeatures::VERTEX_WRITABLE_STORAGE, true);
 
+
+        #[cfg(debug_assertions)]
         app.add_plugins(
             DefaultPlugins
                 .set(LogPlugin {
@@ -94,6 +102,54 @@ impl Plugin for GamePlugin {
                 })
                 .build(),
         )
+        .add_plugins(FrameTimeDiagnosticsPlugin::default())
+        .add_plugins(LogDiagnosticsPlugin::default())
+        .add_plugins(WorldInspectorPlugin::new());
+
+        #[cfg(not(debug_assertions))]
+        app.add_plugins(
+            DefaultPlugins
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        title: "arena2d".to_string(),
+                        name: Some("arena2d".to_string()),
+                        present_mode: PresentMode::AutoVsync,
+                        window_theme: Some(WindowTheme::Dark),
+                        ..default()
+                    }),
+                    ..default()
+                })
+                .set(TaskPoolPlugin {
+                    task_pool_options: TaskPoolOptions {
+                        min_total_threads: 1,
+                        max_total_threads: usize::MAX,
+                        io: TaskPoolThreadAssignmentPolicy {
+                            min_threads: 1,
+                            max_threads: 1,
+                            percent: 10.0,
+                        },
+                        async_compute: TaskPoolThreadAssignmentPolicy {
+                            min_threads: 1,
+                            max_threads: 1,
+                            percent: 10.0,
+                        },
+                        compute: TaskPoolThreadAssignmentPolicy {
+                            min_threads: 1,
+                            max_threads: usize::MAX,
+                            percent: 50.0,
+                        },
+                    },
+                })
+                .set(ImagePlugin::default_nearest())
+                .set(RenderPlugin {
+                    render_creation: wgpu_settings.into(),
+                    synchronous_pipeline_compilation: false,
+                })
+                .build()
+                .disable::<LogPlugin>()
+        );
+
+        app
         .init_state::<AppState>()
         .add_plugins(ProgressPlugin::new(AppState::LoadingAssets).continue_to(AppState::InBattle))
         .add_plugins(EntropyPlugin::<WyRand>::default())
@@ -112,10 +168,8 @@ impl Plugin for GamePlugin {
         .add_plugins(SpellsPlugin)
         .add_plugins(ParticlesPlugin)
         .add_plugins(ItemsPlugin)
+        .add_plugins(LevelPlugin)
         .add_plugins(PhysicsPlugins::new(FixedUpdate))
-        .add_plugins(FrameTimeDiagnosticsPlugin::default())
-        .add_plugins(LogDiagnosticsPlugin::default())
-        .add_plugins(WorldInspectorPlugin::new())
         .insert_resource(Time::<Fixed>::from_hz(PFPS))
         .add_loading_state(
             LoadingState::new(AppState::LoadingAssets)
@@ -154,10 +208,12 @@ impl Plugin for GamePlugin {
                 BattleSet.run_if(in_state(AppState::InBattle)),
                 ParticleSet.run_if(in_state(AppState::InBattle)),
                 ItemsSet.run_if(in_state(AppState::InBattle)),
+                LevelSet.run_if(in_state(AppState::InBattle)),
             ),
         )
         .configure_sets(OnEnter(AppState::InBattle), UiSet.after(PlayerSet))
         .configure_sets(OnEnter(AppState::InBattle), SpellSet.before(PlayerSet))
-        .configure_sets(OnEnter(AppState::InBattle), ParticleSet.after(UiSet));
+        .configure_sets(OnEnter(AppState::InBattle), ParticleSet.after(UiSet))
+        .configure_sets(OnEnter(AppState::InBattle), LevelSet.before(SpellSet));
     }
 }
