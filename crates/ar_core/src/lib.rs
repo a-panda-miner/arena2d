@@ -519,3 +519,40 @@ pub struct PlayerHandler {
 pub struct MagnetHandler {
     pub magnet_id: Entity,
 }
+
+#[derive(Deserialize, Debug, Component, Clone, PartialEq, Hash)]
+pub enum CardType {
+    Buff,
+    Spell,
+}
+
+#[derive(Deserialize, Debug, Component, Clone, PartialEq, Hash)]
+pub enum CardRarity {
+    Common,
+    Uncommon,
+    Rare,
+    Mythical,
+    Legendary,
+    Ultimate,
+}
+
+#[derive(Deserialize, Debug, Component, Clone)]
+pub enum PowerUp {
+    HealthUp(u8),
+    AttackUp(u8),
+    ShieldUp(u8),
+    SpeedUp(u8),
+    LootUp(u8),
+    DamageUp(u8),
+    ExpUp(u8),
+    StaminaUp(u8),
+}
+
+#[derive(Deserialize, Debug, Component, Clone)]
+pub enum PermanentDebuff {
+    HealthDown(u8),
+    AttackDown(u8),
+    StaminaDown(u8),
+    ExpDown(u8),
+    SpeedDown(u8),
+}

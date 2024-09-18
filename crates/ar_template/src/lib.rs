@@ -15,6 +15,7 @@ use std::path::PathBuf;
 use crate::{
     items::{cache_templates_items_info, ItemTemplates},
     monsters::{cache_templates_monsters_info, MonsterTemplates},
+    cards::{CardsTemplates, templates_cards_by_type},
     spells::SpellTemplates,
 };
 
@@ -32,7 +33,7 @@ impl Plugin for TemplatePlugin {
             OnEnter(AppState::LoadingTemplates),
             (
                 load_templates,
-                (cache_templates_monsters_info, cache_templates_items_info),
+                (cache_templates_monsters_info, cache_templates_items_info, templates_cards_by_type),
             )
                 .chain()
                 .in_set(LoadingTemplatesSet),
@@ -44,10 +45,12 @@ pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<A
     let mut spell_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let mut monster_path = spell_path.clone();
     let mut item_path = spell_path.clone();
+    let mut card_path = spell_path.clone();
 
     spell_path.push("../ar_bin/assets/templates/spells.ron");
     monster_path.push("../ar_bin/assets/templates/monsters.ron");
     item_path.push("../ar_bin/assets/templates/items.ron");
+    card_path.push("../ar_bin/assets/templates/cards.ron");
 
     let spell_file =
         File::open(spell_path.clone()).expect(&format!("failed to load {:?}", spell_path));
@@ -55,16 +58,20 @@ pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<A
         File::open(monster_path.clone()).expect(&format!("failed to load {:?}", monster_path));
     let item_file =
         File::open(item_path.clone()).expect(&format!("failed to load {:?}", item_path));
+    let card_file = 
+        File::open(card_path.clone()).expect(&format!("failed to load {:?}", card_path));
 
     let monstertemplate =
         MonsterTemplates::from_reader(monster_file).expect("failed to parse monsters.ron");
     let spelltemplate =
         SpellTemplates::from_reader(spell_file).expect("failed to parse spells.ron");
     let itemtemplate = ItemTemplates::from_reader(item_file).expect("failed to parse items.ron");
+    let cardtemplate = CardsTemplates::from_reader(card_file).expect("failed to parse cards.ron");
 
     commands.insert_resource(monstertemplate);
     commands.insert_resource(spelltemplate);
     commands.insert_resource(itemtemplate);
+    commands.insert_resource(cardtemplate);
 
     next_state.set(AppState::InBattle);
 }

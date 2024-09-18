@@ -1,0 +1,33 @@
+CardsTemplates (
+    cards: {
+            "commonhealthup": CardsTemplate(
+                name: "HealthUp",
+                card_type: Buff,
+                max_level: 30,
+                sprite: "",
+                rarity: Common,
+                description: "Increases health",
+                upgrade: Some(HealthUp(10)),
+                max_level_bonus: Some(HealthUp(200)),
+            ),
+            "commonstaminaup": CardsTemplate(
+                name: "StaminaUp",
+                card_type: Buff,
+                max_level: 30,
+                sprite: "",
+                rarity: Common,
+                description: "Increases stamina",
+                upgrade: Some(StaminaUp(5)),
+                max_level_bonus: Some(StaminaUp(50)),
+            ),
+            "fireballcard": CardsTemplate(
+                name: "Fireball",
+                card_type: Spell,
+                max_level: 1,
+                sprite: "",
+                rarity: Rare,
+                description: "Launches fireballs that explode on contact",
+                spell: Some("fireball"),
+            )
+    }
+)

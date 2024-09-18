@@ -1719,9 +1719,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
 
 [[package]]
 name = "bytes"
-version = "1.7.1"
+version = "1.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
+checksum = "428d9aa8fbc0670b7b8d6030a7fadd0f86151cae55e4dbbece15f3780a3dfaf3"
 
 [[package]]
 name = "calloop"
@@ -1751,9 +1751,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.1.19"
+version = "1.1.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d74707dde2ba56f86ae90effb3b43ddd369504387e718014de010cec7959800"
+checksum = "07b1695e2c7e8fc85310cde85aeaab7e3097f593c91d209d3f9df76c928100f0"
 dependencies = [
  "jobserver",
  "libc",
@@ -2940,7 +2940,7 @@ checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 [[package]]
 name = "leafwing-input-manager"
 version = "0.15.0"
-source = "git+https://github.com/Leafwing-Studios/leafwing-input-manager?branch=main#63ebdb21eab7f8c692bb40d6a610925c381919c4"
+source = "git+https://github.com/Leafwing-Studios/leafwing-input-manager?branch=main#36441c71a8f73e978b05f27b33e735ec14a07bf4"
 dependencies = [
  "bevy",
  "derive_more",
@@ -2957,7 +2957,7 @@ dependencies = [
 [[package]]
 name = "leafwing_input_manager_macros"
 version = "0.15.0"
-source = "git+https://github.com/Leafwing-Studios/leafwing-input-manager?branch=main#63ebdb21eab7f8c692bb40d6a610925c381919c4"
+source = "git+https://github.com/Leafwing-Studios/leafwing-input-manager?branch=main#36441c71a8f73e978b05f27b33e735ec14a07bf4"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -4287,9 +4287,9 @@ dependencies = [
 
 [[package]]
 name = "serde_flexitos"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15a95e8972debc2acae5fa208fd4ec9ba96ace41d2bdd4e715ad4082b822e955"
+checksum = "3323d093d7597660758b742dd7a1525539613f6182b306a4e1dd6e01a89bada9"
 dependencies = [
  "erased-serde",
  "serde",
@@ -4588,9 +4588,9 @@ checksum = "0dd7358ecb8fc2f8d014bf86f6f638ce72ba252a2c3a2572f2a795f1d23efb41"
 
 [[package]]
 name = "toml_edit"
-version = "0.22.20"
+version = "0.22.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "583c44c02ad26b0c3f3066fe629275e50627026c51ac2e595cca4c230ce1ce1d"
+checksum = "3b072cee73c449a636ffd6f32bd8de3a9f7119139aff882f44943ce2986dc5cf"
 dependencies = [
  "indexmap",
  "toml_datetime",
@@ -4745,9 +4745,9 @@ checksum = "e91b56cd4cadaeb79bbf1a5645f6b4f8dc5bde8834ad5894a8db35fda9efa1fe"
 
 [[package]]
 name = "unicode-normalization"
-version = "0.1.23"
+version = "0.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a56d1686db2308d901306f92a263857ef59ea39678a5458e7cb17f01415101f5"
+checksum = "5033c97c4262335cded6d6fc3e5c18ab755e1a3dc96376350f3d8e9f009ad956"
 dependencies = [
  "tinyvec",
 ]

@@ -1,6 +1,9 @@
-use crate::{Component, Deserialize, File, FromReader, HashMap, Resource};
+use crate::{Deserialize, File, FromReader, HashMap, Resource};
+use ar_core::{CardType, CardRarity, PowerUp, PermanentDebuff};
 use ron::de::from_reader;
+use bevy::prelude::{Res, Commands};
 
+// Note: Spell cards need to verify if the spell exists
 #[derive(Clone, Deserialize, Debug)]
 pub struct CardsTemplate {
     pub name: String,
@@ -10,13 +13,14 @@ pub struct CardsTemplate {
     pub rarity: CardRarity,
     pub description: String,
     pub upgrade: Option<PowerUp>,
+    pub spell: Option<String>,
     pub debuff: Option<PermanentDebuff>,
     pub max_level_bonus: Option<PowerUp>,
 }
 
 #[derive(Clone, Deserialize, Debug, Resource)]
 pub struct CardsTemplates {
-    pub templates: HashMap<String, CardsTemplate>,
+    pub cards: HashMap<String, CardsTemplate>,
 }
 
 impl FromReader<File> for CardsTemplates {
@@ -25,39 +29,33 @@ impl FromReader<File> for CardsTemplates {
     }
 }
 
-#[derive(Deserialize, Debug, Component, Clone, PartialEq, Hash)]
-pub enum CardType {
-    Buff,
-    Spell,
+#[derive(Resource)]
+struct CardsByType {
+    powerup_cards: Vec<String>,
+    spell_cards: Vec<String>,
 }
 
-#[derive(Deserialize, Debug, Component, Clone, PartialEq, Hash)]
-pub enum CardRarity {
-    Common,
-    Uncommon,
-    Rare,
-    Mythical,
-    Legendary,
-    Ultimate,
-}
-
-#[derive(Deserialize, Debug, Component, Clone)]
-pub enum PowerUp {
-    HealthUp(u8),
-    AttackUp(u8),
-    ShieldUp(u8),
-    SpeedUp(u8),
-    LootUp(u8),
-    DamageUp(u8),
-    ExpUp(u8),
-    StaminaUp(u8),
-}
-
-#[derive(Deserialize, Debug, Component, Clone)]
-pub enum PermanentDebuff {
-    HealthDown(u8),
-    AttackDown(u8),
-    StaminaDown(u8),
-    ExpDown(u8),
-    SpeedDown(u8),
+pub fn templates_cards_by_type(
+    templates: Res<CardsTemplates>,
+    mut commands: Commands,
+) {
+    let mut cards_by_type = CardsByType {
+        powerup_cards: Vec::new(),
+        spell_cards: Vec::new(),
+    };
+    for (key, template) in templates.cards.iter() {
+        match template.card_type {
+            CardType::Buff => {
+                cards_by_type
+                    .powerup_cards
+                    .push(key.clone());
+            }
+            CardType::Spell => {
+                cards_by_type
+                    .spell_cards
+                    .push(key.clone());
+            }
+        }
+    }
+    commands.insert_resource(cards_by_type);
 }
