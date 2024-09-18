@@ -33,8 +33,13 @@ impl Plugin for InputPlugin {
                 )
                     .chain(),
             );
-            #[cfg(debug_assertions)]
-            app.add_systems(Update, check_input.in_set(InputSet).before(player_movement_direction));
+        #[cfg(debug_assertions)]
+        app.add_systems(
+            Update,
+            check_input
+                .in_set(InputSet)
+                .before(player_movement_direction),
+        );
     }
 }
 

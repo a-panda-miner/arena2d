@@ -24,15 +24,15 @@ use ar_utils::UtilPlugin;
 
 #[cfg(debug_assertions)]
 use bevy::{
-    log::Level, 
-    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin}};
+    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
+    log::Level,
+};
 #[cfg(debug_assertions)]
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
-    log::{LogPlugin},
+    log::LogPlugin,
     prelude::*,
     render::{render_resource::WgpuFeatures, settings::WgpuSettings, RenderPlugin},
     window::{PresentMode, WindowTheme},
@@ -53,7 +53,6 @@ impl Plugin for GamePlugin {
         wgpu_settings
             .features
             .set(WgpuFeatures::VERTEX_WRITABLE_STORAGE, true);
-
 
         #[cfg(debug_assertions)]
         app.add_plugins(
@@ -146,74 +145,75 @@ impl Plugin for GamePlugin {
                     synchronous_pipeline_compilation: false,
                 })
                 .build()
-                .disable::<LogPlugin>()
+                .disable::<LogPlugin>(),
         );
 
-        app
-        .init_state::<AppState>()
-        .add_plugins(ProgressPlugin::new(AppState::LoadingAssets).continue_to(AppState::InBattle))
-        .add_plugins(EntropyPlugin::<WyRand>::default())
-        .add_plugins(FastTileMapPlugin::default())
-        .add_plugins(OneShotPlugin)
-        .add_plugins(ArenaCameraPlugin)
-        .add_plugins(InputPlugin)
-        .add_plugins(PlayerPlugin)
-        .add_plugins(BattlePlugin)
-        .add_plugins(MonsterPlugin)
-        .add_plugins(MapPlugin)
-        .add_plugins(GameAudioPlugin)
-        .add_plugins(TemplatePlugin)
-        .add_plugins(UiPlugin)
-        .add_plugins(UtilPlugin)
-        .add_plugins(SpellsPlugin)
-        .add_plugins(ParticlesPlugin)
-        .add_plugins(ItemsPlugin)
-        .add_plugins(LevelPlugin)
-        .add_plugins(PhysicsPlugins::new(FixedUpdate))
-        .insert_resource(Time::<Fixed>::from_hz(PFPS))
-        .add_loading_state(
-            LoadingState::new(AppState::LoadingAssets)
-                .continue_to_state(AppState::LoadingTemplates)
-                .load_collection::<MonsterSprites>()
-                .load_collection::<SheetHandle>()
-                .load_collection::<TilesetHandle>()
-                .load_collection::<GameAudioAssets>()
-                .load_collection::<FontAssets>()
-                .load_collection::<SpellsSheetSmall>()
-                .load_collection::<ItemSheetSmall>()
-        )
-        .insert_resource(Msaa::Off)
-        .insert_resource(ClearColor(Color::srgba_u8(
-            BG_COLOR.0, BG_COLOR.1, BG_COLOR.2, 0,
-        )))
-        .insert_resource(Gravity(Vec2::ZERO))
-        .configure_sets(
-            Update,
-            (
-                CameraSet.run_if(in_state(AppState::InBattle)),
-                PlayerSet.run_if(in_state(AppState::InBattle)),
-                InputSet.run_if(in_state(AppState::InBattle)),
-                MapSet.run_if(in_state(AppState::InBattle)),
-                AudioSet.run_if(in_state(AppState::InBattle)),
-                MonsterSet.run_if(in_state(AppState::InBattle)),
-            ),
-        )
-        .configure_sets(
-            FixedUpdate,
-            (
-                AISet.run_if(in_state(AppState::InBattle)),
-                MonsterSet.run_if(in_state(AppState::InBattle)),
-                UiSet.run_if(in_state(AppState::InBattle)),
-                UtilSet.run_if(in_state(AppState::InBattle)),
-                BattleSet.run_if(in_state(AppState::InBattle)),
-                ParticleSet.run_if(in_state(AppState::InBattle)),
-                ItemsSet.run_if(in_state(AppState::InBattle)),
-                LevelSet.run_if(in_state(AppState::InBattle)),
-            ),
-        )
-        .configure_sets(OnEnter(AppState::InBattle), UiSet.after(PlayerSet))
-        .configure_sets(OnEnter(AppState::InBattle), SpellSet.before(PlayerSet))
-        .configure_sets(OnEnter(AppState::InBattle), ParticleSet.after(UiSet))
-        .configure_sets(OnEnter(AppState::InBattle), LevelSet.before(SpellSet));
+        app.init_state::<AppState>()
+            .add_plugins(
+                ProgressPlugin::new(AppState::LoadingAssets).continue_to(AppState::InBattle),
+            )
+            .add_plugins(EntropyPlugin::<WyRand>::default())
+            .add_plugins(FastTileMapPlugin::default())
+            .add_plugins(OneShotPlugin)
+            .add_plugins(ArenaCameraPlugin)
+            .add_plugins(InputPlugin)
+            .add_plugins(PlayerPlugin)
+            .add_plugins(BattlePlugin)
+            .add_plugins(MonsterPlugin)
+            .add_plugins(MapPlugin)
+            .add_plugins(GameAudioPlugin)
+            .add_plugins(TemplatePlugin)
+            .add_plugins(UiPlugin)
+            .add_plugins(UtilPlugin)
+            .add_plugins(SpellsPlugin)
+            .add_plugins(ParticlesPlugin)
+            .add_plugins(ItemsPlugin)
+            .add_plugins(LevelPlugin)
+            .add_plugins(PhysicsPlugins::new(FixedUpdate))
+            .insert_resource(Time::<Fixed>::from_hz(PFPS))
+            .add_loading_state(
+                LoadingState::new(AppState::LoadingAssets)
+                    .continue_to_state(AppState::LoadingTemplates)
+                    .load_collection::<MonsterSprites>()
+                    .load_collection::<SheetHandle>()
+                    .load_collection::<TilesetHandle>()
+                    .load_collection::<GameAudioAssets>()
+                    .load_collection::<FontAssets>()
+                    .load_collection::<SpellsSheetSmall>()
+                    .load_collection::<ItemSheetSmall>(),
+            )
+            .insert_resource(Msaa::Off)
+            .insert_resource(ClearColor(Color::srgba_u8(
+                BG_COLOR.0, BG_COLOR.1, BG_COLOR.2, 0,
+            )))
+            .insert_resource(Gravity(Vec2::ZERO))
+            .configure_sets(
+                Update,
+                (
+                    CameraSet.run_if(in_state(AppState::InBattle)),
+                    PlayerSet.run_if(in_state(AppState::InBattle)),
+                    InputSet.run_if(in_state(AppState::InBattle)),
+                    MapSet.run_if(in_state(AppState::InBattle)),
+                    AudioSet.run_if(in_state(AppState::InBattle)),
+                    MonsterSet.run_if(in_state(AppState::InBattle)),
+                ),
+            )
+            .configure_sets(
+                FixedUpdate,
+                (
+                    AISet.run_if(in_state(AppState::InBattle)),
+                    MonsterSet.run_if(in_state(AppState::InBattle)),
+                    UiSet.run_if(in_state(AppState::InBattle)),
+                    UtilSet.run_if(in_state(AppState::InBattle)),
+                    BattleSet.run_if(in_state(AppState::InBattle)),
+                    ParticleSet.run_if(in_state(AppState::InBattle)),
+                    ItemsSet.run_if(in_state(AppState::InBattle)),
+                    LevelSet.run_if(in_state(AppState::InBattle)),
+                ),
+            )
+            .configure_sets(OnEnter(AppState::InBattle), UiSet.after(PlayerSet))
+            .configure_sets(OnEnter(AppState::InBattle), SpellSet.before(PlayerSet))
+            .configure_sets(OnEnter(AppState::InBattle), ParticleSet.after(UiSet))
+            .configure_sets(OnEnter(AppState::InBattle), LevelSet.before(SpellSet));
     }
 }

@@ -401,6 +401,9 @@ pub struct PlayerExperience(pub usize);
 #[derive(Component)]
 pub struct PlayerLevel(pub u8);
 
+#[derive(Resource)]
+pub struct AvailableCards(pub u8);
+
 /// Used for spawning projectiles and dashing from where the player was last facing
 #[derive(Resource)]
 pub struct PlayerLastDirection {

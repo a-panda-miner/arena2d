@@ -371,7 +371,7 @@ name = "ar_oneshot"
 version = "0.1.0"
 dependencies = [
  "ar_core",
- "ar_input",
+ "ar_level",
  "bevy",
 ]
 

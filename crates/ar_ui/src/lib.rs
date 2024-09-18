@@ -7,7 +7,6 @@ use ar_core::{
     AppState, CurrentStamina, DisplayDamageEvent, Health, LifeTime, MaxHealth, MaxStamina,
     PlayerMarker, PlayerMinusHpEvent, UiMarker, UiSet,
 };
-use bevy::color::palettes::css::{GREEN, SILVER};
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 
@@ -60,7 +59,7 @@ fn set_display_player_health(
     let (health, max_health) = health.single();
     let text = format!("HP: {} / {}", health.0, max_health.0);
     let font = fonts.ui_font.clone();
-    let color: Color = SILVER.into();
+    let color: Color = Color::srgba_u8(48, 98, 48, 255);
     let textstyle: TextStyle = TextStyle {
         font,
         font_size: 16.0,
@@ -99,7 +98,7 @@ fn set_display_player_stamina(
     let (stamina, max_stamina) = stamina.single();
     let text = format!("Stamina: {} / {}", stamina.0, max_stamina.0);
     let font = fonts.ui_font.clone();
-    let color: Color = GREEN.into();
+    let color: Color = Color::srgba_u8(15, 56, 15, 255);
     let textstyle: TextStyle = TextStyle {
         font,
         font_size: 16.0,
