@@ -23,7 +23,7 @@ use ar_core::{
     MonstersAlive, PlayerHandler, PlayerMarker,
 };
 use ar_enemies::MonsterSprites;
-use ar_template::{MonsterDifficultyLists, MonsterTemplates};
+use ar_template::monsters::{MonsterDifficultyLists, MonsterTemplates};
 
 pub struct MonsterPlugin;
 

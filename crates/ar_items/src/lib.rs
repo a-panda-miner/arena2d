@@ -5,7 +5,7 @@ use ar_core::{
     DropItemEvent, ItemComponent, ItemMarker, ItemType, ItemsSet, Layer, PickupEvent,
     PlayerExperience, PlayerMarker,
 };
-use ar_template::{ItemTemplates, ItemsUtil};
+use ar_template::items::{ItemTemplates, ItemsUtil};
 use avian2d::prelude::*;
 use bevy::prelude::*;
 use bevy::utils::HashMap;

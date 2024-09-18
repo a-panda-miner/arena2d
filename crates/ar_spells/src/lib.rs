@@ -2,7 +2,7 @@ pub mod generator;
 
 use crate::generator::GenerateSpellsPlugin;
 use ar_core::{AppState, ProjectilePattern, SpellAOEType, SpellSet, SpellType};
-use ar_template::SpellTemplates;
+use ar_template::spells::SpellTemplates;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
