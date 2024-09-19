@@ -5,6 +5,16 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+
+[lib]
+name = "arena2d"
+path = "crates/ar_bin/src/lib.rs"
+crate-type = [
+    "staticlib",
+    "cdylib",
+    "rlib",
+]
+
 [[bin]]
 name = "ar_bin"
 path = "crates/ar_bin/src/main.rs"

@@ -1,6 +1,5 @@
-use ar_game::GamePlugin;
-use bevy::prelude::*;
+use ar_bin::run_game;
 
 fn main() {
-    App::new().add_plugins(GamePlugin).run();
+    run_game();
 }
