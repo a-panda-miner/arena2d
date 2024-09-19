@@ -48,6 +48,7 @@ itertools = "0.13"
 pathfinding = "4"
 anyhow = "1"
 rayon = "1"
+tiny_bail = "0.3"
 
 # RNG
 noise = "0.9"
@@ -56,7 +57,8 @@ rand = "0.8"
 bevy_rand = { version = "0.7", features = ["wyrand"]}
 
 # Physics 
-avian2d = "0.1"
+avian2d = { git = "https://github.com/Jondolf/avian", branch = "main" }
+avian_interpolation2d = { git = "https://github.com/janhohenheim/avian_interpolation", branch = "main"}
 
 # Asset Loader
 bevy_asset_loader = { version = "0.21", features = ["2d", "progress_tracking"] }
@@ -64,7 +66,6 @@ iyes_progress = "0.12"
 
 # Tilemap
 bevy_fast_tilemap = { git = "https://github.com/droggelbecher/bevy-fast-tilemap" }
-#bevy_fast_tilemap = "0.8" # not released on crates.io yet
 
 # GUI Inspector
 bevy-inspector-egui = "0.25"

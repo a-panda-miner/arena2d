@@ -365,10 +365,11 @@ pub struct MonsterProjectileMarker;
 #[derive(Component)]
 pub struct MagnetMarker;
 
-#[derive(PhysicsLayer)]
+#[derive(PhysicsLayer, Default)]
 pub enum Layer {
     Player,
     Monster,
+    #[default]
     Neutral,
     PlayerProjectile,
     MonsterProjectile,

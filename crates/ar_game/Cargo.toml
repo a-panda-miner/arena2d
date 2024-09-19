@@ -12,6 +12,7 @@ bevy-inspector-egui = { workspace = true }
 bevy_fast_tilemap = { workspace = true }
 bevy_rand = { workspace = true }
 rand_core = { workspace = true }
+avian_interpolation2d = { workspace = true }
 
 [lints]
 workspace = true
