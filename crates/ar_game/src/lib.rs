@@ -3,9 +3,10 @@
 use ar_audio::{GameAudioAssets, GameAudioPlugin};
 use ar_battle::{BattlePlugin, SpellsSheetSmall};
 use ar_camera::ArenaCameraPlugin;
+use ar_cards::CardPlugin;
 use ar_conf::{BG_COLOR, PFPS};
 use ar_core::{
-    AISet, AppState, AudioSet, BattleSet, CameraSet, InputSet, ItemsSet, LevelSet, MapSet,
+    AISet, AppState, AudioSet, BattleSet, CameraSet, CardSet, InputSet, ItemsSet, LevelSet, MapSet,
     MonsterSet, ParticleSet, PlayerSet, SpellSet, UiSet, UtilSet,
 };
 use ar_enemies::MonsterSprites;
@@ -169,6 +170,7 @@ impl Plugin for GamePlugin {
             .add_plugins(ParticlesPlugin)
             .add_plugins(ItemsPlugin)
             .add_plugins(LevelPlugin)
+            .add_plugins(CardPlugin)
             .add_plugins(PhysicsPlugins::new(FixedUpdate))
             .insert_resource(Time::<Fixed>::from_hz(PFPS))
             .add_loading_state(
@@ -209,6 +211,7 @@ impl Plugin for GamePlugin {
                     ParticleSet.run_if(in_state(AppState::InBattle)),
                     ItemsSet.run_if(in_state(AppState::InBattle)),
                     LevelSet.run_if(in_state(AppState::InBattle)),
+                    CardSet.run_if(in_state(AppState::InBattle)),
                 ),
             )
             .configure_sets(OnEnter(AppState::InBattle), UiSet.after(PlayerSet))

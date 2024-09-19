@@ -246,6 +246,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ar_cards"
+version = "0.1.0"
+dependencies = [
+ "ar_core",
+ "ar_template",
+ "bevy",
+ "bevy_rand",
+ "rand",
+ "rand_core",
+]
+
+[[package]]
 name = "ar_conf"
 version = "0.1.0"
 dependencies = [
@@ -280,6 +292,7 @@ dependencies = [
  "ar_audio",
  "ar_battle",
  "ar_camera",
+ "ar_cards",
  "ar_conf",
  "ar_core",
  "ar_enemies",

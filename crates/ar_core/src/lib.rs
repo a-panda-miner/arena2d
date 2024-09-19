@@ -116,6 +116,9 @@ pub struct ItemsSet;
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LevelSet;
 
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct CardSet;
+
 /// The base speed of the entity,
 /// Needed for reference when applying and removing slow/stun effects
 #[derive(Component)]
@@ -239,6 +242,9 @@ pub struct PickupEvent {
 
 #[derive(Debug, Event)]
 pub struct LevelUpEvent;
+
+#[derive(Debug, Event)]
+pub struct PlayerLevelUpEvent(pub u8);
 
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'

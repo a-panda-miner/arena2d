@@ -13,9 +13,9 @@ use std::env;
 use std::path::PathBuf;
 
 use crate::{
+    cards::{build_cards_by_type, validate_spell_cards, CardsTemplates},
     items::{cache_templates_items_info, ItemTemplates},
     monsters::{cache_templates_monsters_info, MonsterTemplates},
-    cards::{CardsTemplates, templates_cards_by_type},
     spells::SpellTemplates,
 };
 
@@ -33,7 +33,9 @@ impl Plugin for TemplatePlugin {
             OnEnter(AppState::LoadingTemplates),
             (
                 load_templates,
-                (cache_templates_monsters_info, cache_templates_items_info, templates_cards_by_type),
+                (cache_templates_monsters_info, cache_templates_items_info),
+                build_cards_by_type,
+                validate_spell_cards,
             )
                 .chain()
                 .in_set(LoadingTemplatesSet),
@@ -41,7 +43,7 @@ impl Plugin for TemplatePlugin {
     }
 }
 
-pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<AppState>>) {
+pub fn load_templates(mut commands: Commands) {
     let mut spell_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let mut monster_path = spell_path.clone();
     let mut item_path = spell_path.clone();
@@ -58,7 +60,7 @@ pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<A
         File::open(monster_path.clone()).expect(&format!("failed to load {:?}", monster_path));
     let item_file =
         File::open(item_path.clone()).expect(&format!("failed to load {:?}", item_path));
-    let card_file = 
+    let card_file =
         File::open(card_path.clone()).expect(&format!("failed to load {:?}", card_path));
 
     let monstertemplate =
@@ -72,6 +74,4 @@ pub fn load_templates(mut commands: Commands, mut next_state: ResMut<NextState<A
     commands.insert_resource(spelltemplate);
     commands.insert_resource(itemtemplate);
     commands.insert_resource(cardtemplate);
-
-    next_state.set(AppState::InBattle);
 }
