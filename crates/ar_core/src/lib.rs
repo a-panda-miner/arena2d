@@ -562,3 +562,13 @@ pub enum PermanentDebuff {
     ExpDown(u8),
     SpeedDown(u8),
 }
+
+/// Every time the player levels up, spawn 3 new cards,
+/// every level is an index of the array, the player chooses always from the index 0 and then the vec is shifted,
+/// If there are no valid remaining cards it will be a None in the array,
+/// TODO! if the vec[0] is [None, None, None] grants the player resource and consume the array.
+/// If the vec is empty it means the player can't currently choose a new card.
+#[derive(Resource, Debug, Default)]
+pub struct ChooseACard {
+    pub cards: Vec<[Option<String>; 3]>,
+}

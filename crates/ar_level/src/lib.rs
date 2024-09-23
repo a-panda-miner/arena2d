@@ -2,7 +2,7 @@
 // and sends events when the player levels up
 
 use ar_core::{
-    AppState, AvailableCards, LevelSet, LevelTable, LevelUpEvent, OneShotSystems, PlayerExperience,
+    AppState, AvailableCards, LevelSet, LevelTable, LevelUpEvent, PlayerExperience,
     PlayerLevel, PlayerMarker, MAX_LEVEL,
 };
 use bevy::prelude::*;
@@ -17,7 +17,8 @@ impl Plugin for LevelPlugin {
                 OnEnter(AppState::InBattle),
                 setup_generate_level_table.in_set(LevelSet),
             )
-            .add_systems(FixedUpdate, check_for_level_up.in_set(LevelSet));
+            .add_systems(FixedUpdate, 
+                (check_for_level_up.in_set(LevelSet), level_up.in_set(LevelSet)).chain());
     }
 }
 
@@ -40,37 +41,23 @@ fn setup_generate_level_table(mut commands: Commands) {
 }
 
 fn check_for_level_up(
-    query: Query<(&PlayerExperience, &PlayerLevel), With<PlayerMarker>>,
-    level_up_system: Res<OneShotSystems>,
+    mut query: Query<(&mut PlayerExperience, &mut PlayerLevel), With<PlayerMarker>>,
     level_table: Res<LevelTable>,
-    mut commands: Commands,
+    mut ev_levelup: EventWriter<LevelUpEvent>,
 ) {
-    let (exp, level) = query.single();
-    let level_up_system = level_up_system
-        .0
-        .get("level_up")
-        .expect("level_up system not registered as OneShot system!!!");
-
+    let (mut exp, mut level) = query.single_mut();
     if exp.0 >= level_table.table[level.0 as usize] && level.0 < MAX_LEVEL {
-        commands.run_system(*level_up_system);
+        level.0 += 1;
+        exp.0 -= level_table.table[level.0 as usize];
+        ev_levelup.send(LevelUpEvent { level: level.0 });
     }
 }
 
 pub fn level_up(
     mut ev_levelup: EventReader<LevelUpEvent>,
-    mut query: Query<(&mut PlayerLevel, &mut PlayerExperience), With<PlayerMarker>>,
-    level_table: Res<LevelTable>,
     mut available_cards: ResMut<AvailableCards>,
 ) {
-    if ev_levelup.is_empty() {
-        return;
-    }
-
     for _ in ev_levelup.read() {
-        let (mut level, mut experience) = query.single_mut();
-        experience.0 -= level_table.table[level.0 as usize];
-        level.0 += 1;
+        available_cards.0 += 1;
     }
-    ev_levelup.clear();
-    available_cards.0 += 1;
 }

@@ -20,7 +20,7 @@ use ar_particles::ParticlesPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_spells::SpellsPlugin;
 use ar_template::TemplatePlugin;
-use ar_ui::{FontAssets, UiPlugin};
+use ar_ui::{FontAssets, UiPlugin, displaycards::CardsSprite};
 use ar_utils::UtilPlugin;
 
 #[cfg(debug_assertions)]
@@ -184,7 +184,8 @@ impl Plugin for GamePlugin {
                     .load_collection::<GameAudioAssets>()
                     .load_collection::<FontAssets>()
                     .load_collection::<SpellsSheetSmall>()
-                    .load_collection::<ItemSheetSmall>(),
+                    .load_collection::<ItemSheetSmall>()
+                    .load_collection::<CardsSprite>(),
             )
             .insert_resource(Msaa::Off)
             .insert_resource(ClearColor(Color::srgba_u8(

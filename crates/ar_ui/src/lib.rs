@@ -1,8 +1,10 @@
 // Crate for the UI and text on the floor
 
 pub mod damagenumbers;
+pub mod displaycards;
 
 use crate::damagenumbers::DamageNumbersPlugin;
+use crate::displaycards::DisplayCardsPlugin;
 use ar_core::{
     AppState, CurrentStamina, DisplayDamageEvent, Health, LifeTime, MaxHealth, MaxStamina,
     PlayerMarker, PlayerMinusHpEvent, UiMarker, UiSet,
@@ -33,6 +35,7 @@ pub struct UiPlugin;
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(DamageNumbersPlugin)
+            .add_plugins(DisplayCardsPlugin)
             .add_systems(
                 OnEnter(AppState::InBattle),
                 (

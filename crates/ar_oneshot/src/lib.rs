@@ -4,7 +4,6 @@
 // for the libraries crates, excluding ar_game
 
 use ar_core::OneShotSystems;
-use ar_level::level_up;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 
@@ -12,12 +11,8 @@ pub struct OneShotPlugin;
 
 impl Plugin for OneShotPlugin {
     fn build(&self, app: &mut App) {
-        let mut systems = OneShotSystems(HashMap::new());
-
-        systems
-            .0
-            .insert("level_up".into(), app.register_system(level_up));
-
+        let systems = OneShotSystems(HashMap::new());
+        
         app.insert_resource(systems);
     }
 }
