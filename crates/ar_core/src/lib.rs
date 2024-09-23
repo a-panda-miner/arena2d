@@ -317,7 +317,7 @@ pub struct LootTables(pub Vec<LootTable>);
 
 impl From<Vec<u8>> for LootTables {
     fn from(value: Vec<u8>) -> Self {
-        Self(value.into_iter().map(|x| LootTable::from(x)).collect())
+        Self(value.into_iter().map(LootTable::from).collect())
     }
 }
 

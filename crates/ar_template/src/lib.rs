@@ -54,14 +54,14 @@ pub fn load_templates(mut commands: Commands) {
     item_path.push("../ar_bin/assets/templates/items.ron");
     card_path.push("../ar_bin/assets/templates/cards.ron");
 
-    let spell_file =
-        File::open(spell_path.clone()).expect(&format!("failed to load {:?}", spell_path));
-    let monster_file =
-        File::open(monster_path.clone()).expect(&format!("failed to load {:?}", monster_path));
+    let spell_file = File::open(spell_path.clone())
+        .unwrap_or_else(|_| panic!("failed to load {:?}", spell_path));
+    let monster_file = File::open(monster_path.clone())
+        .unwrap_or_else(|_| panic!("failed to load {:?}", monster_path));
     let item_file =
-        File::open(item_path.clone()).expect(&format!("failed to load {:?}", item_path));
+        File::open(item_path.clone()).unwrap_or_else(|_| panic!("failed to load {:?}", item_path));
     let card_file =
-        File::open(card_path.clone()).expect(&format!("failed to load {:?}", card_path));
+        File::open(card_path.clone()).unwrap_or_else(|_| panic!("failed to load {:?}", card_path));
 
     let monstertemplate =
         MonsterTemplates::from_reader(monster_file).expect("failed to parse monsters.ron");

@@ -139,8 +139,8 @@ fn handle_collision(
     let mut player_damage = 0;
     let mut source: Entity = Entity::from_raw(0);
     for CollisionStarted(entity1, entity2) in ev_collision_reader.read() {
-        let entity1 = entity1.clone();
-        let entity2 = entity2.clone();
+        let entity1 = *entity1;
+        let entity2 = *entity2;
 
         if player_query.contains(entity1) {
             if let Ok(damage) = damage.get(entity2) {
@@ -384,7 +384,7 @@ fn spawn_player_projectiles(
         let proj = spell
             .projectile_spells
             .get(&spa.spell_name)
-            .expect(format!("{} not found", spa.spell_name).as_str());
+            .unwrap_or_else(|| panic!("{} not found", spa.spell_name));
         let linear_vel = dir * proj.projectile_movespeed;
         let sprite = proj.sprite.clone();
         commands
@@ -393,9 +393,8 @@ fn spawn_player_projectiles(
                 texture: sprite_sheet
                     .sprite
                     .get(sprite.as_str())
-                    .expect(format!("{} not found", sprite).as_str())
-                    .clone()
-                    .into(),
+                    .unwrap_or_else(|| panic!("{} not found", sprite))
+                    .clone(),
                 global_transform: *global_transform,
                 transform: *local_transform,
                 ..Default::default()

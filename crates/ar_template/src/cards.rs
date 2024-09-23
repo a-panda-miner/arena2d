@@ -47,7 +47,7 @@ pub fn build_cards_by_type(cards_templates: Res<CardsTemplates>, mut commands: C
         powerup_cards: Vec::new(),
         spell_cards: Vec::new(),
     };
-    let remaining_cards_by_type;
+
     for (key, template) in cards_templates.cards.iter() {
         match template.card_type {
             CardType::Buff => {
@@ -58,7 +58,7 @@ pub fn build_cards_by_type(cards_templates: Res<CardsTemplates>, mut commands: C
             }
         }
     }
-    remaining_cards_by_type = RemainingCardsByType {
+    let remaining_cards_by_type = RemainingCardsByType {
         powerup_cards: cards_by_type.powerup_cards.clone(),
         spell_cards: cards_by_type.spell_cards.clone(),
     };

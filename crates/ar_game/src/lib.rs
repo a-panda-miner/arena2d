@@ -103,7 +103,7 @@ impl Plugin for GamePlugin {
                 })
                 .build(),
         )
-        .add_plugins(FrameTimeDiagnosticsPlugin::default())
+        .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins(LogDiagnosticsPlugin::default())
         .add_plugins(WorldInspectorPlugin::new());
 

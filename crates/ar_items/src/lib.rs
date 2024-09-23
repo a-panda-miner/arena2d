@@ -107,11 +107,8 @@ pub fn pickup_item(
     let mut player_experience = player_experience.single_mut();
     for ev in ev_pickup.read() {
         if let Ok(item) = query.get(ev.entity) {
-            match item.item_type {
-                ItemType::ExperienceOrb => {
-                    player_experience.0 += item.value;
-                }
-                _ => {}
+            if item.item_type == ItemType::ExperienceOrb {
+                player_experience.0 += item.value;
             }
         }
         commands.entity(ev.entity).despawn_recursive();

@@ -10,8 +10,7 @@ pub struct CardPlugin;
 
 impl Plugin for CardPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .init_resource::<ChooseACard>()
+        app.init_resource::<ChooseACard>()
             .add_systems(FixedUpdate, spawn_cards.in_set(CardSet));
     }
 }

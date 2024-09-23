@@ -73,7 +73,7 @@ fn change_camera_state(
 ) {
     *last_change += 1;
     if *last_change < 5 || (zoom_in_event.is_empty() && zoom_out_event.is_empty()) {
-        return ();
+        return;
     }
     if !zoom_in_event.is_empty() {
         match camera_state.0 {
@@ -109,8 +109,6 @@ fn change_camera_zoom(
             max_width: new_resolution_width,
             max_height: new_resolution_height,
         }
-    } else {
-        return;
     }
 }
 

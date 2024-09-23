@@ -50,12 +50,10 @@ fn spawn_monsters(
             } else {
                 Vec3::new(ARENA_WIDTH_ZOOMOUT, -ARENA_HEIGHT_ZOOMOUT, 0.0)
             }
+        } else if up_down {
+            Vec3::new(-ARENA_WIDTH_ZOOMOUT, ARENA_HEIGHT_ZOOMOUT, 0.0)
         } else {
-            if up_down {
-                Vec3::new(-ARENA_WIDTH_ZOOMOUT, ARENA_HEIGHT_ZOOMOUT, 0.0)
-            } else {
-                Vec3::new(-ARENA_WIDTH_ZOOMOUT, -ARENA_HEIGHT_ZOOMOUT, 0.0)
-            }
+            Vec3::new(-ARENA_WIDTH_ZOOMOUT, -ARENA_HEIGHT_ZOOMOUT, 0.0)
         };
         let player_position = player_position.single();
         let spawn_point = spawn_point + player_position.translation();
@@ -141,11 +139,8 @@ fn spawn_monsters(
                 target: target.player_id,
             })
             .id();
-        match monster.layout {
-            MonsterLayoutType::Small => {
-                commands.entity(monster_id).insert(MonsterMarkerSmall);
-            }
-            _ => {}
+        if let MonsterLayoutType::Small = monster.layout {
+            commands.entity(monster_id).insert(MonsterMarkerSmall);
         }
         spawn_count -= 1;
     }

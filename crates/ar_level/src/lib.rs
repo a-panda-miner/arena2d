@@ -30,10 +30,10 @@ fn setup_generate_level_table(mut commands: Commands) {
 
     let factor: f32 = 0.45;
 
-    for i in 0..MAX_LEVEL as usize {
+    for (i, item) in table.iter_mut().enumerate() {
         total += next_level;
-        table[i] = total as usize;
-        next_level = next_level * (1.0 + factor.powi(i as i32));
+        *item = total as usize;
+        next_level *= 1.0 + factor.powi(i as i32);
     }
 
     commands.insert_resource(LevelTable { table });

@@ -132,11 +132,10 @@ pub fn change_camera_follow_state(
     mut camera_state: ResMut<CameraFollowState>,
 ) {
     if action_state.just_pressed(&Action::ChangeCamera) {
-        let state;
-        match *camera_state {
-            CameraFollowState::Player => state = CameraFollowState::Rect,
-            CameraFollowState::Rect => state = CameraFollowState::Player,
-        }
+        let state = match *camera_state {
+            CameraFollowState::Player => CameraFollowState::Rect,
+            CameraFollowState::Rect => CameraFollowState::Player,
+        };
         *camera_state = state;
     }
 }
@@ -229,6 +228,5 @@ fn player_animation(
         } else {
             texture_atlas.index = 6;
         }
-        return;
     }
 }

@@ -67,7 +67,7 @@ fn setup_bg(mut commands: Commands, audio_assets: Res<FlatBGList>) {
     };
     commands
         .spawn(AudioBundle {
-            source: audio_assets.list[bgm.current_bg].clone().into(),
+            source: audio_assets.list[bgm.current_bg].clone(),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Loop,
                 volume: Volume::new(0.1),
@@ -107,7 +107,7 @@ fn play_music(bgm: Res<BackGroundMusic>, mut commands: Commands, audio_assets: R
     let bg = bgm.current_bg;
     commands
         .spawn(AudioBundle {
-            source: audio_assets.list[bg].clone().into(),
+            source: audio_assets.list[bg].clone(),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Loop,
                 volume: Volume::new(0.01),

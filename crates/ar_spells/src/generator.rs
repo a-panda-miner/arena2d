@@ -85,29 +85,26 @@ pub struct SpellSwing {
 /// Must be run before setup_player as the player is spawned with a spell
 pub fn setup_generate_spells(loaded_spells: Res<SpellTemplates>, mut commands: Commands) {
     let mut projectile_spells = HashMap::new();
-    for (&ref name, &ref spell) in &loaded_spells.spells {
-        match spell.spell_main_type {
-            SpellType::Projectile => {
-                let projectile = spell
-                    .projectile_type_struct
-                    .clone()
-                    .expect("Projectile Type with no Projectile Struct");
-                let proj = SpellProjectile {
-                    name: spell.name.clone(),
-                    sprite: projectile.projectile_sprite,
-                    cooldown: Timer::from_seconds(spell.cooldown, TimerMode::Repeating),
-                    count: projectile.projectile_count,
-                    pattern: projectile.projectile_pattern,
-                    damage: projectile.projectile_damage,
-                    projectile_movespeed: projectile.projectile_movespeed,
-                    radius: projectile.projectile_radius,
-                    mass: projectile.projectile_mass,
-                    lifetime: projectile.projectile_lifetime,
-                    penetration: projectile.projectile_penetration.unwrap_or(0),
-                };
-                projectile_spells.insert(name.clone(), proj);
-            }
-            _ => (),
+    for (name, spell) in &loaded_spells.spells {
+        if let SpellType::Projectile = spell.spell_main_type {
+            let projectile = spell
+                .projectile_type_struct
+                .clone()
+                .expect("Projectile Type with no Projectile Struct");
+            let proj = SpellProjectile {
+                name: spell.name.clone(),
+                sprite: projectile.projectile_sprite,
+                cooldown: Timer::from_seconds(spell.cooldown, TimerMode::Repeating),
+                count: projectile.projectile_count,
+                pattern: projectile.projectile_pattern,
+                damage: projectile.projectile_damage,
+                projectile_movespeed: projectile.projectile_movespeed,
+                radius: projectile.projectile_radius,
+                mass: projectile.projectile_mass,
+                lifetime: projectile.projectile_lifetime,
+                penetration: projectile.projectile_penetration.unwrap_or(0),
+            };
+            projectile_spells.insert(name.clone(), proj);
         }
     }
     commands.insert_resource(ProjectileSpells { projectile_spells });

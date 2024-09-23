@@ -7,7 +7,5 @@ fn main() {
 }
 
 pub fn run_game() {
-    App::new()
-        .add_plugins(GamePlugin)
-        .run();
+    App::new().add_plugins(GamePlugin).run();
 }
