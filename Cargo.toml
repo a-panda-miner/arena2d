@@ -38,13 +38,10 @@ debug = 0
 # strip debug symbols
 strip = "symbols"
 
-[build]
-rustflags = ["-C", "target-cpu=native"]
 
 [workspace]
 members = ["crates/*"]
 default-members = ["crates/*"]
-
 
 [workspace.dependencies]
 
