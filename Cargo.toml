@@ -28,7 +28,7 @@ debug = 1
 
 [profile.release]
 #link time optimization
-lto = true
+lto = "fat"
 # allows for more optimazition in exchange for compile time
 codegen-units = 1
 # no unwinding on panic
@@ -37,6 +37,9 @@ panic = "abort"
 debug = 0
 # strip debug symbols
 strip = "symbols"
+
+[build]
+rustflags = ["-C", "target-cpu=native"]
 
 [workspace]
 members = ["crates/*"]

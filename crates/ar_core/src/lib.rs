@@ -241,10 +241,9 @@ pub struct PickupEvent {
 }
 
 #[derive(Debug, Event)]
-pub struct LevelUpEvent;
-
-#[derive(Debug, Event)]
-pub struct PlayerLevelUpEvent(pub u8);
+pub struct LevelUpEvent {
+    pub level: u8,
+}
 
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'

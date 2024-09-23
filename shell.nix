@@ -3,6 +3,10 @@ let
   pkgs = import <nixpkgs> {
 	overlays = [ (import rustOverlay) ];
   };
+	rust = pkgs.rust-bin.stable.latest.default.override {
+  	extensions = [ "llvm-tools-preview" ];
+		targets = [ "wasm32-unknown-unknown" ];
+	};
 in
   pkgs.mkShell {
     packages = [ 
@@ -28,8 +32,9 @@ in
         pkgs.libglvnd	
 	];
 	buildInputs = with pkgs; [
-      rust-bin.stable.latest.default
+      rust
       rust-analyzer
+			cargo-pgo
 	];
 	RUST_BACKTRACE = 1;
 }
