@@ -1,4 +1,4 @@
-use ar_core::{CardSet, LevelUpEvent, ChooseACard};
+use ar_core::{CardSet, ChooseACard, LevelUpEvent};
 use ar_template::cards::RemainingCardsByType;
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;

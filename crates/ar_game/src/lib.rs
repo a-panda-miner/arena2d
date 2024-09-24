@@ -20,7 +20,7 @@ use ar_particles::ParticlesPlugin;
 use ar_player::{PlayerPlugin, SheetHandle};
 use ar_spells::SpellsPlugin;
 use ar_template::TemplatePlugin;
-use ar_ui::{FontAssets, UiPlugin, displaycards::CardsSprite};
+use ar_ui::{displaycards::CardsSprite, FontAssets, UiPlugin};
 use ar_utils::UtilPlugin;
 
 #[cfg(debug_assertions)]

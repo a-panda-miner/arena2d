@@ -12,7 +12,7 @@ pub struct OneShotPlugin;
 impl Plugin for OneShotPlugin {
     fn build(&self, app: &mut App) {
         let systems = OneShotSystems(HashMap::new());
-        
+
         app.insert_resource(systems);
     }
 }

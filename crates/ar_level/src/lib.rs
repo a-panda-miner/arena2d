@@ -2,8 +2,8 @@
 // and sends events when the player levels up
 
 use ar_core::{
-    AppState, AvailableCards, LevelSet, LevelTable, LevelUpEvent, PlayerExperience,
-    PlayerLevel, PlayerMarker, MAX_LEVEL,
+    AppState, AvailableCards, LevelSet, LevelTable, LevelUpEvent, PlayerExperience, PlayerLevel,
+    PlayerMarker, MAX_LEVEL,
 };
 use bevy::prelude::*;
 
@@ -17,8 +17,14 @@ impl Plugin for LevelPlugin {
                 OnEnter(AppState::InBattle),
                 setup_generate_level_table.in_set(LevelSet),
             )
-            .add_systems(FixedUpdate, 
-                (check_for_level_up.in_set(LevelSet), level_up.in_set(LevelSet)).chain());
+            .add_systems(
+                FixedUpdate,
+                (
+                    check_for_level_up.in_set(LevelSet),
+                    level_up.in_set(LevelSet),
+                )
+                    .chain(),
+            );
     }
 }
 

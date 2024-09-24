@@ -1,7 +1,7 @@
-use ar_core::{ChooseACard, UiSet, AppState};
+use ar_core::{AppState, UiSet};
 use bevy::prelude::*;
-use bevy_asset_loader::prelude::*;
 use bevy::utils::HashMap;
+use bevy_asset_loader::prelude::*;
 
 pub struct DisplayCardsPlugin;
 
@@ -33,14 +33,30 @@ impl Plugin for DisplayCardsPlugin {
 
 /// Spawns UI entities for the cards,
 /// When cards are spawned another system modifies these entities,
-/// revealing them until and updating the art of the card, when the resource 
+/// revealing them until and updating the art of the card, when the resource
 /// "ChooseACard" is empty it goes back to being hidden
-fn cards_ui_set_up(
-    mut commands: Commands,
-    cards_sprite: Res<CardsSprite>,
-) {
+fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
+    let template_uncommon = cards_sprite
+        .cards_sprites
+        .get("card_uncommon")
+        .expect("card_uncommon not loaded");
 
-    let template_uncommon = cards_sprite.cards_sprites.get("card_uncommon").expect("card_uncommon not loaded");
+    let fireball_art = cards_sprite
+        .cards_sprites
+        .get("fireball")
+        .expect("fireball art not loaded");
+
+    let stamina_art = cards_sprite
+        .cards_sprites
+        .get("stamina")
+        .expect("stamina art not loaded");
+
+    let health_art = cards_sprite
+        .cards_sprites
+        .get("health")
+        .expect("health art not loaded");
+
+    let background_color: Color = Color::srgba_u8(155, 188, 15, 255);
 
     let container = NodeBundle {
         style: Style {
@@ -53,37 +69,37 @@ fn cards_ui_set_up(
             bottom: Val::Percent(7.5),
             ..default()
         },
-        
+
         ..default()
     };
-    
+
     let card1 = NodeBundle {
         style: Style {
             width: Val::Px(160.),
-            height: Val::Px(232.), 
+            height: Val::Px(232.),
             ..default()
         },
-        background_color: Color::srgb(0.65, 0.65, 0.65).into(),
+        background_color: background_color.into(),
         ..default()
     };
 
     let card2 = NodeBundle {
         style: Style {
             width: Val::Px(160.),
-            height: Val::Px(232.), 
+            height: Val::Px(232.),
             ..default()
         },
-        background_color: Color::srgb(0.65, 0.65, 0.65).into(),
+        background_color: background_color.into(),
         ..default()
     };
 
     let card3 = NodeBundle {
         style: Style {
             width: Val::Px(160.),
-            height: Val::Px(232.), 
+            height: Val::Px(232.),
             ..default()
         },
-        background_color: Color::srgb(0.65, 0.65, 0.65).into(),
+        background_color: background_color.into(),
         ..default()
     };
 
@@ -120,19 +136,80 @@ fn cards_ui_set_up(
         ..default()
     };
 
+    let card_art1 = ImageBundle {
+        style: Style {
+            position_type: PositionType::Absolute,
+            width: Val::Percent(91.25),
+            height: Val::Percent(55.6),
+            margin: UiRect {
+                left: Val::Percent(4.5),
+                right: Val::Percent(4.5),
+                top: Val::Percent(7.75),
+                bottom: Val::Percent(0.0),
+            },
+            ..default()
+        },
+        image: UiImage::new(fireball_art.clone()),
+        ..default()
+    };
+
+    let card_art2 = ImageBundle {
+        style: Style {
+            position_type: PositionType::Absolute,
+            width: Val::Percent(91.25),
+            height: Val::Percent(55.6),
+            margin: UiRect {
+                left: Val::Percent(4.5),
+                right: Val::Percent(4.5),
+                top: Val::Percent(7.75),
+                bottom: Val::Percent(0.0),
+            },
+            ..default()
+        },
+        image: UiImage::new(stamina_art.clone()),
+        ..default()
+    };
+
+    let card_art3 = ImageBundle {
+        style: Style {
+            position_type: PositionType::Absolute,
+            width: Val::Percent(91.25),
+            height: Val::Percent(55.6),
+            margin: UiRect {
+                left: Val::Percent(4.5),
+                right: Val::Percent(4.5),
+                top: Val::Percent(7.75),
+                bottom: Val::Percent(0.0),
+            },
+            ..default()
+        },
+        image: UiImage::new(health_art.clone()),
+        ..default()
+    };
 
     let parent = commands.spawn(container).id();
+
     let card1 = commands.spawn(card1).id();
     let card2 = commands.spawn(card2).id();
     let card3 = commands.spawn(card3).id();
+
     let template1 = commands.spawn(template1).id();
     let template2 = commands.spawn(template2).id();
     let template3 = commands.spawn(template3).id();
 
+    let card_art1 = commands.spawn(card_art1).id();
+    let card_art2 = commands.spawn(card_art2).id();
+    let card_art3 = commands.spawn(card_art3).id();
 
-    commands.entity(parent).push_children(&[card1, card2, card3]);
+    commands
+        .entity(parent)
+        .push_children(&[card1, card2, card3]);
 
     commands.entity(card1).push_children(&[template1]);
     commands.entity(card2).push_children(&[template2]);
     commands.entity(card3).push_children(&[template3]);
+
+    commands.entity(template1).push_children(&[card_art1]);
+    commands.entity(template2).push_children(&[card_art2]);
+    commands.entity(template3).push_children(&[card_art3]);
 }
