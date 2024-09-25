@@ -245,6 +245,11 @@ pub struct LevelUpEvent {
     pub level: u8,
 }
 
+#[derive(Debug, Event)]
+pub struct ChosenCard {
+    pub card: String,
+}
+
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'
 /// Player moves the camera to follow the player each frame

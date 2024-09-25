@@ -1,4 +1,4 @@
-use ar_core::{CardSet, ChooseACard, LevelUpEvent};
+use ar_core::{CardSet, ChooseACard, ChosenCard, LevelUpEvent};
 use ar_template::cards::RemainingCardsByType;
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
@@ -10,8 +10,12 @@ pub struct CardPlugin;
 
 impl Plugin for CardPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<ChooseACard>()
-            .add_systems(FixedUpdate, spawn_cards.in_set(CardSet));
+        app.add_event::<ChosenCard>()
+            .init_resource::<ChooseACard>()
+            .add_systems(
+                FixedUpdate,
+                (spawn_cards, chosen_card).chain().in_set(CardSet),
+            );
     }
 }
 
@@ -95,5 +99,14 @@ fn spawn_cards(
             }
         }
         choose_a_card.cards.push(cards)
+    }
+}
+
+fn chosen_card(
+    mut choose_a_card: ResMut<ChooseACard>,
+    mut ev_chosen_card: EventReader<ChosenCard>,
+) {
+    for _ in ev_chosen_card.read() {
+        let _ = choose_a_card.cards.remove(0);
     }
 }
