@@ -2,6 +2,9 @@ use ar_core::{
     BoostUsage, CameraFollowState, ChangeBackgroundEvent, DashUsage, InputSet, PlayerDirection,
     PlayerMarker, ZoomIn, ZoomOut,
 };
+#[cfg(debug_assertions)]
+use ar_core::OneShotSystems;
+
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
 use bevy::utils::Duration;
@@ -36,7 +39,8 @@ impl Plugin for InputPlugin {
         #[cfg(debug_assertions)]
         app.add_systems(
             Update,
-            check_input
+            (check_input,
+            give_exp_debug,)
                 .in_set(InputSet)
                 .before(player_movement_direction),
         );
@@ -55,6 +59,11 @@ pub enum Action {
     ChangeCamera,
     Dash,
     Boost,
+    ChooseCard1,
+    ChooseCard2,
+    ChooseCard3,
+    #[cfg(debug_assertions)]
+    GiveExpDebug,
 }
 
 impl Action {
@@ -82,6 +91,12 @@ impl Action {
         input_map.insert(Self::Boost, KeyCode::ShiftLeft);
         input_map.insert(Self::ZoomIn, KeyCode::KeyQ);
         input_map.insert(Self::ZoomOut, KeyCode::KeyE);
+        input_map.insert(Self::ChooseCard1, KeyCode::Digit1);
+        input_map.insert(Self::ChooseCard2, KeyCode::Digit2);
+        input_map.insert(Self::ChooseCard3, KeyCode::Digit3);
+        #[cfg(debug_assertions)]
+        input_map.insert(Self::GiveExpDebug, KeyCode::KeyM);
+
         input_map
     }
 }
@@ -153,13 +168,6 @@ pub fn zoom_in_out(
     }
 }
 
-#[cfg(debug_assertions)]
-pub fn check_input(action_state: Res<ActionState<Action>>) {
-    for action in action_state.get_pressed() {
-        info!("Pressed {action:?}");
-    }
-}
-
 fn player_animation(
     action_state: Res<ActionState<Action>>,
     mut query: Query<&mut TextureAtlas, With<PlayerMarker>>,
@@ -228,5 +236,26 @@ fn player_animation(
         } else {
             texture_atlas.index = 6;
         }
+    }
+}
+
+
+
+#[cfg(debug_assertions)]
+pub fn check_input(action_state: Res<ActionState<Action>>) {
+    for action in action_state.get_pressed() {
+        info!("Pressed {action:?}");
+    }
+}
+
+#[cfg(debug_assertions)]
+pub fn give_exp_debug(
+    mut commands: Commands,
+    one_shot: Res<OneShotSystems>,
+    action_state: Res<ActionState<Action>>,
+) {
+    if action_state.just_pressed(&Action::GiveExpDebug) {
+        let id = one_shot.0.get("give_exp").expect("no give_exp system");
+        commands.run_system(*id);
     }
 }

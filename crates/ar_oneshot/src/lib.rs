@@ -6,12 +6,17 @@
 use ar_core::OneShotSystems;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+#[cfg(debug_assertions)]
+use ar_debug_fn::{give_exp};
 
 pub struct OneShotPlugin;
 
 impl Plugin for OneShotPlugin {
     fn build(&self, app: &mut App) {
-        let systems = OneShotSystems(HashMap::new());
+        let mut systems = OneShotSystems(HashMap::new());
+
+        #[cfg(debug_assertions)]
+        systems.0.insert("give_exp".to_string(), app.register_system(give_exp));
 
         app.insert_resource(systems);
     }

@@ -275,6 +275,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ar_debug_fn"
+version = "0.1.0"
+dependencies = [
+ "ar_core",
+ "bevy",
+]
+
+[[package]]
 name = "ar_enemies"
 version = "0.1.0"
 dependencies = [
@@ -385,6 +393,7 @@ name = "ar_oneshot"
 version = "0.1.0"
 dependencies = [
  "ar_core",
+ "ar_debug_fn",
  "ar_level",
  "bevy",
 ]
