@@ -25,6 +25,9 @@ fn spawn_cards(
     mut player_level: EventReader<LevelUpEvent>,
     mut choose_a_card: ResMut<ChooseACard>,
 ) {
+    #[cfg(debug_assertions)]
+    info!("entering spawn_cards");
+
     let spell_cards_range = cards_by_type.spell_cards.len();
     let buff_cards_range = cards_by_type.powerup_cards.len();
 
@@ -33,9 +36,12 @@ fn spawn_cards(
     for level in player_level.read() {
         let level = level.level;
 
+        #[cfg(debug_assertions)]
+        info!("level: {}", level);
+
         if level % 5 == 0 {
             let mut cards_index = HashSet::new();
-            while cards_index.len() < 3 || cards_index.len() <= spell_cards_range {
+            while cards_index.len() < 3 && cards_index.len() < spell_cards_range {
                 cards_index.insert(rng.gen_range(0..spell_cards_range));
             }
             let cards_index: Vec<usize> = cards_index.into_iter().collect();
@@ -67,8 +73,14 @@ fn spawn_cards(
             }
         } else {
             let mut cards_index = HashSet::new();
-            while cards_index.len() < 3 || cards_index.len() <= buff_cards_range {
+            while cards_index.len() < 3 && cards_index.len() < buff_cards_range {
                 cards_index.insert(rng.gen_range(0..buff_cards_range));
+                #[cfg(debug_assertions)]
+                info!(
+                    "cards_index_len: {}, buff_cards_range: {}",
+                    cards_index.len(),
+                    buff_cards_range
+                );
             }
             let cards_index: Vec<usize> = cards_index.into_iter().collect();
             match cards_index.len() {
@@ -100,13 +112,22 @@ fn spawn_cards(
         }
         choose_a_card.cards.push(cards)
     }
+
+    #[cfg(debug_assertions)]
+    info!("exiting spawn_cards");
 }
 
 fn chosen_card(
     mut choose_a_card: ResMut<ChooseACard>,
     mut ev_chosen_card: EventReader<ChosenCard>,
 ) {
+    #[cfg(debug_assertions)]
+    info!("entering chosen_card");
+
     for _ in ev_chosen_card.read() {
         let _ = choose_a_card.cards.remove(0);
     }
+
+    #[cfg(debug_assertions)]
+    info!("exiting chosen_card");
 }

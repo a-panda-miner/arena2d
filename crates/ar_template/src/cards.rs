@@ -1,33 +1,6 @@
-use crate::{Deserialize, File, FromReader, HashMap, Resource, SpellTemplates};
-use ar_core::{AppState, CardRarity, CardType, PermanentDebuff, PowerUp};
+use crate::{Resource, SpellTemplates};
+use ar_core::{AppState, CardType, CardsTemplates};
 use bevy::prelude::{info, Commands, NextState, Res, ResMut};
-use ron::de::from_reader;
-
-// Note: Spell cards need to verify if the spell exists
-#[derive(Clone, Deserialize, Debug)]
-pub struct CardsTemplate {
-    pub name: String,
-    pub card_type: CardType, // A card can be a power-up or a spell
-    pub max_level: u8,
-    pub sprite: String,
-    pub rarity: CardRarity,
-    pub description: String,
-    pub upgrade: Option<PowerUp>,
-    pub spell: Option<String>,
-    pub debuff: Option<PermanentDebuff>,
-    pub max_level_bonus: Option<PowerUp>,
-}
-
-#[derive(Clone, Deserialize, Debug, Resource)]
-pub struct CardsTemplates {
-    pub cards: HashMap<String, CardsTemplate>,
-}
-
-impl FromReader<File> for CardsTemplates {
-    fn from_reader(reader: File) -> Result<Self, ron::error::SpannedError> {
-        from_reader(reader)
-    }
-}
 
 #[derive(Resource)]
 pub struct CardsByType {

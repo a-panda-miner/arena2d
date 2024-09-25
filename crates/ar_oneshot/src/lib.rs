@@ -4,10 +4,10 @@
 // for the libraries crates, excluding ar_game
 
 use ar_core::OneShotSystems;
+#[cfg(debug_assertions)]
+use ar_debug_fn::give_exp;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-#[cfg(debug_assertions)]
-use ar_debug_fn::{give_exp};
 
 pub struct OneShotPlugin;
 
@@ -16,7 +16,9 @@ impl Plugin for OneShotPlugin {
         let mut systems = OneShotSystems(HashMap::new());
 
         #[cfg(debug_assertions)]
-        systems.0.insert("give_exp".to_string(), app.register_system(give_exp));
+        systems
+            .0
+            .insert("give_exp".to_string(), app.register_system(give_exp));
 
         app.insert_resource(systems);
     }

@@ -1,4 +1,4 @@
-use ar_core::{AppState, ChooseACard, UiSet};
+use ar_core::{AppState, CardsTemplates, ChooseACard, UiSet};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -11,9 +11,13 @@ pub struct CardUiMarker;
 #[derive(Component, Debug)]
 pub struct CardArtMarker;
 
+#[derive(Component, Debug)]
+pub struct CardTemplateMarker;
+
 #[derive(Resource, Debug)]
 pub struct CardUiHelper {
     pub card_ui_id: [Entity; 3],
+    pub card_template_id: [Entity; 3],
     pub card_art_id: [Entity; 3],
 }
 
@@ -231,15 +235,18 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
 
     let template1 = commands
         .spawn(template1)
+        .insert(CardTemplateMarker)
         .insert(Name::new("template1"))
         .id();
     let template2 = commands
         .spawn(template2)
+        .insert(CardTemplateMarker)
         .insert(Name::new("template2"))
         .id();
     let template3 = commands
         .spawn(template3)
         .insert(Name::new("template3"))
+        .insert(CardTemplateMarker)
         .id();
 
     let card_art1 = commands
@@ -272,6 +279,7 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
 
     let card_ui_helper = CardUiHelper {
         card_ui_id: [card1, card2, card3],
+        card_template_id: [template1, template2, template3],
         card_art_id: [card_art1, card_art2, card_art3],
     };
 
@@ -281,7 +289,15 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
 /// Display/Hide avaiable cards
 /// Runs when the AvaiableCards resource is updated
 fn display_hide_available_cards(
-    mut card_ui_query: Query<(&mut Visibility, &mut UiImage), With<CardUiMarker>>,
+    mut card_ui_query: Query<&mut Visibility, With<CardUiMarker>>,
+    mut card_template_query: Query<
+        (&mut Visibility, &mut UiImage),
+        (
+            With<CardTemplateMarker>,
+            Without<CardUiMarker>,
+            Without<CardArtMarker>,
+        ),
+    >,
     mut card_art_query: Query<
         (&mut Visibility, &mut UiImage),
         (With<CardArtMarker>, Without<CardUiMarker>),
@@ -289,7 +305,11 @@ fn display_hide_available_cards(
     cards_helper: Res<CardUiHelper>,
     cards_sprites: Res<CardsSprite>,
     chosen_cards: Res<ChooseACard>,
+    cards_res: Res<CardsTemplates>,
 ) {
+    #[cfg(debug_assertions)]
+    info!("entering display_hide_available_cards");
+
     let mut avaiable_cards = 0;
     if !chosen_cards.cards.is_empty() {
         for i in 0..3 {
@@ -302,24 +322,36 @@ fn display_hide_available_cards(
     let avaiable_cards = avaiable_cards;
 
     if avaiable_cards == 0 {
-        for (mut visibility, _) in &mut card_ui_query {
+        for mut visibility in &mut card_ui_query {
             *visibility = Visibility::Hidden;
         }
         for (mut visibility, _) in &mut card_art_query {
             *visibility = Visibility::Hidden;
         }
+        for (mut visibility, _) in &mut card_template_query {
+            *visibility = Visibility::Hidden;
+        }
     } else if avaiable_cards <= 3 {
         for i in 0..avaiable_cards as usize {
-            let (mut card_ui_visibility, mut card_template) =
-                card_ui_query.get_mut(cards_helper.card_ui_id[i]).unwrap();
+            let mut card_ui_visibility = card_ui_query
+                .get_mut(cards_helper.card_ui_id[i])
+                .expect("Cards Helper");
             *card_ui_visibility = Visibility::Visible;
 
-            let card_template_name = chosen_cards.cards[0][i].clone().expect("Chosen Cards OOB");
-            *card_template = UiImage::new(
+            let (mut card_template_visibility, mut card_template_image) = card_template_query
+                .get_mut(cards_helper.card_template_id[i])
+                .unwrap();
+
+            *card_template_visibility = Visibility::Visible;
+            let card_name = chosen_cards.cards[0][i].clone().expect("Chosen Cards OOB");
+            let card_template_res = cards_res.cards.get(&card_name).expect("Card doesn't exist");
+            let card_sprite = card_template_res.sprite.clone();
+            let card_rarity = "card_uncommon".to_string();
+            *card_template_image = UiImage::new(
                 cards_sprites
                     .cards_sprites
-                    .get(card_template_name.as_str())
-                    .unwrap_or_else(|| panic!("Card Template not found {:?}", card_template_name))
+                    .get(card_rarity.as_str())
+                    .unwrap_or_else(|| panic!("Card Template not found {:?}", card_rarity))
                     .clone(),
             );
 
@@ -327,16 +359,18 @@ fn display_hide_available_cards(
                 card_art_query.get_mut(cards_helper.card_art_id[i]).unwrap();
             *card_art_visibility = Visibility::Visible;
 
-            let card_art_name = chosen_cards.cards[0][i].clone().expect("Chosen Cards OOB");
             *card_art_image = UiImage::new(
                 cards_sprites
                     .cards_sprites
-                    .get(card_art_name.as_str())
-                    .unwrap_or_else(|| panic!("Card Art not found {:?}", card_art_name))
+                    .get(card_sprite.as_str())
+                    .unwrap_or_else(|| panic!("Card Art not found {:?}", card_sprite))
                     .clone(),
             );
         }
     } else {
         info!("Avaiable Cards: {:?}", avaiable_cards);
     }
+
+    #[cfg(debug_assertions)]
+    info!("leaving display_hide_available_cards");
 }

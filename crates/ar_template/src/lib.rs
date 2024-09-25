@@ -3,7 +3,7 @@ pub mod items;
 pub mod monsters;
 pub mod spells;
 
-use ar_core::{AppState, LoadingTemplatesSet};
+use ar_core::{AppState, CardsTemplates, FromReader, LoadingTemplatesSet};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use serde::Deserialize;
@@ -13,17 +13,11 @@ use std::env;
 use std::path::PathBuf;
 
 use crate::{
-    cards::{build_cards_by_type, validate_spell_cards, CardsTemplates},
+    cards::{build_cards_by_type, validate_spell_cards},
     items::{cache_templates_items_info, ItemTemplates},
     monsters::{cache_templates_monsters_info, MonsterTemplates},
     spells::SpellTemplates,
 };
-
-pub trait FromReader<R> {
-    fn from_reader(reader: R) -> Result<Self, ron::error::SpannedError>
-    where
-        Self: Sized;
-}
 
 pub struct TemplatePlugin;
 

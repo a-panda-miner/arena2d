@@ -51,12 +51,18 @@ fn check_for_level_up(
     level_table: Res<LevelTable>,
     mut ev_levelup: EventWriter<LevelUpEvent>,
 ) {
+    #[cfg(debug_assertions)]
+    info!("entering check_for_level_up");
+
     let (mut exp, mut level) = query.single_mut();
     if exp.0 >= level_table.table[level.0 as usize] && level.0 < MAX_LEVEL {
         exp.0 -= level_table.table[level.0 as usize];
         level.0 += 1;
         ev_levelup.send(LevelUpEvent { level: level.0 });
     }
+
+    #[cfg(debug_assertions)]
+    info!("exiting check_for_level_up");
 }
 
 pub fn level_up(

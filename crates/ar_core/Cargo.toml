@@ -8,6 +8,7 @@ bevy = { workspace = true }
 avian2d = { workspace = true }
 bevy_asset_loader = { workspace = true }
 serde = { workspace = true }
+ron = { workspace = true }
 
 [lints]
 workspace = true

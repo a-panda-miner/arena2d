@@ -5,7 +5,15 @@ use avian2d::prelude::*;
 use bevy::ecs::system::SystemId;
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
+use ron::de::from_reader;
 use serde::Deserialize;
+use std::fs::File;
+
+pub trait FromReader<R> {
+    fn from_reader(reader: R) -> Result<Self, ron::error::SpannedError>
+    where
+        Self: Sized;
+}
 
 /// Defines the maximum level in a run
 pub const MAX_LEVEL: u8 = 200;
@@ -576,4 +584,30 @@ pub enum PermanentDebuff {
 #[derive(Resource, Debug, Default)]
 pub struct ChooseACard {
     pub cards: Vec<[Option<String>; 3]>,
+}
+
+// Note: Spell cards need to verify if the spell exists
+#[derive(Clone, Deserialize, Debug)]
+pub struct CardsTemplate {
+    pub name: String,
+    pub card_type: CardType, // A card can be a power-up or a spell
+    pub max_level: u8,
+    pub sprite: String,
+    pub rarity: CardRarity,
+    pub description: String,
+    pub upgrade: Option<PowerUp>,
+    pub spell: Option<String>,
+    pub debuff: Option<PermanentDebuff>,
+    pub max_level_bonus: Option<PowerUp>,
+}
+
+#[derive(Clone, Deserialize, Debug, Resource)]
+pub struct CardsTemplates {
+    pub cards: HashMap<String, CardsTemplate>,
+}
+
+impl FromReader<File> for CardsTemplates {
+    fn from_reader(reader: File) -> Result<Self, ron::error::SpannedError> {
+        from_reader(reader)
+    }
 }

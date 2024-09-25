@@ -271,6 +271,7 @@ dependencies = [
  "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
  "bevy",
  "bevy_asset_loader",
+ "ron",
  "serde",
 ]
 

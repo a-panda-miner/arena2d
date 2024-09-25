@@ -1,9 +1,9 @@
+#[cfg(debug_assertions)]
+use ar_core::OneShotSystems;
 use ar_core::{
     BoostUsage, CameraFollowState, ChangeBackgroundEvent, DashUsage, InputSet, PlayerDirection,
     PlayerMarker, ZoomIn, ZoomOut,
 };
-#[cfg(debug_assertions)]
-use ar_core::OneShotSystems;
 
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
@@ -39,8 +39,7 @@ impl Plugin for InputPlugin {
         #[cfg(debug_assertions)]
         app.add_systems(
             Update,
-            (check_input,
-            give_exp_debug,)
+            (check_input, give_exp_debug)
                 .in_set(InputSet)
                 .before(player_movement_direction),
         );
@@ -238,8 +237,6 @@ fn player_animation(
         }
     }
 }
-
-
 
 #[cfg(debug_assertions)]
 pub fn check_input(action_state: Res<ActionState<Action>>) {
