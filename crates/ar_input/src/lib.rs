@@ -2,7 +2,7 @@
 use ar_core::OneShotSystems;
 use ar_core::{
     BoostUsage, CameraFollowState, ChangeBackgroundEvent, DashUsage, InputSet, PlayerDirection,
-    PlayerMarker, ZoomIn, ZoomOut,
+    PlayerMarker, ZoomIn, ZoomOut, ChosenCard,
 };
 
 use bevy::prelude::*;
@@ -22,7 +22,7 @@ impl Plugin for InputPlugin {
             .init_resource::<ActionState<Action>>()
             .insert_resource(Action::input_map())
             .add_systems(
-                Update,
+                FixedUpdate,
                 (
                     player_movement_direction.in_set(InputSet),
                     dash.in_set(InputSet),
@@ -30,6 +30,7 @@ impl Plugin for InputPlugin {
                     change_background_music.in_set(InputSet),
                     change_camera_follow_state.in_set(InputSet),
                     zoom_in_out.in_set(InputSet),
+                    choose_card.in_set(InputSet),
                     player_animation
                         .run_if(on_timer(Duration::from_millis(240)))
                         .in_set(InputSet),
@@ -164,6 +165,19 @@ pub fn zoom_in_out(
     }
     if action_state.just_pressed(&Action::ZoomOut) {
         ev_zoom_out.send(ZoomOut);
+    }
+}
+
+pub fn choose_card(
+    action_state: Res<ActionState<Action>>,
+    mut ev_choose_card: EventWriter<ChosenCard>,
+) {
+    if action_state.just_pressed(&Action::ChooseCard1) {
+        ev_choose_card.send(ChosenCard(1));
+    } else if action_state.just_pressed(&Action::ChooseCard2) {
+        ev_choose_card.send(ChosenCard(2));
+    } else if action_state.just_pressed(&Action::ChooseCard3) {
+        ev_choose_card.send(ChosenCard(3));
     }
 }
 

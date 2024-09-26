@@ -40,7 +40,7 @@ use bevy::{
 };
 
 use avian2d::prelude::*;
-use avian_interpolation2d::prelude::*;
+//use avian_interpolation2d::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_fast_tilemap::plugin::FastTileMapPlugin;
 use iyes_progress::ProgressPlugin;
@@ -173,7 +173,7 @@ impl Plugin for GamePlugin {
             .add_plugins(LevelPlugin)
             .add_plugins(CardPlugin)
             .add_plugins(PhysicsPlugins::default())
-            .add_plugins(AvianInterpolationPlugin::default())
+            //.add_plugins(AvianInterpolationPlugin::default())
             .insert_resource(Time::<Fixed>::from_hz(PFPS))
             .add_loading_state(
                 LoadingState::new(AppState::LoadingAssets)

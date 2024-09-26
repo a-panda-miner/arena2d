@@ -209,7 +209,7 @@ dependencies = [
  "ar_core",
  "ar_spells",
  "ar_template",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_asset_loader",
  "bevy_rand",
@@ -232,7 +232,7 @@ dependencies = [
  "ar_player",
  "ar_shop",
  "ar_template",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_asset_loader",
 ]
@@ -268,7 +268,7 @@ dependencies = [
 name = "ar_core"
 version = "0.1.0"
 dependencies = [
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_asset_loader",
  "ron",
@@ -288,7 +288,7 @@ name = "ar_enemies"
 version = "0.1.0"
 dependencies = [
  "ar_core",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_asset_loader",
  "serde",
@@ -318,8 +318,7 @@ dependencies = [
  "ar_template",
  "ar_ui",
  "ar_utils",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
- "avian_interpolation2d",
+ "avian2d",
  "bevy",
  "bevy-inspector-egui",
  "bevy_asset_loader",
@@ -344,7 +343,7 @@ version = "0.1.0"
 dependencies = [
  "ar_core",
  "ar_template",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_asset_loader",
  "bevy_rand",
@@ -383,7 +382,7 @@ dependencies = [
  "ar_enemies",
  "ar_player",
  "ar_template",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_rand",
  "rand_core",
@@ -415,7 +414,7 @@ version = "0.1.0"
 dependencies = [
  "ar_core",
  "ar_spells",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_asset_loader",
  "iyes_progress",
@@ -432,7 +431,7 @@ dependencies = [
  "ar_core",
  "ar_enemies",
  "ar_template",
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian2d",
  "bevy",
  "bevy_asset_loader",
  "serde",
@@ -594,9 +593,9 @@ checksum = "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
 [[package]]
 name = "avian2d"
 version = "0.1.2"
-source = "git+https://github.com/Jondolf/avian?branch=main#d79bb13f4d5a92a26d2a798f706429f60f96a521"
+source = "git+https://github.com/Jondolf/avian?branch=main#39a7480cd1915bc5266aa8ebd3c3436d4d0568b0"
 dependencies = [
- "avian_derive 0.1.0 (git+https://github.com/Jondolf/avian?branch=main)",
+ "avian_derive",
  "bevy",
  "bevy_math",
  "bitflags 2.6.0",
@@ -610,51 +609,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "avian2d"
-version = "0.1.2"
-source = "git+https://github.com/Jondolf/avian#d79bb13f4d5a92a26d2a798f706429f60f96a521"
-dependencies = [
- "avian_derive 0.1.0 (git+https://github.com/Jondolf/avian)",
- "bevy",
- "bevy_math",
- "bitflags 2.6.0",
- "derive_more",
- "fxhash",
- "indexmap",
- "itertools",
- "nalgebra",
- "parry2d",
-]
-
-[[package]]
 name = "avian_derive"
 version = "0.1.0"
-source = "git+https://github.com/Jondolf/avian?branch=main#d79bb13f4d5a92a26d2a798f706429f60f96a521"
+source = "git+https://github.com/Jondolf/avian?branch=main#39a7480cd1915bc5266aa8ebd3c3436d4d0568b0"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
  "quote",
  "syn 2.0.77",
-]
-
-[[package]]
-name = "avian_derive"
-version = "0.1.0"
-source = "git+https://github.com/Jondolf/avian#d79bb13f4d5a92a26d2a798f706429f60f96a521"
-dependencies = [
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn 2.0.77",
-]
-
-[[package]]
-name = "avian_interpolation2d"
-version = "0.1.0"
-source = "git+https://github.com/janhohenheim/avian_interpolation?branch=main#f528c796da795247d64b8dd50ceb7336238d5c86"
-dependencies = [
- "avian2d 0.1.2 (git+https://github.com/Jondolf/avian)",
- "bevy",
 ]
 
 [[package]]

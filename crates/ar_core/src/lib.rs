@@ -254,9 +254,10 @@ pub struct LevelUpEvent {
 }
 
 #[derive(Debug, Event)]
-pub struct ChosenCard {
-    pub card: String,
-}
+pub struct ChosenCard(pub u8);
+
+#[derive(Debug, Event)]
+pub struct ApplyCard { pub card: String }
 
 /// Changes the camera following strategy of the game
 /// Rect is the default, adjusts itself only when the player moves out of the current 'rect'
@@ -610,4 +611,12 @@ impl FromReader<File> for CardsTemplates {
     fn from_reader(reader: File) -> Result<Self, ron::error::SpannedError> {
         from_reader(reader)
     }
+}
+
+/// A structure that keeps track of the current cards
+/// the player has chosen, and their level,
+/// needs to be initialized in the template loading stage, after the cards are loaded
+#[derive(Resource, Debug)]
+pub struct CurrentCards {
+    pub cards: HashMap<String, u8>,
 }

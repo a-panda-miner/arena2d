@@ -3,7 +3,7 @@
 
 use ar_core::{
     AppState, AvailableCards, LevelSet, LevelTable, LevelUpEvent, PlayerExperience, PlayerLevel,
-    PlayerMarker, MAX_LEVEL,
+    PlayerMarker, MAX_LEVEL, ChosenCard, ApplyCard, ChooseACard,
 };
 use bevy::prelude::*;
 
@@ -71,5 +71,23 @@ pub fn level_up(
 ) {
     for _ in ev_levelup.read() {
         available_cards.0 += 1;
+    }
+}
+
+// Checks if the chosen card is valid and sends an event
+// with its name to apply the effects of the card
+pub fn choosing_card(
+    mut ev_choosing_card: EventReader<ChosenCard>,
+    mut ev_card_name: EventWriter<ApplyCard>,
+    available_cards: Res<AvailableCards>,
+    choose_card: Res<ChooseACard>,
+) {
+    if available_cards.0 <= 0 { return; }
+    for card_number in ev_choosing_card.read() {
+        if card_number.0 > 2 { info!("Invalid card number"); return;}
+        let index = card_number.0 as usize;
+        if let Some(card) = &choose_card.cards[0][index] {
+            ev_card_name.send(ApplyCard{card: card.to_string()});
+        }
     }
 }
