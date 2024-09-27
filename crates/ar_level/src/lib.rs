@@ -2,8 +2,8 @@
 // and sends events when the player levels up
 
 use ar_core::{
-    AppState, AvailableCards, LevelSet, LevelTable, LevelUpEvent, PlayerExperience, PlayerLevel,
-    PlayerMarker, MAX_LEVEL, ChosenCard, ApplyCard, ChooseACard,
+    AppState, ApplyCard, AvailableCards, ChooseACard, ChosenCard, LevelSet, LevelTable,
+    LevelUpEvent, PlayerExperience, PlayerLevel, PlayerMarker, MAX_LEVEL,
 };
 use bevy::prelude::*;
 
@@ -77,12 +77,19 @@ pub fn choosing_card(
     available_cards: Res<AvailableCards>,
     choose_card: Res<ChooseACard>,
 ) {
-    if available_cards.0 <= 0 { return; }
+    if available_cards.0 == 0 {
+        return;
+    }
     for card_number in ev_choosing_card.read() {
-        if card_number.0 > 2 { info!("Invalid card number"); return;}
+        if card_number.0 > 2 {
+            info!("Invalid card number");
+            return;
+        }
         let index = card_number.0 as usize;
         if let Some(card) = &choose_card.cards[0][index] {
-            ev_card_name.send(ApplyCard{card: card.to_string()});
+            ev_card_name.send(ApplyCard {
+                card: card.to_string(),
+            });
         }
     }
 }

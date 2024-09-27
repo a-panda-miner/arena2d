@@ -1,4 +1,6 @@
-use ar_core::{CardSet, ChooseACard, ChosenCard, LevelUpEvent, ApplyCard, CardsTemplates, CardType, PowerUp};
+use ar_core::{
+    ApplyCard, CardSet, CardType, CardsTemplates, ChooseACard, ChosenCard, LevelUpEvent, PowerUp,
+};
 use ar_template::cards::RemainingCardsByType;
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
@@ -26,7 +28,6 @@ fn spawn_cards(
     mut player_level: EventReader<LevelUpEvent>,
     mut choose_a_card: ResMut<ChooseACard>,
 ) {
-
     let spell_cards_range = cards_by_type.spell_cards.len();
     let buff_cards_range = cards_by_type.powerup_cards.len();
 
@@ -114,53 +115,49 @@ fn spawn_cards(
 }
 
 /// Removes the current avaiable cards from ChooseACard resource and applies the effects
-/// of the chosen card to the player 
+/// of the chosen card to the player
 fn chosen_card(
     mut choose_a_card: ResMut<ChooseACard>,
     mut ev_chosen_card: EventReader<ApplyCard>,
     cards_templates: Res<CardsTemplates>,
 ) {
-
     for card in ev_chosen_card.read() {
         let _ = choose_a_card.cards.remove(0);
-        let card_template = cards_templates.cards.get(card.card.as_str()).unwrap_or_else(|| panic!("Card doesn't exist: {:?}", card.card));
+        let card_template = cards_templates
+            .cards
+            .get(card.card.as_str())
+            .unwrap_or_else(|| panic!("Card doesn't exist: {:?}", card.card));
         match card_template.card_type {
-            CardType::Spell => {
-
-             },
-            CardType::Buff => {
-                match &card_template.upgrade {
-                    Some(power_up) => {
-                        match power_up {
-                            PowerUp::HealthUp(health) => {
-                                info!("Health: {}", health);
-                            },
-                            PowerUp::AttackUp(attack) => {
-                                info!("Attack: {}", attack);
-                            },
-                            PowerUp::ShieldUp(shield) => {
-                                info!("Shield: {}", shield);
-                            },
-                            PowerUp::SpeedUp(speed) => {
-                                info!("Speed: {}", speed);
-                            },
-                            PowerUp::LootUp(loot) => {
-                                info!("Loot: {}", loot);
-                            },
-                            PowerUp::DamageUp(damage) => {
-                                info!("Damage: {}", damage);
-                            },
-                            PowerUp::ExpUp(exp) => {
-                                info!("Exp: {}", exp);
-                            },
-                            PowerUp::StaminaUp(stamina) => {
-                                info!("Stamina: {}", stamina);
-                            }
-                        }
+            CardType::Spell => {}
+            CardType::Buff => match &card_template.upgrade {
+                Some(power_up) => match power_up {
+                    PowerUp::HealthUp(health) => {
+                        info!("Health: {}", health);
                     }
-                    None => {}
-                }
-             },
+                    PowerUp::AttackUp(attack) => {
+                        info!("Attack: {}", attack);
+                    }
+                    PowerUp::ShieldUp(shield) => {
+                        info!("Shield: {}", shield);
+                    }
+                    PowerUp::SpeedUp(speed) => {
+                        info!("Speed: {}", speed);
+                    }
+                    PowerUp::LootUp(loot) => {
+                        info!("Loot: {}", loot);
+                    }
+                    PowerUp::DamageUp(damage) => {
+                        info!("Damage: {}", damage);
+                    }
+                    PowerUp::ExpUp(exp) => {
+                        info!("Exp: {}", exp);
+                    }
+                    PowerUp::StaminaUp(stamina) => {
+                        info!("Stamina: {}", stamina);
+                    }
+                },
+                None => {}
+            },
         }
     }
 }
