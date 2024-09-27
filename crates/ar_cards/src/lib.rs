@@ -1,4 +1,4 @@
-use ar_core::{CardSet, ChooseACard, ChosenCard, LevelUpEvent};
+use ar_core::{CardSet, ChooseACard, ChosenCard, LevelUpEvent, ApplyCard, CardsTemplates, CardType, PowerUp};
 use ar_template::cards::RemainingCardsByType;
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
@@ -11,6 +11,7 @@ pub struct CardPlugin;
 impl Plugin for CardPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ChosenCard>()
+            .add_event::<ApplyCard>()
             .init_resource::<ChooseACard>()
             .add_systems(
                 FixedUpdate,
@@ -25,8 +26,6 @@ fn spawn_cards(
     mut player_level: EventReader<LevelUpEvent>,
     mut choose_a_card: ResMut<ChooseACard>,
 ) {
-    #[cfg(debug_assertions)]
-    info!("entering spawn_cards");
 
     let spell_cards_range = cards_by_type.spell_cards.len();
     let buff_cards_range = cards_by_type.powerup_cards.len();
@@ -112,22 +111,56 @@ fn spawn_cards(
         }
         choose_a_card.cards.push(cards)
     }
-
-    #[cfg(debug_assertions)]
-    info!("exiting spawn_cards");
 }
 
+/// Removes the current avaiable cards from ChooseACard resource and applies the effects
+/// of the chosen card to the player 
 fn chosen_card(
     mut choose_a_card: ResMut<ChooseACard>,
-    mut ev_chosen_card: EventReader<ChosenCard>,
+    mut ev_chosen_card: EventReader<ApplyCard>,
+    cards_templates: Res<CardsTemplates>,
 ) {
-    #[cfg(debug_assertions)]
-    info!("entering chosen_card");
 
-    for _ in ev_chosen_card.read() {
+    for card in ev_chosen_card.read() {
         let _ = choose_a_card.cards.remove(0);
-    }
+        let card_template = cards_templates.cards.get(card.card.as_str()).unwrap_or_else(|| panic!("Card doesn't exist: {:?}", card.card));
+        match card_template.card_type {
+            CardType::Spell => {
 
-    #[cfg(debug_assertions)]
-    info!("exiting chosen_card");
+             },
+            CardType::Buff => {
+                match &card_template.upgrade {
+                    Some(power_up) => {
+                        match power_up {
+                            PowerUp::HealthUp(health) => {
+                                info!("Health: {}", health);
+                            },
+                            PowerUp::AttackUp(attack) => {
+                                info!("Attack: {}", attack);
+                            },
+                            PowerUp::ShieldUp(shield) => {
+                                info!("Shield: {}", shield);
+                            },
+                            PowerUp::SpeedUp(speed) => {
+                                info!("Speed: {}", speed);
+                            },
+                            PowerUp::LootUp(loot) => {
+                                info!("Loot: {}", loot);
+                            },
+                            PowerUp::DamageUp(damage) => {
+                                info!("Damage: {}", damage);
+                            },
+                            PowerUp::ExpUp(exp) => {
+                                info!("Exp: {}", exp);
+                            },
+                            PowerUp::StaminaUp(stamina) => {
+                                info!("Stamina: {}", stamina);
+                            }
+                        }
+                    }
+                    None => {}
+                }
+             },
+        }
+    }
 }

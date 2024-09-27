@@ -173,11 +173,11 @@ pub fn choose_card(
     mut ev_choose_card: EventWriter<ChosenCard>,
 ) {
     if action_state.just_pressed(&Action::ChooseCard1) {
-        ev_choose_card.send(ChosenCard(1));
+        ev_choose_card.send(ChosenCard(0));
     } else if action_state.just_pressed(&Action::ChooseCard2) {
-        ev_choose_card.send(ChosenCard(2));
+        ev_choose_card.send(ChosenCard(1));
     } else if action_state.just_pressed(&Action::ChooseCard3) {
-        ev_choose_card.send(ChosenCard(3));
+        ev_choose_card.send(ChosenCard(2));
     }
 }
 

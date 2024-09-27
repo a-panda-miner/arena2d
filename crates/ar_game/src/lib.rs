@@ -215,6 +215,7 @@ impl Plugin for GamePlugin {
                     ItemsSet.run_if(in_state(AppState::InBattle)),
                     LevelSet.run_if(in_state(AppState::InBattle)),
                     CardSet.run_if(in_state(AppState::InBattle)),
+                    InputSet.run_if(in_state(AppState::InBattle)),
                 ),
             )
             .configure_sets(OnEnter(AppState::InBattle), UiSet.after(PlayerSet))
