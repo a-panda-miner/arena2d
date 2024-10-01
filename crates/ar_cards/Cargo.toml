@@ -18,3 +18,6 @@ path = "../ar_core"
 
 [dependencies.ar_template]
 path = "../ar_template"
+
+[dependencies.ar_spells]
+path = "../ar_spells"

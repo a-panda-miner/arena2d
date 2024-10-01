@@ -50,6 +50,12 @@ pub struct SpellProjectile {
     pub penetration: u8,
 }
 
+impl PartialEq for SpellProjectile {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct SpellProjectileExplosive {
     pub name: String,

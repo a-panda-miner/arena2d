@@ -1,7 +1,9 @@
 use ar_core::{
-    ApplyCard, CardSet, CardType, CardsTemplates, ChooseACard, ChosenCard, LevelUpEvent, PowerUp,
+    ApplyCard, CardSet, CardType, CardsTemplates, ChooseACard, ChosenCard, LevelUpEvent, MaxHealth,
+    MaxStamina, PlayerMarker, PowerUp,
 };
 use ar_template::cards::RemainingCardsByType;
+use ar_template::spells::SpellTemplates;
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
 use bevy_rand::resource::GlobalEntropy;
@@ -117,10 +119,13 @@ fn spawn_cards(
 /// Removes the current avaiable cards from ChooseACard resource and applies the effects
 /// of the chosen card to the player
 fn chosen_card(
+    mut player: Query<(&mut MaxHealth, &mut MaxStamina), With<PlayerMarker>>,
+    spell_templates: Res<SpellTemplates>,
     mut choose_a_card: ResMut<ChooseACard>,
     mut ev_chosen_card: EventReader<ApplyCard>,
     cards_templates: Res<CardsTemplates>,
 ) {
+    let (mut player_health, mut player_stamina) = player.single_mut();
     for card in ev_chosen_card.read() {
         let _ = choose_a_card.cards.remove(0);
         let card_template = cards_templates
@@ -133,6 +138,7 @@ fn chosen_card(
                 Some(power_up) => match power_up {
                     PowerUp::HealthUp(health) => {
                         info!("Health: {}", health);
+                        player_health.0 += *health as usize;
                     }
                     PowerUp::AttackUp(attack) => {
                         info!("Attack: {}", attack);
@@ -154,6 +160,7 @@ fn chosen_card(
                     }
                     PowerUp::StaminaUp(stamina) => {
                         info!("Stamina: {}", stamina);
+                        player_stamina.0 += *stamina as f32;
                     }
                 },
                 None => {}
