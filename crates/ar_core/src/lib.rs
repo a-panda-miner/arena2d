@@ -391,6 +391,7 @@ pub enum Layer {
     Pet,
     Item,
     Magnet,
+    Wall,
 }
 
 #[derive(Resource, Debug)]

@@ -9,10 +9,10 @@ avian2d = { workspace = true }
 bevy_asset_loader = { workspace = true }
 iyes_progress = { workspace = true }
 bevy-inspector-egui = { workspace = true }
-bevy_fast_tilemap = { workspace = true }
+bevy_ecs_tiled = { workspace = true }
+bevy_ecs_tilemap = { workspace = true }
 bevy_rand = { workspace = true }
 rand_core = { workspace = true }
-#avian_interpolation2d = { workspace = true }
 
 [lints]
 workspace = true

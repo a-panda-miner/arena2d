@@ -67,15 +67,15 @@ rand = "0.8"
 bevy_rand = { version = "0.7", features = ["wyrand"]}
 
 # Physics 
-avian2d = { git = "https://github.com/Jondolf/avian", branch = "main" }
-#avian_interpolation2d = { git = "https://github.com/janhohenheim/avian_interpolation", branch = "main"} #disabled because of broken build
+avian2d = "0.1.2"
 
 # Asset Loader
 bevy_asset_loader = { version = "0.21", features = ["2d", "progress_tracking"] }
 iyes_progress = "0.12"
 
 # Tilemap
-bevy_fast_tilemap = { git = "https://github.com/droggelbecher/bevy-fast-tilemap" }
+bevy_ecs_tiled = { version = "0.4", features = ["avian", "debug"] }
+bevy_ecs_tilemap = "0.14"
 
 # GUI Inspector
 bevy-inspector-egui = "0.25"
@@ -84,7 +84,7 @@ bevy-inspector-egui = "0.25"
 bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
 
 # Input
-leafwing-input-manager = { git = "https://github.com/Leafwing-Studios/leafwing-input-manager", branch = "main" }
+leafwing-input-manager = "0.15"
 
 # Network
 lightyear = "0.17"

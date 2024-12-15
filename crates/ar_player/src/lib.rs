@@ -49,7 +49,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert(Cooldown(Timer::from_seconds(0.24, TimerMode::Repeating))) // Animation cooldown, for attacks it should be a Cooldown in its own child
         .insert(CollisionLayers::new(
             [Layer::Player],
-            [Layer::Monster, Layer::MonsterProjectile],
+            [Layer::Monster, Layer::MonsterProjectile, Layer::Wall],
         ))
         .insert(PlayerInvulnerableFrames {
             // Player invulnerability after getting hit

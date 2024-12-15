@@ -13,7 +13,7 @@ use ar_enemies::MonsterSprites;
 use ar_input::InputPlugin;
 use ar_items::{ItemSheetSmall, ItemsPlugin};
 use ar_level::LevelPlugin;
-use ar_map::{MapPlugin, TilesetHandle};
+use ar_map::MapPlugin;
 use ar_monsters::MonsterPlugin;
 use ar_oneshot::OneShotPlugin;
 use ar_particles::ParticlesPlugin;
@@ -31,6 +31,9 @@ use bevy::{
 #[cfg(debug_assertions)]
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
+#[cfg(debug_assertions)]
+use bevy_ecs_tiled::debug::TiledMapDebugPlugin;
+
 use bevy::{
     core::TaskPoolThreadAssignmentPolicy,
     log::LogPlugin,
@@ -42,7 +45,6 @@ use bevy::{
 use avian2d::prelude::*;
 //use avian_interpolation2d::prelude::*;
 use bevy_asset_loader::prelude::*;
-use bevy_fast_tilemap::plugin::FastTileMapPlugin;
 use iyes_progress::ProgressPlugin;
 
 use bevy_rand::prelude::{EntropyPlugin, WyRand};
@@ -105,7 +107,9 @@ impl Plugin for GamePlugin {
         )
         .add_plugins(FrameTimeDiagnosticsPlugin)
         .add_plugins(LogDiagnosticsPlugin::default())
-        .add_plugins(WorldInspectorPlugin::new());
+        .add_plugins(WorldInspectorPlugin::new())
+        .add_plugins(TiledMapDebugPlugin::default())
+        .add_plugins(PhysicsDebugPlugin::default());
 
         #[cfg(not(debug_assertions))]
         app.add_plugins(
@@ -155,7 +159,6 @@ impl Plugin for GamePlugin {
                 ProgressPlugin::new(AppState::LoadingAssets).continue_to(AppState::InBattle),
             )
             .add_plugins(EntropyPlugin::<WyRand>::default())
-            .add_plugins(FastTileMapPlugin::default())
             .add_plugins(OneShotPlugin)
             .add_plugins(ArenaCameraPlugin)
             .add_plugins(InputPlugin)
@@ -172,7 +175,7 @@ impl Plugin for GamePlugin {
             .add_plugins(ItemsPlugin)
             .add_plugins(LevelPlugin)
             .add_plugins(CardPlugin)
-            .add_plugins(PhysicsPlugins::default())
+            .add_plugins(PhysicsPlugins::default().with_length_unit(100.0))
             //.add_plugins(AvianInterpolationPlugin::default())
             .insert_resource(Time::<Fixed>::from_hz(PFPS))
             .add_loading_state(
@@ -180,7 +183,6 @@ impl Plugin for GamePlugin {
                     .continue_to_state(AppState::LoadingTemplates)
                     .load_collection::<MonsterSprites>()
                     .load_collection::<SheetHandle>()
-                    .load_collection::<TilesetHandle>()
                     .load_collection::<GameAudioAssets>()
                     .load_collection::<FontAssets>()
                     .load_collection::<SpellsSheetSmall>()

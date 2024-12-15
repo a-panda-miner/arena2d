@@ -1,54 +1,72 @@
-use ar_core::{AppState, MapSet};
-use bevy::math::{uvec2, vec2};
+use ar_core::{AppState, MapSet, Layer};
 use bevy::prelude::*;
-use bevy_asset_loader::prelude::*;
-use bevy_fast_tilemap::{bundle::MapBundleManaged, map::Map};
-use rand::prelude::*;
-
-const TILE_SIZE: u32 = 16;
-
-// Playable area
-const ARENA_RADIUS: u32 = 1000;
-
-// Used for generation of the map and the spawn of enemies
-const ARENA_WIDTH: u32 = (ARENA_RADIUS * 2) + TILE_SIZE;
-const ARENA_HEIGHT: u32 = (ARENA_RADIUS * 2) + TILE_SIZE;
-
-#[derive(AssetCollection, Resource)]
-pub struct TilesetHandle {
-    #[asset(path = "map/tileset.png")]
-    pub sprite: Handle<Image>,
-}
+use bevy_ecs_tilemap::prelude::*;
+use bevy_ecs_tiled::prelude::*;
+use avian2d::prelude::*;
 
 pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            OnEnter(AppState::InBattle),
-            map_builder_tileset.in_set(MapSet),
-        );
+        app
+            .add_plugins(TilemapPlugin)
+            .add_plugins(TiledMapPlugin::default())
+            .add_systems(
+                OnEnter(AppState::InBattle), 
+                (spawn_map).in_set(MapSet),);
     }
 }
 
-/// Builds the visual tileset of the game
-fn map_builder_tileset(
-    mut commands: Commands,
-    tile_set: Res<TilesetHandle>,
-    mut materials: ResMut<Assets<Map>>,
-) {
-    let mut rng = thread_rng();
+fn spawn_map(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let map_handle: Handle<TiledMap> = asset_server.load("map.tmx");
 
-    let map = Map::builder(
-        // The size of the map
-        uvec2(ARENA_WIDTH * 4, ARENA_HEIGHT * 4),
-        // Tile atlas
-        tile_set.sprite.clone(),
-        // Tile size
-        vec2(16., 16.),
-    )
-    // Set the index of each tile
-    .build_and_set(|_| rng.gen_range(1..4));
+    commands.spawn(TiledMapHandle(map_handle))
+        .insert(TiledMapSettings {
+            layer_positioning: LayerPositioning::Centered,
+            ..Default::default()
+        });
 
-    commands.spawn(MapBundleManaged::new(map, materials.as_mut()));
+    // top wall
+    commands
+        .spawn(RigidBody::Static)
+        .insert(Collider::rectangle(1960.0, 16.0))
+        .insert(Mass(500.0))
+        .insert(Transform::from_xyz(0.0, 640.0, 100.0)) 
+        .insert(CollisionLayers::new(
+            [Layer::Wall],
+            [Layer::Player],
+        ));
+
+    // bottom wall
+    commands
+        .spawn(RigidBody::Static)
+        .insert(Collider::rectangle(1960.0, 16.0))
+        .insert(Mass(500.0))
+        .insert(Transform::from_xyz(0.0, -624.0, 100.0)) 
+        .insert(CollisionLayers::new(
+            [Layer::Wall],
+            [Layer::Player],
+        ));
+
+    // left wall
+    commands
+        .spawn(RigidBody::Static)
+        .insert(Collider::rectangle(16.0, 1320.0))
+        .insert(Mass(500.0))
+        .insert(Transform::from_xyz(-944.0, 0.0, 100.0))
+        .insert(CollisionLayers::new(
+            [Layer::Wall],
+            [Layer::Player],
+        ));
+
+    // right wall
+    commands
+        .spawn(RigidBody::Static)
+        .insert(Collider::rectangle(16.0, 1320.0))
+        .insert(Mass(500.0))
+        .insert(Transform::from_xyz(960.0, 0.0, 100.0))
+        .insert(CollisionLayers::new(
+            [Layer::Wall],
+            [Layer::Player],
+        ));
 }
