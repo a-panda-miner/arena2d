@@ -3,7 +3,6 @@ use ar_core::{
     MaxStamina, PlayerMarker, PowerUp,
 };
 use ar_template::cards::RemainingCardsByType;
-use ar_template::spells::SpellTemplates;
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
 use bevy_rand::resource::GlobalEntropy;
@@ -120,7 +119,6 @@ fn spawn_cards(
 /// of the chosen card to the player
 fn chosen_card(
     mut player: Query<(&mut MaxHealth, &mut MaxStamina), With<PlayerMarker>>,
-    spell_templates: Res<SpellTemplates>,
     mut choose_a_card: ResMut<ChooseACard>,
     mut ev_chosen_card: EventReader<ApplyCard>,
     cards_templates: Res<CardsTemplates>,

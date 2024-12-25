@@ -63,34 +63,36 @@ fn set_display_player_health(
     let text = format!("HP: {} / {}", health.0, max_health.0);
     let font = fonts.ui_font.clone();
     let color: Color = Color::srgba_u8(48, 98, 48, 255);
-    let textstyle: TextStyle = TextStyle {
-        font,
-        font_size: 16.0,
-        color,
-    };
 
     commands
         .spawn(
-            TextBundle::from_section(text, textstyle)
-                .with_text_justify(JustifyText::Center)
-                .with_style(Style {
-                    position_type: PositionType::Absolute,
-                    top: Val::Px(0.0),
-                    right: Val::Percent(40.0),
-                    ..default()
-                }),
+            Node {
+                display: Display::Grid,
+                position_type: PositionType::Absolute,
+                top: Val::Px(0.0),
+                right: Val::Percent(40.0),
+                ..default()
+            }
         )
+        .insert(Text::new(text))
+        .insert(TextLayout::new_with_justify(JustifyText::Center))
+        .insert(TextFont {
+            font: font.clone().into(),
+            font_size: 16.0,
+            ..default()
+        })
+        .insert(TextColor(color))
         .insert(UiMarker)
         .insert(PlayerHealthText);
 }
 
 fn update_health_displayer(
-    mut text: Query<&mut Text, With<PlayerHealthText>>,
-    health: Query<(&Health, &MaxHealth), With<PlayerMarker>>,
+    health_text: Single<Entity, (With<PlayerHealthText>, With<Text>)>,
+    health_value: Query<(&Health, &MaxHealth), With<PlayerMarker>>,
+    mut writer: TextUiWriter,
 ) {
-    let (health, max_health) = health.single();
-    let mut text = text.single_mut();
-    text.sections[0].value = format!("HP: {} / {}", health.0, max_health.0);
+    let (health, max_health) = health_value.single();
+    *writer.text(*health_text, 0) = format!("HP: {} / {}", health.0, max_health.0);
 }
 
 fn set_display_player_stamina(
@@ -102,32 +104,33 @@ fn set_display_player_stamina(
     let text = format!("Stamina: {} / {}", stamina.0, max_stamina.0);
     let font = fonts.ui_font.clone();
     let color: Color = Color::srgba_u8(15, 56, 15, 255);
-    let textstyle: TextStyle = TextStyle {
-        font,
-        font_size: 16.0,
-        color,
-    };
 
     commands
         .spawn(
-            TextBundle::from_section(text, textstyle)
-                .with_text_justify(JustifyText::Center)
-                .with_style(Style {
-                    position_type: PositionType::Absolute,
-                    bottom: Val::Px(0.0),
-                    right: Val::Percent(78.0),
-                    ..default()
-                }),
-        )
+            Node {
+                display: Display::Grid,
+                position_type: PositionType::Absolute,
+                bottom: Val::Px(0.0),
+                right: Val::Percent(78.0),
+                ..default()
+            })
+        .insert(Text::new(text))
+        .insert(TextLayout::new_with_justify(JustifyText::Center))
+        .insert(TextFont {
+            font,
+            font_size: 16.0,
+            ..Default::default()
+        })
+        .insert(TextColor(color))
         .insert(UiMarker)
         .insert(PlayerStaminaText);
 }
 
 fn update_stamina_displayer(
-    mut text: Query<&mut Text, With<PlayerStaminaText>>,
-    stamina: Query<(&CurrentStamina, &MaxStamina), With<PlayerMarker>>,
+    stamina_text: Single<Entity, (With<PlayerStaminaText>, With<Text>)>,
+    stamina_value: Query<(&CurrentStamina, &MaxStamina), With<PlayerMarker>>,
+    mut writer: TextUiWriter,
 ) {
-    let (stamina, max_stamina) = stamina.single();
-    let mut text = text.single_mut();
-    text.sections[0].value = format!("Stamina: {} / {}", stamina.0, max_stamina.0);
+    let (stamina, max_stamina) = stamina_value.single();
+    *writer.text(*stamina_text, 0) = format!("Stamina: {} / {}", stamina.0, max_stamina.0);
 }

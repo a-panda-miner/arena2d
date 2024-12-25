@@ -64,35 +64,36 @@ tiny_bail = "0.3"
 noise = "0.9"
 rand_core = {version = "0.6", features = ["std"]}
 rand = "0.8"
-bevy_rand = { version = "0.7", features = ["wyrand"]}
+bevy_rand = { version = "0.8", features = ["wyrand"]}
 
 # Physics 
-avian2d = "0.1.2"
+avian2d = "0.2"
 
 # Asset Loader
-bevy_asset_loader = { version = "0.21", features = ["2d", "progress_tracking"] }
-iyes_progress = "0.12"
+bevy_asset_loader = { version = "0.22", features = ["2d", "progress_tracking"] }
+iyes_progress = "0.13"
 
 # Tilemap
-bevy_ecs_tiled = { version = "0.4", features = ["avian", "debug"] }
-bevy_ecs_tilemap = "0.14"
+bevy_ecs_tiled = { version = "0.5", features = ["avian", "debug"] }
+bevy_ecs_tilemap = "0.15"
 
 # GUI Inspector
-bevy-inspector-egui = "0.25"
+bevy-inspector-egui = "0.28"
 
 # Particles
-bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
+bevy_hanabi = { version = "0.14", default-features = false, features = ["2d"] }
 
 # Input
-leafwing-input-manager = "0.15"
+leafwing-input-manager = "0.16"
 
 # Network
-lightyear = "0.17"
+lightyear = "0.18"
 
 [workspace.dependencies.bevy]
-version = "0.14"
+version = "0.15"
 default-features = false
 features = [
+    "bevy_window",
     "bevy_winit",
     "bevy_render",
     "x11",
@@ -114,7 +115,6 @@ features = [
     "png",
     "jpeg",
     "serialize",
-    "subpixel_glyph_atlas",
     "trace",
     "wav",
     ]

@@ -66,13 +66,11 @@ fn setup_bg(mut commands: Commands, audio_assets: Res<FlatBGList>) {
         current_bg: 0,
     };
     commands
-        .spawn(AudioBundle {
-            source: audio_assets.list[bgm.current_bg].clone(),
-            settings: PlaybackSettings {
-                mode: PlaybackMode::Loop,
-                volume: Volume::new(0.1),
-                ..default()
-            },
+        .spawn(AudioPlayer::new(audio_assets.list[bgm.current_bg].clone()))
+        .insert(PlaybackSettings {
+            mode: PlaybackMode::Loop,
+            volume: Volume::new(0.01),
+            ..default()
         })
         .insert(BGMusicMarker)
         .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));
@@ -106,13 +104,11 @@ fn play_music(bgm: Res<BackGroundMusic>, mut commands: Commands, audio_assets: R
     }
     let bg = bgm.current_bg;
     commands
-        .spawn(AudioBundle {
-            source: audio_assets.list[bg].clone(),
-            settings: PlaybackSettings {
-                mode: PlaybackMode::Loop,
-                volume: Volume::new(0.01),
-                ..default()
-            },
+        .spawn(AudioPlayer::new(audio_assets.list[bg].clone()))
+        .insert(PlaybackSettings {
+            mode: PlaybackMode::Loop,
+            volume: Volume::new(0.01),
+            ..default()
         })
         .insert(BGMusicMarker)
         .insert(Cooldown(Timer::from_seconds(40., TimerMode::Repeating)));

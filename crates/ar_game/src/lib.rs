@@ -62,7 +62,7 @@ impl Plugin for GamePlugin {
         app.add_plugins(
             DefaultPlugins
                 .set(LogPlugin {
-                    filter: "wpgu=off,bevy_render=off,bevy_ecs=trace,bevy_pbr=error,naga=warn,wgpu_hal=off"
+                    filter: "wpgu=off,bevy_render=off,bevy_ecs=trace,bevy_pbr=error,naga=warn,wgpu_hal=off,bevy_ecs_tilemap=off"
                         .to_string(),
                     level: Level::INFO,
                     custom_layer: |_| None,
@@ -156,7 +156,8 @@ impl Plugin for GamePlugin {
 
         app.init_state::<AppState>()
             .add_plugins(
-                ProgressPlugin::new(AppState::LoadingAssets).continue_to(AppState::InBattle),
+                ProgressPlugin::<AppState>::new()
+                .with_state_transition(AppState::LoadingAssets, AppState::InBattle)
             )
             .add_plugins(EntropyPlugin::<WyRand>::default())
             .add_plugins(OneShotPlugin)
@@ -176,7 +177,6 @@ impl Plugin for GamePlugin {
             .add_plugins(LevelPlugin)
             .add_plugins(CardPlugin)
             .add_plugins(PhysicsPlugins::default().with_length_unit(100.0))
-            //.add_plugins(AvianInterpolationPlugin::default())
             .insert_resource(Time::<Fixed>::from_hz(PFPS))
             .add_loading_state(
                 LoadingState::new(AppState::LoadingAssets)
@@ -189,7 +189,6 @@ impl Plugin for GamePlugin {
                     .load_collection::<ItemSheetSmall>()
                     .load_collection::<CardsSprite>(),
             )
-            .insert_resource(Msaa::Off)
             .insert_resource(ClearColor(Color::srgba_u8(
                 BG_COLOR.0, BG_COLOR.1, BG_COLOR.2, 0,
             )))

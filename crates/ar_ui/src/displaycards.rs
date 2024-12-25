@@ -80,135 +80,45 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
 
     let background_color: Color = Color::srgba_u8(155, 188, 15, 255);
 
-    let container = NodeBundle {
-        style: Style {
-            flex_direction: FlexDirection::Row,
-            justify_content: JustifyContent::SpaceEvenly,
-            align_items: AlignItems::Center,
-            position_type: PositionType::Absolute,
-            width: Val::Percent(100.0),
-            height: Val::Percent(10.0),
-            bottom: Val::Percent(7.5),
-            ..default()
-        },
-
+    let container = Node {
+        flex_direction: FlexDirection::Row,
+        justify_content: JustifyContent::SpaceEvenly,
+        align_items: AlignItems::Center,
+        position_type: PositionType::Absolute,
+        width: Val::Percent(100.0),
+        height: Val::Percent(10.0),
+        bottom: Val::Percent(7.5),
         ..default()
     };
 
-    let card1 = NodeBundle {
-        style: Style {
-            width: Val::Px(160.),
-            height: Val::Px(232.),
-            ..default()
-        },
-        background_color: background_color.into(),
-        visibility: Visibility::Hidden,
+    let card_container = Node {
+        width: Val::Px(160.),
+        height: Val::Px(232.),
         ..default()
     };
 
-    let card2 = NodeBundle {
-        style: Style {
-            width: Val::Px(160.),
-            height: Val::Px(232.),
-            ..default()
-        },
-        background_color: background_color.into(),
-        visibility: Visibility::Hidden,
-        ..default()
-    };
-
-    let card3 = NodeBundle {
-        style: Style {
-            width: Val::Px(160.),
-            height: Val::Px(232.),
-            ..default()
-        },
-        background_color: background_color.into(),
-        visibility: Visibility::Hidden,
-        ..default()
-    };
-
-    let template1 = ImageBundle {
-        style: Style {
+    let template_node = Node {
             position_type: PositionType::Relative,
             width: Val::Percent(100.0),
             height: Val::Percent(100.0),
             ..default()
-        },
-        image: UiImage::new(template_uncommon.clone()),
-        ..default()
-    };
+        };
+    let template_image = ImageNode::new(template_uncommon.clone());
 
-    let template2 = ImageBundle {
-        style: Style {
-            position_type: PositionType::Relative,
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            ..default()
-        },
-        image: UiImage::new(template_uncommon.clone()),
-        ..default()
-    };
+    let card_art_fireball = ImageNode::new(fireball_art.clone());
+    let card_art_stamina = ImageNode::new(stamina_art.clone());
+    let card_art_health = ImageNode::new(health_art.clone());
 
-    let template3 = ImageBundle {
-        style: Style {
-            position_type: PositionType::Relative,
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            ..default()
+    let card_style = Node {
+        display: Display::Grid,
+        width: Val::Percent(91.25),
+        height: Val::Percent(55.6),
+        margin: UiRect {
+            left: Val::Percent(4.5),
+            right: Val::Percent(4.5),
+            top: Val::Percent(7.75),
+            bottom: Val::Percent(0.0),
         },
-        image: UiImage::new(template_uncommon.clone()),
-        ..default()
-    };
-
-    let card_art1 = ImageBundle {
-        style: Style {
-            position_type: PositionType::Absolute,
-            width: Val::Percent(91.25),
-            height: Val::Percent(55.6),
-            margin: UiRect {
-                left: Val::Percent(4.5),
-                right: Val::Percent(4.5),
-                top: Val::Percent(7.75),
-                bottom: Val::Percent(0.0),
-            },
-            ..default()
-        },
-        image: UiImage::new(fireball_art.clone()),
-        ..default()
-    };
-
-    let card_art2 = ImageBundle {
-        style: Style {
-            position_type: PositionType::Absolute,
-            width: Val::Percent(91.25),
-            height: Val::Percent(55.6),
-            margin: UiRect {
-                left: Val::Percent(4.5),
-                right: Val::Percent(4.5),
-                top: Val::Percent(7.75),
-                bottom: Val::Percent(0.0),
-            },
-            ..default()
-        },
-        image: UiImage::new(stamina_art.clone()),
-        ..default()
-    };
-
-    let card_art3 = ImageBundle {
-        style: Style {
-            position_type: PositionType::Absolute,
-            width: Val::Percent(91.25),
-            height: Val::Percent(55.6),
-            margin: UiRect {
-                left: Val::Percent(4.5),
-                right: Val::Percent(4.5),
-                top: Val::Percent(7.75),
-                bottom: Val::Percent(0.0),
-            },
-            ..default()
-        },
-        image: UiImage::new(health_art.clone()),
         ..default()
     };
 
@@ -218,64 +128,76 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
         .id();
 
     let card1 = commands
-        .spawn(card1)
+        .spawn(card_container.clone())
+        .insert(BackgroundColor(background_color))
+        .insert(Visibility::Hidden)
         .insert(Name::new("card1"))
         .insert(CardUiMarker)
         .id();
     let card2 = commands
-        .spawn(card2)
+        .spawn(card_container.clone())
+        .insert(BackgroundColor(background_color))
+        .insert(Visibility::Hidden)
         .insert(Name::new("card2"))
         .insert(CardUiMarker)
         .id();
     let card3 = commands
-        .spawn(card3)
+        .spawn(card_container)
+        .insert(BackgroundColor(background_color))
+        .insert(Visibility::Hidden)
         .insert(Name::new("card3"))
         .insert(CardUiMarker)
         .id();
 
     let template1 = commands
-        .spawn(template1)
+        .spawn(template_node.clone())
+        .insert(template_image.clone())
         .insert(CardTemplateMarker)
         .insert(Name::new("template1"))
         .id();
     let template2 = commands
-        .spawn(template2)
+        .spawn(template_node.clone())
+        .insert(template_image.clone())
         .insert(CardTemplateMarker)
         .insert(Name::new("template2"))
         .id();
     let template3 = commands
-        .spawn(template3)
+        .spawn(template_node)
+        .insert(template_image)
         .insert(Name::new("template3"))
         .insert(CardTemplateMarker)
         .id();
 
     let card_art1 = commands
-        .spawn(card_art1)
+        .spawn(card_art_fireball)
+        .insert(card_style.clone())
         .insert(Name::new("card_art1"))
         .insert(CardArtMarker)
         .id();
     let card_art2 = commands
-        .spawn(card_art2)
+        .spawn(card_art_health)
+        .insert(card_style.clone())
         .insert(Name::new("card_art2"))
         .insert(CardArtMarker)
         .id();
     let card_art3 = commands
-        .spawn(card_art3)
+        .spawn(card_art_stamina)
+        .insert(card_style)
         .insert(Name::new("card_art3"))
         .insert(CardArtMarker)
         .id();
 
     commands
         .entity(parent)
-        .push_children(&[card1, card2, card3]);
+        .add_children(&[card1, card2, card3]);
 
-    commands.entity(card1).push_children(&[template1]);
-    commands.entity(card2).push_children(&[template2]);
-    commands.entity(card3).push_children(&[template3]);
+    commands.entity(card1).add_children(&[template1]);
+    commands.entity(card2).add_children(&[template2]);
+    commands.entity(card3).add_children(&[template3]);
 
-    commands.entity(template1).push_children(&[card_art1]);
-    commands.entity(template2).push_children(&[card_art2]);
-    commands.entity(template3).push_children(&[card_art3]);
+    commands.entity(template1).add_children(&[card_art1]);
+    commands.entity(template2).add_children(&[card_art2]);
+    commands.entity(template3).add_children(&[card_art3]);
 
     let card_ui_helper = CardUiHelper {
         card_ui_id: [card1, card2, card3],
@@ -287,11 +209,11 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
 }
 
 /// Display/Hide avaiable cards
-/// Runs when the AvaiableCards resource is updated
+/// Runs when the AvailableCards resource is updated
 fn display_hide_available_cards(
     mut card_ui_query: Query<&mut Visibility, With<CardUiMarker>>,
     mut card_template_query: Query<
-        (&mut Visibility, &mut UiImage),
+        (&mut Visibility, &mut ImageNode),
         (
             With<CardTemplateMarker>,
             Without<CardUiMarker>,
@@ -299,7 +221,7 @@ fn display_hide_available_cards(
         ),
     >,
     mut card_art_query: Query<
-        (&mut Visibility, &mut UiImage),
+        (&mut Visibility, &mut ImageNode),
         (With<CardArtMarker>, Without<CardUiMarker>),
     >,
     cards_helper: Res<CardUiHelper>,
@@ -307,21 +229,18 @@ fn display_hide_available_cards(
     chosen_cards: Res<ChooseACard>,
     cards_res: Res<CardsTemplates>,
 ) {
-    #[cfg(debug_assertions)]
-    info!("entering display_hide_available_cards");
-
-    let mut avaiable_cards = 0;
+    let mut available_cards = 0;
     if !chosen_cards.cards.is_empty() {
         for i in 0..3 {
             if chosen_cards.cards[0][i].is_some() {
-                avaiable_cards += 1;
+                available_cards += 1;
             }
         }
     }
 
-    let avaiable_cards = avaiable_cards;
+    let available_cards = available_cards;
 
-    if avaiable_cards == 0 {
+    if available_cards == 0 {
         for mut visibility in &mut card_ui_query {
             *visibility = Visibility::Hidden;
         }
@@ -331,8 +250,8 @@ fn display_hide_available_cards(
         for (mut visibility, _) in &mut card_template_query {
             *visibility = Visibility::Hidden;
         }
-    } else if avaiable_cards <= 3 {
-        for i in 0..avaiable_cards as usize {
+    } else if available_cards <= 3 {
+        for i in 0..available_cards as usize {
             let mut card_ui_visibility = card_ui_query
                 .get_mut(cards_helper.card_ui_id[i])
                 .expect("Cards Helper");
@@ -347,30 +266,29 @@ fn display_hide_available_cards(
             let card_template_res = cards_res.cards.get(&card_name).expect("Card doesn't exist");
             let card_sprite = card_template_res.sprite.clone();
             let card_rarity = "card_uncommon".to_string();
-            *card_template_image = UiImage::new(
-                cards_sprites
+            *card_template_image = ImageNode {
+                image: cards_sprites
                     .cards_sprites
                     .get(card_rarity.as_str())
                     .unwrap_or_else(|| panic!("Card Template not found {:?}", card_rarity))
                     .clone(),
-            );
+                ..Default::default()
+            };
 
             let (mut card_art_visibility, mut card_art_image) =
                 card_art_query.get_mut(cards_helper.card_art_id[i]).unwrap();
             *card_art_visibility = Visibility::Visible;
 
-            *card_art_image = UiImage::new(
-                cards_sprites
+            *card_art_image = ImageNode {
+                image: cards_sprites
                     .cards_sprites
                     .get(card_sprite.as_str())
                     .unwrap_or_else(|| panic!("Card Art not found {:?}", card_sprite))
                     .clone(),
-            );
+                ..Default::default()
+            };
         }
     } else {
-        info!("Avaiable Cards: {:?}", avaiable_cards);
+        info!("Available Cards: {:?}", available_cards);
     }
-
-    #[cfg(debug_assertions)]
-    info!("leaving display_hide_available_cards");
 }

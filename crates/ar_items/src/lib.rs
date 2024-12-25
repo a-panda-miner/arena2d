@@ -75,15 +75,12 @@ pub fn item_spawner(
         commands
             .spawn_empty()
             .insert(ItemMarker)
-            .insert(SpriteBundle {
-                texture: sprite.clone(),
-                transform: Transform::from_translation(position),
+            .insert(Sprite {
+                image: sprite.clone(),
+                texture_atlas: Some(layout.clone().into()),
                 ..default()
             })
-            .insert(TextureAtlas {
-                layout,
-                ..Default::default()
-            })
+            .insert(Transform::from_translation(position))
             .insert(Collider::circle(2.0))
             .insert(Mass::from(0.1))
             .insert(RigidBody::Kinematic)

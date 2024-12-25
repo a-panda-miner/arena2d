@@ -18,16 +18,18 @@ fn spawn_monsters(
     monster_sprites: Res<MonsterSprites>,
     monster_template: Res<MonsterTemplates>,
     monster_difficulty_lists: Res<MonsterDifficultyLists>,
-    player_position: Query<&GlobalTransform, With<PlayerMarker>>,
+    player_position: Query<(&Transform, &GlobalTransform), With<PlayerMarker>>,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
     target: Res<PlayerHandler>,
     game_score: Res<GameScore>,
     minutes_survived: Res<MinutesSurvived>,
     monsters_alive: Res<MonstersAlive>,
 ) {
+    info!("Spawning monsters");
     if !timer.0.tick(time.delta()).just_finished() {
         return;
     }
+    info!("Spawning monsters2");
     // How many monsters should be on the map
     let mut spawn_count = 1 + (minutes_survived.0 / 4) + (game_score.0 / 50);
     if monsters_alive.0 >= spawn_count {
@@ -55,10 +57,10 @@ fn spawn_monsters(
         } else {
             Vec3::new(-ARENA_WIDTH_ZOOMOUT, -ARENA_HEIGHT_ZOOMOUT, 0.0)
         };
-        let player_position = player_position.single();
-        let spawn_point = spawn_point + player_position.translation();
+        let (player_position, _) = player_position.single();
+        let spawn_point = spawn_point + player_position.translation;
 
-        let direction = (player_position.translation() - spawn_point).normalize_or_zero();
+        let direction = (player_position.translation - spawn_point).normalize_or_zero();
 
         let list = match difficulty {
             0 => &monster_difficulty_lists.difficulty_1,
@@ -106,19 +108,16 @@ fn spawn_monsters(
         let monster_id = commands
             .spawn_empty()
             .insert(MonsterMarker)
-            .insert(SpriteBundle {
-                texture: monster_sprites
+            .insert(Sprite {
+                image: monster_sprites
                     .monster_sheets
                     .get(sprite_name.as_str())
                     .unwrap()
                     .clone(),
-                transform: Transform::from_translation(spawn_point),
+                texture_atlas: Some(layout.clone().into()),
                 ..Default::default()
             })
-            .insert(TextureAtlas {
-                layout: layout.clone(),
-                ..Default::default()
-            })
+            .insert(Transform::from_translation(spawn_point))
             .insert(BaseSpeed(base_speed))
             .insert(RigidBody::Dynamic)
             .insert(Mass(mass))

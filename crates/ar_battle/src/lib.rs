@@ -359,7 +359,7 @@ struct PlayerProjectileSpawner {
 fn spawn_player_projectiles(
     mut commands: Commands,
     time: Res<Time>,
-    player_position: Query<(&GlobalTransform, &Transform), With<PlayerMarker>>,
+    player_position: Query<&Transform, With<PlayerMarker>>,
     mut spawner: Query<(Entity, &mut PlayerProjectileSpawner)>,
     sprite_sheet: Res<SpellsSheetSmall>,
     spell: Res<ProjectileSpells>,
@@ -369,12 +369,11 @@ fn spawn_player_projectiles(
         return;
     }
     let player_last_direction = player_last_direction.direction;
-    let (player_position, player_transform) = player_position.single();
+    let player_transform = player_position.single();
     for (entity, mut spa) in spawner.iter_mut() {
         if !spa.timer.tick(time.delta()).just_finished() {
             break;
         }
-        let global_transform = player_position;
         let local_transform = player_transform;
         let angle = spa.angle + player_last_direction;
         let mut dir = angle.normalize_or_zero();
@@ -389,20 +388,16 @@ fn spawn_player_projectiles(
         let sprite = proj.sprite.clone();
         commands
             .entity(entity)
-            .insert(SpriteBundle {
-                texture: sprite_sheet
-                    .sprite
-                    .get(sprite.as_str())
-                    .unwrap_or_else(|| panic!("{} not found", sprite))
-                    .clone(),
-                global_transform: *global_transform,
-                transform: *local_transform,
+            .insert(Sprite {
+                image: sprite_sheet
+                .sprite
+                .get(sprite.as_str())
+                .unwrap_or_else(|| panic!("{} not found", sprite))
+                .clone(),
+                texture_atlas: Some(sprite_sheet.layout.clone().into()),
                 ..Default::default()
             })
-            .insert(TextureAtlas {
-                layout: sprite_sheet.layout.clone(),
-                ..Default::default()
-            })
+            .insert(*local_transform)
             .insert(PlayerProjectileMarker)
             .insert(RigidBody::Kinematic)
             .insert(Mass(proj.mass))

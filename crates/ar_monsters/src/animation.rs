@@ -22,13 +22,14 @@ impl Plugin for MonsterAnimationPlugin {
 /// Defines the column in the sprite sheet that the animation should be, depending on way
 /// the monster is moving towards the player
 fn animation_small_monster_direction(
-    mut query: Query<(&mut TextureAtlas, &GlobalTransform), With<MonsterMarkerSmall>>,
+    mut query: Query<(&mut Sprite, &GlobalTransform), With<MonsterMarkerSmall>>,
     player_position: Query<&GlobalTransform, With<PlayerMarker>>,
 ) {
     let player_position = player_position.get_single().unwrap();
-    for (mut texture_atlas, transform) in query.iter_mut() {
+    for (mut sprite, transform) in query.iter_mut() {
         let relative_position = transform.translation() - player_position.translation();
         let (x, y, _) = relative_position.into();
+        if let Some(texture_atlas) = sprite.texture_atlas.as_mut() {
         if x > 0.0 && y > 0.0 {
             texture_atlas.index = 1;
         }
@@ -40,24 +41,27 @@ fn animation_small_monster_direction(
         }
         if x > 0.0 && y < 0.0 {
             texture_atlas.index = 7;
+            }
         }
     }
 }
 
 /// Loops between the 2-key animation frame sequence, depending on which column
 /// the animation is in
-fn animation_small_monster_loop(mut query: Query<&mut TextureAtlas, With<MonsterMarkerSmall>>) {
-    for mut texture_atlas in query.iter_mut() {
-        match texture_atlas.index {
-            0 => texture_atlas.index = 1,
-            1 => texture_atlas.index = 0,
-            2 => texture_atlas.index = 3,
-            3 => texture_atlas.index = 2,
-            4 => texture_atlas.index = 5,
-            5 => texture_atlas.index = 4,
-            6 => texture_atlas.index = 7,
-            7 => texture_atlas.index = 6,
-            _ => {}
+fn animation_small_monster_loop(mut query: Query<&mut Sprite, With<MonsterMarkerSmall>>) {
+    for mut sprite in query.iter_mut() {
+        if let Some(texture_atlas) = sprite.texture_atlas.as_mut() {
+            match texture_atlas.index {
+                0 => texture_atlas.index = 1,
+                1 => texture_atlas.index = 0,
+                2 => texture_atlas.index = 3,
+                3 => texture_atlas.index = 2,
+                4 => texture_atlas.index = 5,
+                5 => texture_atlas.index = 4,
+                6 => texture_atlas.index = 7,
+                7 => texture_atlas.index = 6,
+                _ => {}
+            }
         }
     }
 }

@@ -183,9 +183,10 @@ pub fn choose_card(
 
 fn player_animation(
     action_state: Res<ActionState<Action>>,
-    mut query: Query<&mut TextureAtlas, With<PlayerMarker>>,
+    mut query: Query<&mut Sprite, With<PlayerMarker>>,
 ) {
-    let mut texture_atlas = query.get_single_mut().unwrap();
+    let mut binding = query.get_single_mut().unwrap();
+    let texture_atlas = binding.texture_atlas.as_mut().unwrap();
 
     if action_state.pressed(&Action::Up) && action_state.pressed(&Action::Right) {
         if texture_atlas.index == 8 {

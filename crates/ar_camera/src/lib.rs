@@ -56,13 +56,16 @@ impl Plugin for ArenaCameraPlugin {
 }
 
 fn setup_arena_camera(mut commands: Commands) {
-    let mut camera = Camera2dBundle::default();
-    camera.projection.scaling_mode = ScalingMode::AutoMax {
-        max_width: ARENA_WIDTH_DEFAULT,
-        max_height: ARENA_HEIGHT_DEFAULT,
+    let camera = Camera2d;
+    let projection = OrthographicProjection {
+        scaling_mode: ScalingMode::AutoMax {
+            max_width: ARENA_WIDTH_DEFAULT,
+            max_height: ARENA_HEIGHT_DEFAULT,
+        },
+        ..OrthographicProjection::default_2d()
     };
     // Allows us to always show ARENA_WIDTH and ARENA_HEIGHT of world units for the player in this cam
-    commands.spawn((camera, ArenaCameraMarker));
+    commands.spawn((camera, ArenaCameraMarker, Msaa::Off, projection));
 }
 
 fn change_camera_state(
