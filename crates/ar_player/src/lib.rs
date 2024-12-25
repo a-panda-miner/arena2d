@@ -55,6 +55,10 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
             // Player invulnerability after getting hit
             timer: Timer::from_seconds(0.5, TimerMode::Once),
         })
+        // Ccd
+        .insert(SweptCcd::default())
+        // Interpolation
+        .insert(TransformInterpolation)
         .insert(PlayerExperience(0))
         .insert(PlayerLevel(1))
         .insert(Health(100))

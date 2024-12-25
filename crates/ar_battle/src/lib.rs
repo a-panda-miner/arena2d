@@ -364,7 +364,6 @@ fn spawn_player_projectiles(
     spell: Res<ProjectileSpells>,
     player_last_direction: Res<PlayerLastDirection>,
 ) {
-    info!("Spawning player projectiles");
     if spawner.is_empty() {
         return;
     }

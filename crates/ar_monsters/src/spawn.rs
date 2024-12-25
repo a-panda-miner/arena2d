@@ -25,11 +25,9 @@ fn spawn_monsters(
     minutes_survived: Res<MinutesSurvived>,
     monsters_alive: Res<MonstersAlive>,
 ) {
-    info!("Spawning monsters");
     if !timer.0.tick(time.delta()).just_finished() {
         return;
     }
-    info!("Spawning monsters2");
     // How many monsters should be on the map
     let mut spawn_count = 1 + (minutes_survived.0 / 4) + (game_score.0 / 50);
     if monsters_alive.0 >= spawn_count {

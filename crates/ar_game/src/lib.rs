@@ -62,7 +62,7 @@ impl Plugin for GamePlugin {
         app.add_plugins(
             DefaultPlugins
                 .set(LogPlugin {
-                    filter: "wpgu=off,bevy_render=off,bevy_ecs=trace,bevy_pbr=error,naga=warn,wgpu_hal=off,bevy_ecs_tilemap=off"
+                    filter: "wpgu=off,bevy_render=off,bevy_pbr=error,bevy_ecs=warn,naga=warn,wgpu_hal=off,bevy_ecs_tilemap=off"
                         .to_string(),
                     level: Level::INFO,
                     custom_layer: |_| None,
@@ -157,7 +157,7 @@ impl Plugin for GamePlugin {
         app.init_state::<AppState>()
             .add_plugins(
                 ProgressPlugin::<AppState>::new()
-                .with_state_transition(AppState::LoadingAssets, AppState::InBattle)
+                .with_state_transition(AppState::LoadingAssets, AppState::LoadingTemplates)
             )
             .add_plugins(EntropyPlugin::<WyRand>::default())
             .add_plugins(OneShotPlugin)
