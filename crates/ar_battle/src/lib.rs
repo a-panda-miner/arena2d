@@ -57,12 +57,11 @@ impl Plugin for BattlePlugin {
             .add_systems(
                 FixedUpdate,
                 (
-                    queue_spawn_player_projectiles,
-                    spawn_player_projectiles,
-                    regenerate_stamina,
+                    queue_spawn_player_projectiles.in_set(BattleSet),
+                    spawn_player_projectiles.in_set(BattleSet),
+                    regenerate_stamina.in_set(BattleSet),
                 )
-                    .chain()
-                    .in_set(BattleSet),
+                    .chain(),
             );
     }
 }

@@ -107,7 +107,7 @@ fn play_music(bgm: Res<BackGroundMusic>, mut commands: Commands, audio_assets: R
         .spawn(AudioPlayer::new(audio_assets.list[bg].clone()))
         .insert(PlaybackSettings {
             mode: PlaybackMode::Loop,
-            volume: Volume::new(0.01),
+            volume: Volume::new(0.5),
             ..default()
         })
         .insert(BGMusicMarker)
