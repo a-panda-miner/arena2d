@@ -20,7 +20,9 @@ fn add_particles_for_player(
     mut effects: ResMut<Assets<EffectAsset>>,
     mut player: Query<Entity, With<PlayerMarker>>,
 ) {
-    let gradient = Gradient::constant(Vec4::new(0.5, 0.5, 1.0, 0.3));
+    let color = Color::srgba_u8(155, 188, 15, 127).to_linear().to_vec4();
+
+    let gradient = Gradient::constant(color);
 
     let writer = ExprWriter::new();
     let age = writer.lit(0.).expr();
