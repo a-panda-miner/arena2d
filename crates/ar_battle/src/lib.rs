@@ -389,10 +389,10 @@ fn spawn_player_projectiles(
             .entity(entity)
             .insert(Sprite {
                 image: sprite_sheet
-                .sprite
-                .get(sprite.as_str())
-                .unwrap_or_else(|| panic!("{} not found", sprite))
-                .clone(),
+                    .sprite
+                    .get(sprite.as_str())
+                    .unwrap_or_else(|| panic!("{} not found", sprite))
+                    .clone(),
                 texture_atlas: Some(sprite_sheet.layout.clone().into()),
                 ..Default::default()
             })

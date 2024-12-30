@@ -65,15 +65,13 @@ fn set_display_player_health(
     let color: Color = Color::srgba_u8(48, 98, 48, 255);
 
     commands
-        .spawn(
-            Node {
-                display: Display::Grid,
-                position_type: PositionType::Absolute,
-                top: Val::Px(0.0),
-                right: Val::Percent(40.0),
-                ..default()
-            }
-        )
+        .spawn(Node {
+            display: Display::Grid,
+            position_type: PositionType::Absolute,
+            top: Val::Px(0.0),
+            right: Val::Percent(40.0),
+            ..default()
+        })
         .insert(Text::new(text))
         .insert(TextLayout::new_with_justify(JustifyText::Center))
         .insert(TextFont {
@@ -106,14 +104,13 @@ fn set_display_player_stamina(
     let color: Color = Color::srgba_u8(15, 56, 15, 255);
 
     commands
-        .spawn(
-            Node {
-                display: Display::Grid,
-                position_type: PositionType::Absolute,
-                bottom: Val::Px(0.0),
-                right: Val::Percent(78.0),
-                ..default()
-            })
+        .spawn(Node {
+            display: Display::Grid,
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(0.0),
+            right: Val::Percent(78.0),
+            ..default()
+        })
         .insert(Text::new(text))
         .insert(TextLayout::new_with_justify(JustifyText::Center))
         .insert(TextFont {

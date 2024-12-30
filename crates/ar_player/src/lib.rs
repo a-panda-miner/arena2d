@@ -32,13 +32,11 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
 
     let player_id = commands
         .spawn(PlayerMarker)
-        .insert(
-            Sprite {
-                image: sheet_handle.sprite.clone(),
-                texture_atlas: Some(sheet_handle.layout.clone().into()),
-                ..Default::default()
-            }
-        )
+        .insert(Sprite {
+            image: sheet_handle.sprite.clone(),
+            texture_atlas: Some(sheet_handle.layout.clone().into()),
+            ..Default::default()
+        })
         .insert(Transform::from_xyz(0.0, 0.0, 5.0))
         .insert(RigidBody::Dynamic)
         .insert(Mass(50.0))

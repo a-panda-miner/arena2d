@@ -157,7 +157,7 @@ impl Plugin for GamePlugin {
         app.init_state::<AppState>()
             .add_plugins(
                 ProgressPlugin::<AppState>::new()
-                .with_state_transition(AppState::LoadingAssets, AppState::LoadingTemplates)
+                    .with_state_transition(AppState::LoadingAssets, AppState::LoadingTemplates),
             )
             .add_plugins(EntropyPlugin::<WyRand>::default())
             .add_plugins(OneShotPlugin)

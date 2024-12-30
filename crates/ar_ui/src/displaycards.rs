@@ -98,11 +98,11 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
     };
 
     let template_node = Node {
-            position_type: PositionType::Relative,
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            ..default()
-        };
+        position_type: PositionType::Relative,
+        width: Val::Percent(100.0),
+        height: Val::Percent(100.0),
+        ..default()
+    };
     let template_image = ImageNode::new(template_uncommon.clone());
 
     let card_art_fireball = ImageNode::new(fireball_art.clone());
@@ -187,9 +187,7 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
         .insert(CardArtMarker)
         .id();
 
-    commands
-        .entity(parent)
-        .add_children(&[card1, card2, card3]);
+    commands.entity(parent).add_children(&[card1, card2, card3]);
 
     commands.entity(card1).add_children(&[template1]);
     commands.entity(card2).add_children(&[template2]);

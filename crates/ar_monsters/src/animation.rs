@@ -30,17 +30,17 @@ fn animation_small_monster_direction(
         let relative_position = transform.translation() - player_position.translation();
         let (x, y, _) = relative_position.into();
         if let Some(texture_atlas) = sprite.texture_atlas.as_mut() {
-        if x > 0.0 && y > 0.0 {
-            texture_atlas.index = 1;
-        }
-        if x < 0.0 && y > 0.0 {
-            texture_atlas.index = 3;
-        }
-        if x < 0.0 && y < 0.0 {
-            texture_atlas.index = 5;
-        }
-        if x > 0.0 && y < 0.0 {
-            texture_atlas.index = 7;
+            if x > 0.0 && y > 0.0 {
+                texture_atlas.index = 1;
+            }
+            if x < 0.0 && y > 0.0 {
+                texture_atlas.index = 3;
+            }
+            if x < 0.0 && y < 0.0 {
+                texture_atlas.index = 5;
+            }
+            if x > 0.0 && y < 0.0 {
+                texture_atlas.index = 7;
             }
         }
     }
