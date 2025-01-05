@@ -19,7 +19,7 @@ in
 		pkgs.xorg.libXcursor
 		pkgs.xorg.libXi
 		pkgs.libxkbcommon
-        pkgs.libglvnd	
+    pkgs.libglvnd
 	];
 	buildInputs = with pkgs; [
 		pkg-config
@@ -28,6 +28,7 @@ in
 		xorg.libXrandr
 		xorg.libXcursor
 		xorg.libXi
+		libudev-zero
 		libxkbcommon
     rust
     rust-analyzer
