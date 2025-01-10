@@ -6,3 +6,4 @@
 .idea/.gitignore
 nohup.out
 trace-*
+.vscode/settings.json

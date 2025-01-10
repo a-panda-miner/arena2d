@@ -64,6 +64,8 @@ pub enum Action {
     ChooseCard3,
     #[cfg(debug_assertions)]
     GiveExpDebug,
+    #[cfg(debug_assertions)]
+    ItemSpawnDebug,
 }
 
 impl Action {
@@ -96,6 +98,8 @@ impl Action {
         input_map.insert(Self::ChooseCard3, KeyCode::Digit3);
         #[cfg(debug_assertions)]
         input_map.insert(Self::GiveExpDebug, KeyCode::KeyM);
+        #[cfg(debug_assertions)]
+        input_map.insert(Self::ItemSpawnDebug, KeyCode::KeyL);
 
         input_map
     }
@@ -267,7 +271,21 @@ pub fn give_exp_debug(
     action_state: Res<ActionState<Action>>,
 ) {
     if action_state.just_pressed(&Action::GiveExpDebug) {
-        let id = one_shot.0.get("give_exp").expect("no give_exp system");
-        commands.run_system(*id);
+        if let Some(id) = one_shot.0.get("give_exp") {
+            commands.run_system(*id);
+        }
+    }
+}
+
+#[cfg(debug_assertions)]
+pub fn item_spawn_debug(
+    mut commands: Commands,
+    one_shot: Res<OneShotSystems>,
+    action_state: Res<ActionState<Action>>,
+) {
+    if action_state.just_pressed(&Action::ItemSpawnDebug) {
+        if let Some(id) = one_shot.0.get("spawn_item_debug") {
+            commands.run_system(*id);
+        }
     }
 }

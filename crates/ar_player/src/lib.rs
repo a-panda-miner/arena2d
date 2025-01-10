@@ -71,6 +71,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
             magnet_id = children
                 .spawn((
                     Collider::circle(1.0),
+                    CollidingEntities::default(),
                     CollisionLayers::new([Layer::Magnet], [Layer::Item]),
                     MagnetMarker,
                 ))

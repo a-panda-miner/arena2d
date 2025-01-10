@@ -60,6 +60,7 @@ impl Plugin for BattlePlugin {
                     queue_spawn_player_projectiles.in_set(BattleSet),
                     spawn_player_projectiles.in_set(BattleSet),
                     regenerate_stamina.in_set(BattleSet),
+                    handle_magnet_collision.in_set(BattleSet),
                 )
                     .chain(),
             );
@@ -115,21 +116,31 @@ pub struct PlayerDamageEvent {
     pub source: Entity,
 }
 
+/// Handles the magnet collision with items,
+/// sends the event that an item was picked up
+fn handle_magnet_collision(
+    mut magnet_query: Query<&mut CollidingEntities, With<MagnetMarker>>,
+    mut ev_item_pickup: EventWriter<PickupEvent>,
+) {
+    let mut magnet = magnet_query.single_mut();
+    for item in magnet.drain() {
+        ev_item_pickup.send(PickupEvent{ entity: item});
+    }
+}
+
 /// Handles the possible collisions accordingly to Layers' rules,
 /// Player only gets damaged by the largest damage source possible
-// TODO! Check for collided entities with projectiles,
-// ignore collisions with entities already collided with the same projectile
+// TODO! Instead of doing this, add CollidingEntities for each source of continuous 
+// damage/check
 fn handle_collision(
     mut ev_collision_reader: EventReader<CollisionStarted>,
     mut ev_damage: EventWriter<DamageEvent>,
     mut ev_player_damage: EventWriter<PlayerDamageEvent>,
-    mut ev_item_pickup: EventWriter<PickupEvent>,
     damage: Query<&Damage>,
     monster_query: Query<Entity, With<MonsterMarker>>,
     monster_projectile_query: Query<Entity, With<MonsterProjectileMarker>>,
     mut player_projectile_query: Query<(Entity, &mut CollidedHash), With<PlayerProjectileMarker>>,
     player_query: Query<Entity, With<PlayerMarker>>,
-    magnet_query: Query<Entity, With<MagnetMarker>>,
 ) {
     if ev_collision_reader.is_empty() {
         return;
@@ -155,10 +166,6 @@ fn handle_collision(
                     source = entity1;
                 }
             }
-        } else if magnet_query.contains(entity1) {
-            ev_item_pickup.send(PickupEvent { entity: entity2 });
-        } else if magnet_query.contains(entity2) {
-            ev_item_pickup.send(PickupEvent { entity: entity1 });
         } else if monster_query.contains(entity1) {
             if player_projectile_query.contains(entity2) {
                 // Unwrap safety: It is guaranteed to have the entity as we just checked in the 'if'

@@ -5,7 +5,7 @@
 
 use ar_core::OneShotSystems;
 #[cfg(debug_assertions)]
-use ar_debug_fn::give_exp;
+use ar_debug_fn::{give_exp, spawn_item_debug};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 
@@ -19,6 +19,11 @@ impl Plugin for OneShotPlugin {
         systems
             .0
             .insert("give_exp".to_string(), app.register_system(give_exp));
+
+        #[cfg(debug_assertions)]
+        systems
+            .0
+            .insert("spawn_item_debug".to_string(), app.register_system(spawn_item_debug));
 
         app.insert_resource(systems);
     }
