@@ -455,9 +455,19 @@ pub struct StaminaRegen(pub f32);
 
 #[derive(Clone, Deserialize, Debug)]
 pub enum SpellAOEType {
-    Arc,
+    Arc(f32),
     Circle,
     Rectangle,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+pub struct SpellAOE {
+    pub aoe_sprite: String,
+    pub aoe_radius: f32,
+    pub aoe_damage: usize,
+    pub aoe_pattern: SpellAOEType,
+    pub aoe_knockback: Option<f32>,
+    pub aoe_distributed: bool, // whether the total damage is distributed among the targets
 }
 
 #[derive(Clone, Deserialize, Debug)]

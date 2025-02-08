@@ -8,7 +8,7 @@ edition = "2021"
 
 [lib]
 name = "arena2d"
-path = "crates/ar_bin/src/lib.rs"
+path = "crates/ar_lib/src/lib.rs"
 crate-type = [
     "staticlib",
     "cdylib",
@@ -29,7 +29,7 @@ debug = 1
 [profile.release]
 #link time optimization
 lto = "fat"
-# allows for more optimazition in exchange for compile time
+# allows for more optimization in exchange for compile time
 codegen-units = 1
 # no unwinding on panic
 panic = "abort"
@@ -66,7 +66,7 @@ rand_core = {version = "0.6", features = ["std"]}
 rand = "0.8"
 bevy_rand = { version = "0.8", features = ["wyrand"]}
 
-# Physics 
+# Physics
 avian2d = "0.2"
 
 # Asset Loader
@@ -121,3 +121,6 @@ features = [
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+enum_glob_use = "deny"

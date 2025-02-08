@@ -115,7 +115,7 @@ fn spawn_cards(
     }
 }
 
-/// Removes the current avaiable cards from ChooseACard resource and applies the effects
+/// Removes the current available cards from ChooseACard resource and applies the effects
 /// of the chosen card to the player
 fn chosen_card(
     mut player: Query<(&mut MaxHealth, &mut MaxStamina), With<PlayerMarker>>,
@@ -132,37 +132,38 @@ fn chosen_card(
             .unwrap_or_else(|| panic!("Card doesn't exist: {:?}", card.card));
         match card_template.card_type {
             CardType::Spell => {}
-            CardType::Buff => match &card_template.upgrade {
-                Some(power_up) => match power_up {
-                    PowerUp::HealthUp(health) => {
-                        info!("Health: {}", health);
-                        player_health.0 += *health as usize;
+            CardType::Buff => {
+                if let Some(power_up) = &card_template.upgrade {
+                    match power_up {
+                        PowerUp::HealthUp(health) => {
+                            info!("Health: {}", health);
+                            player_health.0 += *health as usize;
+                        }
+                        PowerUp::AttackUp(attack) => {
+                            info!("Attack: {}", attack);
+                        }
+                        PowerUp::ShieldUp(shield) => {
+                            info!("Shield: {}", shield);
+                        }
+                        PowerUp::SpeedUp(speed) => {
+                            info!("Speed: {}", speed);
+                        }
+                        PowerUp::LootUp(loot) => {
+                            info!("Loot: {}", loot);
+                        }
+                        PowerUp::DamageUp(damage) => {
+                            info!("Damage: {}", damage);
+                        }
+                        PowerUp::ExpUp(exp) => {
+                            info!("Exp: {}", exp);
+                        }
+                        PowerUp::StaminaUp(stamina) => {
+                            info!("Stamina: {}", stamina);
+                            player_stamina.0 += *stamina as f32;
+                        }
                     }
-                    PowerUp::AttackUp(attack) => {
-                        info!("Attack: {}", attack);
-                    }
-                    PowerUp::ShieldUp(shield) => {
-                        info!("Shield: {}", shield);
-                    }
-                    PowerUp::SpeedUp(speed) => {
-                        info!("Speed: {}", speed);
-                    }
-                    PowerUp::LootUp(loot) => {
-                        info!("Loot: {}", loot);
-                    }
-                    PowerUp::DamageUp(damage) => {
-                        info!("Damage: {}", damage);
-                    }
-                    PowerUp::ExpUp(exp) => {
-                        info!("Exp: {}", exp);
-                    }
-                    PowerUp::StaminaUp(stamina) => {
-                        info!("Stamina: {}", stamina);
-                        player_stamina.0 += *stamina as f32;
-                    }
-                },
-                None => {}
-            },
+                }
+            }
         }
     }
 }

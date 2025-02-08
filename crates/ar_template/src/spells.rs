@@ -1,7 +1,7 @@
 use crate::{Deserialize, File, FromReader, HashMap, Resource};
 use ar_core::{
-    SpellAOEType, SpellBuffType, SpellProjectileExplosiveType, SpellProjectileType,
-    SpellSummonType, SpellSwingType, SpellType,
+    SpellAOE, SpellBuffType, SpellProjectileExplosiveType, SpellProjectileType, SpellSummonType,
+    SpellSwingType, SpellType,
 };
 use ron::de::from_reader;
 
@@ -15,7 +15,7 @@ pub struct SpellTemplate {
     pub projectile_type_struct: Option<SpellProjectileType>,
     pub swing_type_struct: Option<SpellSwingType>,
     pub buff_type_struct: Option<SpellBuffType>,
-    pub aoe_type_struct: Option<SpellAOEType>,
+    pub aoe_type_struct: Option<SpellAOE>,
     pub explosive_projectile_struct: Option<SpellProjectileExplosiveType>,
 }
 

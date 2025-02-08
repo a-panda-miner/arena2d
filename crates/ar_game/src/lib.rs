@@ -1,4 +1,4 @@
-// This crate creates the GamePlugin, which is the only Plugin ran in the app
+// This crate creates the GamePlugin, which is the only Plugin directly invoked by the app
 
 use ar_audio::{GameAudioAssets, GameAudioPlugin};
 use ar_battle::{BattlePlugin, SpellsSheetSmall};
@@ -196,11 +196,12 @@ impl Plugin for GamePlugin {
             .configure_sets(
                 Update,
                 (
-                    CameraSet.run_if(in_state(AppState::InBattle)),
-                    PlayerSet.run_if(in_state(AppState::InBattle)),
-                    InputSet.run_if(in_state(AppState::InBattle)),
-                    MapSet.run_if(in_state(AppState::InBattle)),
                     AudioSet.run_if(in_state(AppState::InBattle)),
+                    BattleSet.run_if(in_state(AppState::InBattle)),
+                    CameraSet.run_if(in_state(AppState::InBattle)),
+                    InputSet.run_if(in_state(AppState::InBattle)),
+                    PlayerSet.run_if(in_state(AppState::InBattle)),
+                    MapSet.run_if(in_state(AppState::InBattle)),
                     MonsterSet.run_if(in_state(AppState::InBattle)),
                 ),
             )
@@ -213,7 +214,9 @@ impl Plugin for GamePlugin {
                     UtilSet.run_if(in_state(AppState::InBattle)),
                     BattleSet.run_if(in_state(AppState::InBattle)),
                     ParticleSet.run_if(in_state(AppState::InBattle)),
-                    ItemsSet.after(BattleSet).run_if(in_state(AppState::InBattle)),
+                    ItemsSet
+                        .after(BattleSet)
+                        .run_if(in_state(AppState::InBattle)),
                     LevelSet.run_if(in_state(AppState::InBattle)),
                     CardSet.run_if(in_state(AppState::InBattle)),
                     InputSet.run_if(in_state(AppState::InBattle)),

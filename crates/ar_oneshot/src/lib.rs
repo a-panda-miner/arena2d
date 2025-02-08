@@ -1,7 +1,5 @@
-// This crate initiates the resource OneShotSystems
-// It needs to be a new crate because of cyclic dependencies,
-// this crate should be right before the leaf node (ar_game) on the dependency graph, while the ar_core should be the root node
-// for the libraries crates, excluding ar_game
+// This crate initiates the resource OneShotSystems, which is a collection of systems that are ran on-demand once,
+// including debug systems
 
 use ar_core::OneShotSystems;
 #[cfg(debug_assertions)]
@@ -21,9 +19,10 @@ impl Plugin for OneShotPlugin {
             .insert("give_exp".to_string(), app.register_system(give_exp));
 
         #[cfg(debug_assertions)]
-        systems
-            .0
-            .insert("spawn_item_debug".to_string(), app.register_system(spawn_item_debug));
+        systems.0.insert(
+            "spawn_item_debug".to_string(),
+            app.register_system(spawn_item_debug),
+        );
 
         app.insert_resource(systems);
     }

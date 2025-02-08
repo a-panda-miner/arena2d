@@ -28,12 +28,12 @@ fn display_player_damaged_numbers(
         commands
             .spawn(Text2d::new(displayed_number))
             .insert(TextFont {
-                font: font.clone().into(),
+                font: font.clone(),
                 font_size: 14.0,
                 ..default()
             })
             .insert(TextColor(color))
-            .insert(transform.clone())
+            .insert(*transform)
             .insert(LifeTime {
                 timer: Timer::from_seconds(1.2, TimerMode::Once),
             });
@@ -59,12 +59,12 @@ fn display_damage_numbers(
             commands
                 .spawn(Text2d::new(displayed_number))
                 .insert(TextFont {
-                    font: font.clone().into(),
+                    font: font.clone(),
                     font_size: 18.0,
                     ..default()
                 })
                 .insert(TextColor(color))
-                .insert(transform.clone())
+                .insert(*transform)
                 .insert(LifeTime {
                     timer: Timer::from_seconds(0.8, TimerMode::Once),
                 });

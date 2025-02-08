@@ -43,3 +43,6 @@ path = "../ar_enemies"
 
 [dependencies.ar_template]
 path = "../ar_template"
+
+[dependencies.ar_lib]
+path = "../ar_lib"

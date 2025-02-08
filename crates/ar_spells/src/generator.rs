@@ -23,6 +23,16 @@ pub struct ProjectileSpells {
     pub projectile_spells: HashMap<String, SpellProjectile>,
 }
 
+#[derive(Resource, Debug)]
+pub struct AOESpells {
+    pub aoe_spells: HashMap<String, SpellAOE>,
+}
+
+#[derive(Component)]
+pub struct OwnedAOESpells {
+    pub spells: Vec<SpellAOE>,
+}
+
 /// The spells of the type Projectile that the Entity has
 #[derive(Component)]
 pub struct OwnedProjectileSpells {
@@ -50,7 +60,25 @@ pub struct SpellProjectile {
     pub penetration: u8,
 }
 
+#[derive(Clone, Debug)]
+pub struct SpellAOE {
+    pub name: String,
+    pub sprite: String,
+    pub cooldown: Timer,
+    pub damage: usize,
+    pub pattern: SpellAOEType,
+    pub radius: f32,
+    pub knockback: Option<f32>,
+    pub distributed: bool,
+}
+
 impl PartialEq for SpellProjectile {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
+impl PartialEq for SpellAOE {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name
     }
@@ -87,31 +115,54 @@ pub struct SpellSwing {
     pub aoe: SpellAOEType,
 }
 
-/// Creates the SpellSwing, SpellProjectile structs from the SpellTemplates
+/// Creates the SpellSwing, SpellProjectile, SpellAOE structs from the SpellTemplates
 /// Must be run before setup_player as the player is spawned with a spell
 pub fn setup_generate_spells(loaded_spells: Res<SpellTemplates>, mut commands: Commands) {
     let mut projectile_spells = HashMap::new();
+    let mut aoe_spells = HashMap::new();
     for (name, spell) in &loaded_spells.spells {
-        if let SpellType::Projectile = spell.spell_main_type {
-            let projectile = spell
-                .projectile_type_struct
-                .clone()
-                .expect("Projectile Type with no Projectile Struct");
-            let proj = SpellProjectile {
-                name: spell.name.clone(),
-                sprite: projectile.projectile_sprite,
-                cooldown: Timer::from_seconds(spell.cooldown, TimerMode::Repeating),
-                count: projectile.projectile_count,
-                pattern: projectile.projectile_pattern,
-                damage: projectile.projectile_damage,
-                projectile_movespeed: projectile.projectile_movespeed,
-                radius: projectile.projectile_radius,
-                mass: projectile.projectile_mass,
-                lifetime: projectile.projectile_lifetime,
-                penetration: projectile.projectile_penetration.unwrap_or(0),
-            };
-            projectile_spells.insert(name.clone(), proj);
+        match spell.spell_main_type {
+            SpellType::Projectile => {
+                let projectile = spell
+                    .projectile_type_struct
+                    .clone()
+                    .expect("Projectile Type with no Projectile Struct");
+                let proj = SpellProjectile {
+                    name: spell.name.clone(),
+                    sprite: projectile.projectile_sprite,
+                    cooldown: Timer::from_seconds(spell.cooldown, TimerMode::Repeating),
+                    count: projectile.projectile_count,
+                    pattern: projectile.projectile_pattern,
+                    damage: projectile.projectile_damage,
+                    projectile_movespeed: projectile.projectile_movespeed,
+                    radius: projectile.projectile_radius,
+                    mass: projectile.projectile_mass,
+                    lifetime: projectile.projectile_lifetime,
+                    penetration: projectile.projectile_penetration.unwrap_or(0),
+                };
+                projectile_spells.insert(name.clone(), proj);
+            }
+            SpellType::AoE => {
+                let aoe = spell
+                    .aoe_type_struct
+                    .clone()
+                    .expect("AoE Type with no AoE Struct");
+
+                let aoe = SpellAOE {
+                    name: spell.name.clone(),
+                    sprite: aoe.aoe_sprite,
+                    cooldown: Timer::from_seconds(spell.cooldown, TimerMode::Repeating),
+                    damage: aoe.aoe_damage,
+                    pattern: aoe.aoe_pattern,
+                    radius: aoe.aoe_radius,
+                    knockback: aoe.aoe_knockback,
+                    distributed: aoe.aoe_distributed,
+                };
+                aoe_spells.insert(name.clone(), aoe);
+            }
+            _ => (),
         }
     }
     commands.insert_resource(ProjectileSpells { projectile_spells });
+    commands.insert_resource(AOESpells { aoe_spells });
 }

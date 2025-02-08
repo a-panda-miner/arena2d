@@ -1,5 +1,5 @@
 MonsterTemplates(
-    templates: { 
+    templates: {
         "dummy": MonsterTemplate(
             name: "Dummy",
             sprite_name: "dummy",

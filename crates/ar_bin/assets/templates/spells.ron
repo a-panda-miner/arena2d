@@ -45,5 +45,17 @@ SpellTemplates(
 
             )),
         ),
+        "hellfire": SpellTemplate(
+            name: "hellfire",
+            cooldown: 9.0,
+            spell_main_type: AoE,
+            aoe_type_struct: Some(SpellAOE(
+                aoe_sprite: "BASIC_RECTANGLE",
+                aoe_radius: 20.0,
+                aoe_damage: 3,
+                aoe_pattern: Rectangle,
+                aoe_distributed: false,
+            )),
+        ),
     }
 )

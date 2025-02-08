@@ -206,8 +206,9 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
     commands.insert_resource(card_ui_helper);
 }
 
-/// Display/Hide avaiable cards
+/// Display/Hide available cards
 /// Runs when the AvailableCards resource is updated
+#[allow(clippy::type_complexity)]
 fn display_hide_available_cards(
     mut card_ui_query: Query<&mut Visibility, With<CardUiMarker>>,
     mut card_template_query: Query<

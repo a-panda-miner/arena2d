@@ -1,11 +1,14 @@
+use std::time::Duration;
+
 use ar_core::{
     AppState, BattleSet, BoostUsage, CollidedHash, CurrentStamina, Damage, DashUsage, DeathEvent,
     DisplayDamageEvent, DropItemEvent, DropsChance, Health, Layer, LifeTime, LootTables,
     MagnetMarker, MaxStamina, MonsterMarker, MonsterProjectileMarker, Penetration, PickupEvent,
     PlayerDirection, PlayerInvulnerableFrames, PlayerLastDirection, PlayerMarker,
     PlayerMinusHpEvent, PlayerProjectileMarker, ProjectilePattern, StaminaRegen,
+    SpellAOEType,
 };
-use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
+use ar_spells::generator::{AOESpells, OwnedAOESpells, OwnedProjectileSpells, ProjectileSpells};
 use avian2d::{prelude::*, schedule::PhysicsSchedule, schedule::PhysicsStepSet};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
@@ -41,6 +44,7 @@ impl Plugin for BattlePlugin {
             .add_event::<DeathEvent>()
             .add_event::<DropItemEvent>()
             .add_event::<PickupEvent>()
+            .add_event::<NewAoeSpellEvent>()
             .add_systems(
                 PhysicsSchedule,
                 (
@@ -63,7 +67,8 @@ impl Plugin for BattlePlugin {
                     handle_magnet_collision.in_set(BattleSet),
                 )
                     .chain(),
-            );
+            )
+            .add_systems(Update, create_aoe_spell.in_set(BattleSet));
     }
 }
 
@@ -124,14 +129,15 @@ fn handle_magnet_collision(
 ) {
     let mut magnet = magnet_query.single_mut();
     for item in magnet.drain() {
-        ev_item_pickup.send(PickupEvent{ entity: item});
+        ev_item_pickup.send(PickupEvent { entity: item });
     }
 }
 
 /// Handles the possible collisions accordingly to Layers' rules,
 /// Player only gets damaged by the largest damage source possible
-// TODO! Instead of doing this, add CollidingEntities for each source of continuous 
+// TODO! Instead of doing this, add CollidingEntities for each source of continuous
 // damage/check
+#[allow(clippy::too_many_arguments)]
 fn handle_collision(
     mut ev_collision_reader: EventReader<CollisionStarted>,
     mut ev_damage: EventWriter<DamageEvent>,
@@ -264,7 +270,7 @@ fn queue_spawn_player_projectiles(
     let mut projectiles = projectiles.single_mut();
     for proj in projectiles.spells.iter_mut() {
         if !proj.cooldown.tick(time.delta()).finished() {
-            break;
+            continue;
         }
         for i in 0..proj.count {
             let time_to_spawn: f32 = (i as f32 + 1.0) * 2.0 / 3.0
@@ -279,6 +285,39 @@ fn queue_spawn_player_projectiles(
                 spell_name: proj.name.clone(),
             });
         }
+    }
+}
+
+fn queue_spawn_player_aoe(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut aoe: Query<&mut OwnedAOESpells, With<PlayerMarker>>,
+) {
+    if aoe.is_empty() {
+        return;
+    }
+
+    let mut aoe = aoe.single_mut();
+    for aoe in aoe.spells.iter_mut() {
+        if !aoe.cooldown.tick(time.delta()).finished() {
+            continue;
+        }
+        let aoe_collider = match aoe.pattern {
+            SpellAOEType::Circle => {
+                Collider::circle(aoe.radius)
+            }
+            SpellAOEType::Rectangle => {
+                Collider::rectangle(aoe.radius, aoe.radius)
+            }
+            SpellAOEType::Arc(x) => {
+                Collider::ellipse(aoe.radius * x , aoe.radius * (1.0 / x ) )
+            }
+        };
+        let lifetime = Time::from_duration(Duration::from_millis(15));
+        let damage = aoe.damage;
+        let distributed = aoe.distributed;
+        let knockback = aoe.knockback;
+        
     }
 }
 
@@ -378,7 +417,7 @@ fn spawn_player_projectiles(
     let player_transform = player_position.single();
     for (entity, mut spa) in spawner.iter_mut() {
         if !spa.timer.tick(time.delta()).just_finished() {
-            break;
+            continue;
         }
         let local_transform = player_transform;
         let angle = spa.angle + player_last_direction;
@@ -426,6 +465,14 @@ fn spawn_player_projectiles(
     }
 }
 
+fn spawn_player_aoe (
+    mut commands: Commands,
+    time: Res<Time>,
+    player_position: Query<&Transform, With<PlayerMarker>>,
+) {
+
+}
+
 fn regenerate_stamina(
     mut stamina_query: Query<(&mut CurrentStamina, &MaxStamina, &StaminaRegen)>,
     time: Res<Time>,
@@ -435,4 +482,31 @@ fn regenerate_stamina(
             stamina.0 = (stamina.0 + regen.0 * time.delta().as_secs_f32()).max(max_stamina.0);
         }
     }
+}
+
+/// Updates the list of owned aoe spells
+fn create_aoe_spell(
+    mut new_aoe: EventReader<NewAoeSpellEvent>,
+    aoe_spells_list: Res<AOESpells>,
+    mut owned_aoe_spells: Query<&mut OwnedAOESpells, With<PlayerMarker>>,
+) {
+    if new_aoe.is_empty() {
+        return;
+    }
+    let mut owned_aoe_spells = owned_aoe_spells.single_mut();
+    for aoe in new_aoe.read() {
+        let spell = aoe_spells_list
+            .aoe_spells
+            .get(&aoe.spell_name)
+            .expect("AoE spell not found")
+            .clone();
+        if !owned_aoe_spells.spells.contains(&spell) {
+            owned_aoe_spells.spells.push(spell);
+        }
+    }
+}
+
+#[derive(Event)]
+pub struct NewAoeSpellEvent {
+    pub spell_name: String,
 }

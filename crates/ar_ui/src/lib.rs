@@ -75,7 +75,7 @@ fn set_display_player_health(
         .insert(Text::new(text))
         .insert(TextLayout::new_with_justify(JustifyText::Center))
         .insert(TextFont {
-            font: font.clone().into(),
+            font: font.clone(),
             font_size: 16.0,
             ..default()
         })

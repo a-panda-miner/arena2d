@@ -11,6 +11,7 @@ impl Plugin for SpawnPlugin {
 
 /// Handles the logic of monster spawning
 //TODO! Separate into multiple systems instead of a big one
+#[allow(clippy::too_many_arguments)]
 fn spawn_monsters(
     time: Res<Time>,
     mut timer: ResMut<SpawnerTimer>,
