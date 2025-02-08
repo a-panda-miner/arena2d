@@ -387,6 +387,7 @@ pub enum Layer {
     #[default]
     Neutral,
     PlayerProjectile,
+    PlayerAOE,
     MonsterProjectile,
     Pet,
     Item,

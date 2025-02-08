@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 use ar_core::{
     AppState, BattleSet, BoostUsage, CollidedHash, CurrentStamina, Damage, DashUsage, DeathEvent,
     DisplayDamageEvent, DropItemEvent, DropsChance, Health, Layer, LifeTime, LootTables,
@@ -45,6 +43,7 @@ impl Plugin for BattlePlugin {
             .add_event::<DropItemEvent>()
             .add_event::<PickupEvent>()
             .add_event::<NewAoeSpellEvent>()
+            .add_event::<DespawnEvent>()
             .add_systems(
                 PhysicsSchedule,
                 (
@@ -53,6 +52,7 @@ impl Plugin for BattlePlugin {
                     player_damaged_handler,
                     damage_applier,
                     death_applier,
+                    despawn_event_handler,
                 )
                     .chain()
                     .before(PhysicsStepSet::First)
@@ -65,10 +65,21 @@ impl Plugin for BattlePlugin {
                     spawn_player_projectiles.in_set(BattleSet),
                     regenerate_stamina.in_set(BattleSet),
                     handle_magnet_collision.in_set(BattleSet),
+                    queue_spawn_player_aoe.in_set(BattleSet),
                 )
                     .chain(),
             )
-            .add_systems(Update, create_aoe_spell.in_set(BattleSet));
+            .add_systems(Update, create_aoe_spell.in_set(BattleSet))
+            .add_systems(
+                PhysicsSchedule,
+                (
+                    handle_aoe_collisions,
+                    aoe_damage_handler,
+                )
+                .chain()
+                .after(PhysicsStepSet::Last)
+                .run_if(in_state(AppState::InBattle))
+            );
     }
 }
 
@@ -288,6 +299,7 @@ fn queue_spawn_player_projectiles(
     }
 }
 
+/// Creates a new aoe entity that will collide with monsters
 fn queue_spawn_player_aoe(
     mut commands: Commands,
     time: Res<Time>,
@@ -313,12 +325,75 @@ fn queue_spawn_player_aoe(
                 Collider::ellipse(aoe.radius * x , aoe.radius * (1.0 / x ) )
             }
         };
-        let lifetime = Time::from_duration(Duration::from_millis(15));
         let damage = aoe.damage;
         let distributed = aoe.distributed;
-        let knockback = aoe.knockback;
-        
+        //let knockback = aoe.knockback;
+        let physical_layer = CollisionLayers::new(
+            [Layer::PlayerAOE],
+            [Layer::Monster],
+        );
+
+        commands
+            .spawn_empty()
+            .insert(aoe_collider)
+            .insert(AoEDamageMarker)
+            .insert(AoEDamage {
+                damage,
+                distributed,
+            })
+            .insert(physical_layer)
+            .insert(CollidedHash(HashSet::with_capacity(16)))
+            .insert(RigidBody::Static);
     }
+}
+
+/// Must be run after the physics pipeline and before aoe_damage_handler system
+fn handle_aoe_collisions(
+    mut aoe_query: Query<(&CollidingEntities, &mut CollidedHash), With<AoEDamageMarker>>,
+) {
+    for (colliding, mut collided) in aoe_query.iter_mut() {
+        for entity in colliding.iter() {
+                collided.0.insert(*entity);
+        }
+    }
+}
+
+/// Sends events to damage the target of the player's AoE spells
+/// This system must be run after the Physics pipeline, and after the system that handles AoE CollidedHash components, as it assumes that all
+/// aoe entities had their collisions resolved in this frame to despawn them.
+fn aoe_damage_handler(
+    mut despawn_event: EventWriter<DespawnEvent>,
+    mut ev_damage: EventWriter<DamageEvent>,
+    query_aoe: Query<(Entity, &AoEDamage, &CollidedHash), With<AoEDamageMarker>>,
+) {
+    for (source, aoe_damage, collided) in query_aoe.iter() {
+        let damage = if aoe_damage.distributed {
+            aoe_damage.damage / collided.0.len()
+        } else {
+            aoe_damage.damage
+        };
+        for target in collided.0.iter() {
+            ev_damage.send(DamageEvent {
+                damage,
+                target: *target,
+                source,
+            });
+        }
+        despawn_event.send(DespawnEvent { entity: source });
+    }
+}
+
+#[derive(Event)]
+struct DespawnEvent {
+    entity: Entity,
+}
+#[derive(Component)]
+struct AoEDamageMarker;
+
+#[derive(Component)]
+struct AoEDamage {
+    damage: usize,
+    distributed: bool,
 }
 
 /// Applies damage to the target,
@@ -364,6 +439,13 @@ fn damage_applier(
         }
     }
     ev_damage.clear();
+}
+
+/// It must be ran after damage_applier system
+fn despawn_event_handler(mut ev_despawn: EventReader<DespawnEvent>, mut commands: Commands) {
+    for ev in ev_despawn.read() {
+        commands.entity(ev.entity).despawn_recursive();
+    }
 }
 
 fn death_applier(
@@ -463,14 +545,6 @@ fn spawn_player_projectiles(
             )))
             .remove::<PlayerProjectileSpawner>();
     }
-}
-
-fn spawn_player_aoe (
-    mut commands: Commands,
-    time: Res<Time>,
-    player_position: Query<&Transform, With<PlayerMarker>>,
-) {
-
 }
 
 fn regenerate_stamina(
