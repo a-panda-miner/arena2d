@@ -1,18 +1,11 @@
 use crate::{Resource, SpellTemplates};
-use ar_core::{AppState, CardType, CardsTemplates};
+use ar_core::{AppState, CardType, CardsTemplates, RemainingCardsByType};
 use bevy::prelude::{info, Commands, NextState, Res, ResMut};
 
 #[derive(Resource)]
 pub struct CardsByType {
     powerup_cards: Vec<String>,
     spell_cards: Vec<String>,
-}
-
-/// When a card reaches max level, remove it from the list
-#[derive(Resource)]
-pub struct RemainingCardsByType {
-    pub powerup_cards: Vec<String>,
-    pub spell_cards: Vec<String>,
 }
 
 pub fn build_cards_by_type(cards_templates: Res<CardsTemplates>, mut commands: Commands) {

@@ -601,6 +601,14 @@ pub struct ChooseACard {
     pub cards: Vec<[Option<String>; 3]>,
 }
 
+/// When a card reaches max level, remove it from the list
+#[derive(Resource)]
+pub struct RemainingCardsByType {
+    pub powerup_cards: Vec<String>,
+    pub spell_cards: Vec<String>,
+}
+
+
 // Note: Spell cards need to verify if the spell exists
 #[derive(Clone, Deserialize, Debug)]
 pub struct CardsTemplate {

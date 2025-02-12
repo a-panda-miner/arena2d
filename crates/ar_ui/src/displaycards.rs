@@ -56,7 +56,7 @@ impl Plugin for DisplayCardsPlugin {
 /// Spawns UI entities for the cards,
 /// When cards are spawned another system modifies these entities,
 /// revealing them and updating the art of the card, when the resource
-/// "ChooseACard" is empty it goes back to being hidden
+/// `ChooseACard` is empty it goes back to being hidden
 fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
     let template_uncommon = cards_sprite
         .cards_sprites
@@ -207,7 +207,7 @@ fn cards_ui_set_up(mut commands: Commands, cards_sprite: Res<CardsSprite>) {
 }
 
 /// Display/Hide available cards
-/// Runs when the AvailableCards resource is updated
+/// Runs when the `AvailableCards` resource is updated
 #[allow(clippy::type_complexity)]
 fn display_hide_available_cards(
     mut card_ui_query: Query<&mut Visibility, With<CardUiMarker>>,

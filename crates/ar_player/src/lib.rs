@@ -1,9 +1,9 @@
 use ar_core::{
     AppState, Cooldown, CurrentStamina, Damage, Health, Layer, MagnetHandler, MagnetMarker,
     MaxHealth, MaxStamina, PlayerExperience, PlayerHandler, PlayerInvulnerableFrames,
-    PlayerLastDirection, PlayerLevel, PlayerMarker, PlayerSet, StaminaRegen,
+    PlayerLastDirection, PlayerLevel, PlayerMarker, PlayerSet, StaminaRegen, RemainingCardsByType,
 };
-use ar_spells::generator::{OwnedProjectileSpells, ProjectileSpells};
+use ar_spells::generator::{OwnedAOESpells, OwnedProjectileSpells, ProjectileSpells};
 use avian2d::prelude::*;
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
@@ -66,6 +66,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
         .insert(StaminaRegen(0.1))
         .insert(Damage(1))
         .insert(OwnedProjectileSpells { spells: vec![] })
+        .insert(OwnedAOESpells { spells: vec![] })
         // This child is the magnet collider, used for item pickup
         .with_children(|children| {
             magnet_id = children
@@ -89,6 +90,7 @@ fn spawn_player(mut commands: Commands, sheet_handle: Res<SheetHandle>) {
 fn setup_basic_spell(
     mut player_spells: Query<&mut OwnedProjectileSpells, With<PlayerMarker>>,
     loaded_projectile_spells: Res<ProjectileSpells>,
+    mut remaining_cards: ResMut<RemainingCardsByType>,
 ) {
     let mut player_spells = player_spells.single_mut();
     let spell = loaded_projectile_spells
@@ -96,4 +98,8 @@ fn setup_basic_spell(
         .get("throwdagger")
         .expect("no throwdagger in loaded spells");
     player_spells.spells.push(spell.clone());
+
+    if let Some(idx) = remaining_cards.spell_cards.iter().position(|v| *v == "throwdagger") {
+        remaining_cards.spell_cards.swap_remove(idx);
+    }
 }

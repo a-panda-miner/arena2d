@@ -1,8 +1,8 @@
 use ar_core::{
     ApplyCard, CardSet, CardType, CardsTemplates, ChooseACard, ChosenCard, LevelUpEvent, MaxHealth,
-    MaxStamina, PlayerMarker, PowerUp,
+    MaxStamina, PlayerMarker, PowerUp, RemainingCardsByType
 };
-use ar_template::cards::RemainingCardsByType;
+use ar_spells::generator::{OwnedProjectileSpells, OwnedAOESpells, ProjectileSpells, AOESpells};
 use bevy::prelude::*;
 use bevy_rand::prelude::WyRand;
 use bevy_rand::resource::GlobalEntropy;
@@ -40,7 +40,7 @@ fn spawn_cards(
         #[cfg(debug_assertions)]
         info!("level: {}", level);
 
-        if level % 5 == 0 {
+        if level % 5 == 0 && spell_cards_range > 0 {
             let mut cards_index = HashSet::new();
             while cards_index.len() < 3 && cards_index.len() < spell_cards_range {
                 cards_index.insert(rng.gen_range(0..spell_cards_range));
@@ -117,21 +117,47 @@ fn spawn_cards(
 
 /// Removes the current available cards from ChooseACard resource and applies the effects
 /// of the chosen card to the player
+#[allow(clippy::too_many_arguments)]
 fn chosen_card(
     mut player: Query<(&mut MaxHealth, &mut MaxStamina), With<PlayerMarker>>,
     mut choose_a_card: ResMut<ChooseACard>,
     mut ev_chosen_card: EventReader<ApplyCard>,
+    mut remaining_cards: ResMut<RemainingCardsByType>,
     cards_templates: Res<CardsTemplates>,
+    aoe_list: Res<AOESpells>,
+    proj_list: Res<ProjectileSpells>,
+    mut owned_aoe: Single<&mut OwnedAOESpells>,
+    mut owned_projectiles: Single<&mut OwnedProjectileSpells>,
 ) {
     let (mut player_health, mut player_stamina) = player.single_mut();
+
     for card in ev_chosen_card.read() {
-        let _ = choose_a_card.cards.remove(0);
+        choose_a_card.cards.clear();
         let card_template = cards_templates
             .cards
             .get(card.card.as_str())
             .unwrap_or_else(|| panic!("Card doesn't exist: {:?}", card.card));
         match card_template.card_type {
-            CardType::Spell => {}
+            CardType::Spell => {
+                if let Some(spell) = &card_template.spell {
+                    if let Some(aoe_spell) = aoe_list.aoe_spells.get(spell) {
+                        if !owned_aoe.spells.contains(aoe_spell) {
+                            owned_aoe.spells.push(aoe_spell.clone());
+                            if let Some(idx) = remaining_cards.spell_cards.iter().position(|v| *v == aoe_spell.name) {
+                                remaining_cards.spell_cards.swap_remove(idx);
+                            }
+
+                        }
+                    } else if let Some(proj_spell) = proj_list.projectile_spells.get(spell) {
+                        if !owned_projectiles.spells.contains(proj_spell) {
+                            owned_projectiles.spells.push(proj_spell.clone());
+                            if let Some(idx) = remaining_cards.spell_cards.iter().position(|v| *v == proj_spell.name) {
+                                remaining_cards.spell_cards.swap_remove(idx);
+                            }
+                        }
+                    }
+                }
+            }
             CardType::Buff => {
                 if let Some(power_up) = &card_template.upgrade {
                     match power_up {
